@@ -357,65 +357,177 @@
   </section>
 
   <main>
-    <section id="news">
-      <h2>Das Camping-Magazin</h2>
+    
+<section id="news" style="margin-top: 40px">
+  <h2>Aktuelle Camping-News</h2>
+  <p>
+    Die neuesten Meldungen aus der Schweiz und Europa.
+    Alle Beiträge verlinken auf ihre Originalquellen.
+  </p>
 
-      <div class="grid">
-        <article class="card">
-          <img
-            src="https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?auto=format&fit=crop&w=700&q=80"
-            alt="Camping in einer grünen Naturlandschaft"
-            loading="lazy"
-          >
+  <div class="filters">
+    <input
+      id="news-search"
+      type="search"
+      placeholder="News suchen ..."
+      aria-label="Camping-News suchen"
+    />
 
-          <div class="pad">
-            <span class="tag">Ratgeber</span>
+    <select id="news-region" aria-label="Region filtern">
+      <option value="Alle">Alle Regionen</option>
+      <option value="Schweiz">Schweiz</option>
+      <option value="Europa">Europa</option>
+      <option value="Allgemein">Allgemein</option>
+    </select>
+  </div>
 
-            <h3>Gut vorbereitet ins nächste Camping-Abenteuer</h3>
+  <p id="news-status" aria-live="polite">
+    Camping-News werden geladen ...
+  </p>
 
-            <p>
-              Checklisten, Planungstipps und praktische Ideen
-              für unterwegs.
-            </p>
-          </div>
-        </article>
+  <div id="news-list" class="grid"></div>
 
-        <article class="card" id="produkte">
-          <img
-            src="https://images.unsplash.com/photo-1504851149312-7a075b496cc7?auto=format&fit=crop&w=700&q=80"
-            alt="Outdoor-Ausrüstung für Camping und Abenteuer"
-            loading="lazy"
-          >
+  <button id="news-more" class="btn" type="button" hidden>
+    Weitere News laden
+  </button>
+</section>
 
-          <div class="pad">
-            <span class="tag">Gadgets</span>
+<script>
+(() => {
+  const list = document.getElementById("news-list");
+  const status = document.getElementById("news-status");
+  const search = document.getElementById("news-search");
+  const region = document.getElementById("news-region");
+  const more = document.getElementById("news-more");
 
-            <h3>Welches Zubehör lohnt sich?</h3>
+  let articles = [];
+  let visibleCount = 12;
 
-            <p>
-              Wichtige Kriterien für deine nächste Kaufentscheidung.
-            </p>
-          </div>
-        </article>
+  const escapeHTML = value =>
+    String(value ?? "").replace(/[&<>"']/g, char => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[char]);
 
-        <article class="card">
-          <img
-            src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=700&q=80"
-            alt="Beeindruckende Berglandschaft"
-            loading="lazy"
-          >
+  function render() {
+    const query = search.value.trim().toLocaleLowerCase("de");
 
-          <div class="pad">
-            <span class="tag">Camping-News</span>
+    const filtered = articles.filter(article => {
+      const text = [
+        article.title,
+        article.excerpt,
+        article.region,
+        article.source_title
+      ].join(" ").toLocaleLowerCase("de");
 
-            <h3>Neuigkeiten für Outdoor-Fans</h3>
+      return text.includes(query) &&
+        (region.value === "Alle" ||
+         article.region === region.value);
+    });
 
-            <p>
-              Hier erscheinen geprüfte Meldungen mit Quellen und Datum.
-            </p>
-          </div>
-        </article>
-      </div>
+    list.replaceChildren();
+
+    filtered.slice(0, visibleCount).forEach(article => {
+      const card = document.createElement("article");
+      card.className = "card";
+
+      const pad = document.createElement("div");
+      pad.className = "pad";
+
+      const tag = document.createElement("span");
+      tag.className = "tag";
+      tag.textContent =
+        `${article.category || "News"} · ${article.region || "Allgemein"}`;
+
+      const heading = document.createElement("h3");
+      heading.textContent = article.title || "Camping-News";
+
+      const date = document.createElement("small");
+      date.textContent = article.source_published
+        ? `Originaldatum: ${article.source_published}`
+        : "Originalmeldung";
+
+      const excerpt = document.createElement("p");
+      excerpt.textContent =
+        article.excerpt || "Lies die vollständige Meldung bei der Quelle.";
+
+      const source = document.createElement("p");
+      source.textContent = `Quelle: ${article.source_title || "Originalwebsite"}`;
+
+      const link = document.createElement("a");
+      link.className = "btn";
+      link.textContent = "Originalartikel lesen →";
+
+      try {
+        const url = new URL(article.source_url);
+        if (url.protocol === "https:" || url.protocol === "http:") {
+          link.href = url.href;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          source.append(" ", link);
+        } else {
+          return;
+        }
+      } catch {
+        return;
+      }
+
+      pad.append(tag, heading, date, excerpt, source);
+      card.append(pad);
+      list.append(card);
+    });
+
+    status.textContent = `${filtered.length} Camping-News gefunden.`;
+
+    if (filtered.length === 0) {
+      status.textContent =
+        "Keine passenden News gefunden. Bitte Filter ändern oder später erneut versuchen.";
+    }
+
+    more.hidden = visibleCount >= filtered.length;
+  }
+
+  search.addEventListener("input", () => {
+    visibleCount = 12;
+    render();
+  });
+
+  region.addEventListener("change", () => {
+    visibleCount = 12;
+    render();
+  });
+
+  more.addEventListener("click", () => {
+    visibleCount += 12;
+    render();
+  });
+
+  fetch("./news.json", { cache: "no-store" })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (!Array.isArray(data)) {
+        throw new Error("Das News-Archiv ist keine JSON-Liste.");
+      }
+
+      articles = data;
+      render();
+    })
+    .catch(error => {
+      console.error("Camping-News konnten nicht geladen werden:", error);
+      status.textContent =
+        "Die News konnten nicht geladen werden. Bitte später erneut versuchen.";
+    });
+})();
+</script>
+
     </section>
 
     <section id="plaetze" style="margin-top: 55px">
