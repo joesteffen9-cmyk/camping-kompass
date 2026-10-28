@@ -1,0 +1,698 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Camping-Kompass – Dein Camping-Magazin</title>
+
+  <meta
+    name="description"
+    content="Campingplätze entdecken, Gadgets vergleichen und Inspiration für dein nächstes Camping-Abenteuer finden."
+  >
+
+  <meta name="theme-color" content="#203d32">
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  >
+
+  <style>
+    :root {
+      --green: #203d32;
+      --sand: #d9c99a;
+      --cream: #f7f5ef;
+      --ink: #24312a;
+      --muted: #68736b;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 20px;
+    }
+
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--ink);
+      font: 16px/1.6 system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    a {
+      overflow-wrap: anywhere;
+    }
+
+    header {
+      background: var(--green);
+      color: var(--white);
+      padding: 18px 6%;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      color: var(--white);
+      font-size: 22px;
+      font-weight: 850;
+      letter-spacing: 1px;
+      text-decoration: none;
+    }
+
+    nav .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+    }
+
+    nav .links a {
+      color: var(--white);
+      text-decoration: none;
+    }
+
+    nav .links a:hover,
+    nav .links a:focus-visible {
+      color: var(--sand);
+    }
+
+    .hero {
+      padding: 75px 7%;
+      background:
+        linear-gradient(90deg, #203d32ed, #203d3270),
+        url("https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?auto=format&fit=crop&w=1800&q=85")
+        center / cover;
+      color: var(--white);
+    }
+
+    .hero h1 {
+      max-width: 700px;
+      font-size: clamp(36px, 6vw, 64px);
+      line-height: 1.05;
+    }
+
+    .hero p {
+      max-width: 560px;
+      font-size: 19px;
+    }
+
+    .hero .tag {
+      color: #e8d9ad;
+    }
+
+    .btn {
+      display: inline-block;
+      background: var(--sand);
+      color: var(--green);
+      padding: 12px 18px;
+      border-radius: 7px;
+      text-decoration: none;
+      font-weight: 750;
+      transition: background 0.2s ease;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      background: #eadbb0;
+    }
+
+    main {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 38px 22px;
+    }
+
+    section h2 {
+      font-size: 29px;
+      line-height: 1.25;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      min-width: 0;
+      overflow: hidden;
+      background: var(--white);
+      border-radius: 13px;
+      box-shadow: 0 3px 14px #203d3210;
+    }
+
+    .card img {
+      width: 100%;
+      height: 175px;
+      object-fit: cover;
+    }
+
+    .pad {
+      padding: 16px;
+    }
+
+    .tag {
+      color: #607767;
+      font-size: 12px;
+      font-weight: 750;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .card h3 {
+      line-height: 1.35;
+    }
+
+    .card p {
+      overflow-wrap: anywhere;
+    }
+
+    .card .btn {
+      margin-top: 10px;
+    }
+
+    .filters {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 16px 0;
+    }
+
+    input,
+    select {
+      min-width: 0;
+      max-width: 100%;
+      padding: 12px;
+      border: 1px solid #c8cec8;
+      border-radius: 7px;
+      font: inherit;
+      background: var(--white);
+      color: var(--ink);
+    }
+
+    #search {
+      flex: 1 1 240px;
+    }
+
+    #type {
+      flex: 0 1 210px;
+    }
+
+    input:focus-visible,
+    select:focus-visible,
+    a:focus-visible {
+      outline: 3px solid #b59a51;
+      outline-offset: 3px;
+    }
+
+    #map {
+      width: 100%;
+      height: 400px;
+      margin-top: 20px;
+      border-radius: 12px;
+      z-index: 1;
+      background: #e6e8e1;
+    }
+
+    .place-link {
+      display: inline-block;
+      margin-top: 10px;
+      color: var(--green);
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .place-link:hover {
+      color: #55745f;
+    }
+
+    .empty-state {
+      padding: 18px;
+      background: var(--white);
+      border-radius: 10px;
+      grid-column: 1 / -1;
+    }
+
+    .note {
+      display: block;
+      margin-top: 12px;
+      color: var(--muted);
+    }
+
+    .instagram-section {
+      margin-top: 50px;
+    }
+
+    footer {
+      margin-top: 35px;
+      padding: 32px 7%;
+      background: var(--green);
+      color: var(--white);
+    }
+
+    footer small {
+      color: #e0e5df;
+    }
+
+    footer a {
+      color: var(--white);
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 16px 5%;
+      }
+
+      nav {
+        align-items: flex-start;
+      }
+
+      nav .links {
+        gap: 8px 12px;
+      }
+
+      .hero {
+        padding: 48px 6%;
+      }
+
+      main {
+        padding: 28px 16px;
+      }
+
+      section h2 {
+        font-size: 25px;
+      }
+
+      #map {
+        height: 330px;
+      }
+
+      #type {
+        flex: 1 1 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav aria-label="Hauptnavigation">
+      <a class="logo" href="#" aria-label="Camping-Kompass Startseite">
+        ◉ CAMPING-KOMPASS
+      </a>
+
+      <div class="links">
+        <a href="#news">News</a>
+        <a href="#produkte">Gadgets</a>
+        <a href="#plaetze">Stellplätze</a>
+        <a href="#instagram">Instagram</a>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <p class="tag">ENTDECKEN · VERGLEICHEN · LOSFAHREN</p>
+
+    <h1>Dein nächstes Abenteuer beginnt hier.</h1>
+
+    <p>
+      Finde schöne Stellplätze, entdecke praktische Camping-Gadgets
+      und erhalte Inspiration für deine nächste Tour.
+    </p>
+
+    <a class="btn" href="#plaetze">
+      Stellplätze entdecken →
+    </a>
+  </section>
+
+  <main>
+    <section id="news">
+      <h2>Das Camping-Magazin</h2>
+
+      <div class="grid">
+        <article class="card">
+          <img
+            src="https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?auto=format&fit=crop&w=700&q=80"
+            alt="Camping in einer grünen Naturlandschaft"
+            loading="lazy"
+          >
+
+          <div class="pad">
+            <span class="tag">Ratgeber</span>
+
+            <h3>Gut vorbereitet ins nächste Camping-Abenteuer</h3>
+
+            <p>
+              Checklisten, Planungstipps und praktische Ideen
+              für unterwegs.
+            </p>
+          </div>
+        </article>
+
+        <article class="card" id="produkte">
+          <img
+            src="https://images.unsplash.com/photo-1504851149312-7a075b496cc7?auto=format&fit=crop&w=700&q=80"
+            alt="Outdoor-Ausrüstung für Camping und Abenteuer"
+            loading="lazy"
+          >
+
+          <div class="pad">
+            <span class="tag">Gadgets</span>
+
+            <h3>Welches Zubehör lohnt sich?</h3>
+
+            <p>
+              Wichtige Kriterien für deine nächste Kaufentscheidung.
+            </p>
+          </div>
+        </article>
+
+        <article class="card">
+          <img
+            src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=700&q=80"
+            alt="Beeindruckende Berglandschaft"
+            loading="lazy"
+          >
+
+          <div class="pad">
+            <span class="tag">Camping-News</span>
+
+            <h3>Neuigkeiten für Outdoor-Fans</h3>
+
+            <p>
+              Hier erscheinen geprüfte Meldungen mit Quellen und Datum.
+            </p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="plaetze" style="margin-top: 55px">
+      <h2>Stellplätze entdecken</h2>
+
+      <p>
+        Entdecke Campingplätze und filtere die Einträge nach Name,
+        Ort oder Platztyp. Bitte prüfe aktuelle Preise,
+        Verfügbarkeit und Ausstattung direkt beim Anbieter.
+      </p>
+
+      <div class="filters">
+        <input
+          id="search"
+          type="search"
+          placeholder="Ort oder Name suchen …"
+          aria-label="Stellplatz nach Ort oder Name suchen"
+        >
+
+        <select id="type" aria-label="Platztyp filtern">
+          <option value="alle">Alle Platztypen</option>
+          <option value="Wohnmobil">Wohnmobil</option>
+          <option value="Campingplatz">Campingplatz</option>
+        </select>
+      </div>
+
+      <div
+        id="results"
+        class="grid"
+        aria-live="polite"
+        aria-label="Suchergebnisse der Campingplätze"
+      ></div>
+
+      <div
+        id="map"
+        role="region"
+        aria-label="Interaktive Karte der Campingplätze"
+      ></div>
+
+      <small class="note">
+        Hinweis: Die Einträge sind Beispieldaten. Adressen,
+        Koordinaten, Preise, Ausstattung und Verfügbarkeit müssen
+        vor einer Veröffentlichung geprüft werden.
+        Kartendaten © OpenStreetMap-Mitwirkende.
+      </small>
+    </section>
+
+    <section id="instagram" class="instagram-section">
+      <h2>Unterwegs mit Camping-Kompass</h2>
+
+      <p>
+        Tipps, Gadgets und Reiseinspiration für deine nächste Tour.
+      </p>
+
+      <a
+        class="btn"
+        href="https://www.instagram.com/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Instagram öffnen
+      </a>
+    </section>
+  </main>
+
+  <footer>
+    <strong>CAMPING-KOMPASS</strong>
+
+    <p>
+      Dein Magazin für Camping, Ausrüstung und Reiseziele.
+    </p>
+
+    <small>
+      Impressum · Datenschutz · Affiliate-Hinweis –
+      vor dem Livegang ergänzen.
+    </small>
+  </footer>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  ></script>
+
+  <script>
+    "use strict";
+
+    // Campingplätze: Beispieldaten, vor Veröffentlichung prüfen.
+    const places = [
+      {
+        name: "Camping Münstertal",
+        town: "Münstertal, Schwarzwald, Deutschland",
+        type: "Campingplatz",
+        wohnmobil: true,
+        lat: 47.859584,
+        lon: 7.763714,
+        description:
+          "Komfort-Camping im Schwarzwald mit Freizeit- und Wellnessangeboten.",
+        url: "https://www.camping-muenstertal.de/"
+      },
+      {
+        name: "Camping Schwarzwälder Hof",
+        town: "Seelbach, Schwarzwald, Deutschland",
+        type: "Campingplatz",
+        wohnmobil: true,
+        lat: 48.300278,
+        lon: 7.945,
+        description:
+          "Campingurlaub im Schwarzwald bei Seelbach.",
+        url: "https://www.spacamping.de/"
+      },
+      {
+        name: "Camping Village Capalonga",
+        town: "Bibione Pineda, Venetien, Italien",
+        type: "Campingplatz",
+        wohnmobil: true,
+        lat: 45.630535,
+        lon: 12.994383,
+        description:
+          "Camping zwischen Sandstrand und Lagune an der italienischen Adriaküste.",
+        url: "https://www.capalonga.com/de/"
+      }
+    ];
+
+    const searchInput = document.getElementById("search");
+    const typeSelect = document.getElementById("type");
+    const resultsContainer = document.getElementById("results");
+
+    // Karte initialisieren, wenn Leaflet geladen wurde.
+    let map = null;
+    let markers = null;
+
+    if (typeof L !== "undefined") {
+      map = L.map("map").setView([48.2, 9.7], 6);
+
+      L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+          maxZoom: 19
+        }
+      ).addTo(map);
+
+      markers = L.layerGroup().addTo(map);
+    } else {
+      document.getElementById("map").textContent =
+        "Die Karte konnte nicht geladen werden. Bitte prüfe deine Internetverbindung.";
+    }
+
+    // HTML-Sonderzeichen in dynamischen Texten sicher behandeln.
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, function (character) {
+        const entities = {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+        };
+
+        return entities[character];
+      });
+    }
+
+    // Ergebnisse und Markierungen anhand der Filter aktualisieren.
+    function render() {
+      const query = searchInput.value.trim().toLocaleLowerCase("de");
+      const selectedType = typeSelect.value;
+
+      const filtered = places.filter(function (place) {
+        const searchableText =
+          (place.name + " " + place.town).toLocaleLowerCase("de");
+
+        const matchesQuery = searchableText.includes(query);
+
+        const matchesType =
+          selectedType === "alle" ||
+          place.type === selectedType ||
+          (
+            selectedType === "Wohnmobil" &&
+            place.wohnmobil === true
+          );
+
+        return matchesQuery && matchesType;
+      });
+
+      if (filtered.length === 0) {
+        resultsContainer.innerHTML =
+          '<p class="empty-state">Keine passenden Einträge gefunden. ' +
+          'Versuche einen anderen Suchbegriff oder Filter.</p>';
+      } else {
+        resultsContainer.innerHTML = filtered.map(function (place) {
+          return `
+            <article class="card">
+              <div class="pad">
+                <span class="tag">
+                  ${escapeHTML(place.type)} · BEISPIEL
+                </span>
+
+                <h3>${escapeHTML(place.name)}</h3>
+
+                <p>${escapeHTML(place.town)}</p>
+
+                <p>${escapeHTML(place.description)}</p>
+
+                <small>
+                  Beispieldatensatz – Angebot und Angaben bitte prüfen.
+                </small>
+
+                <a
+                  class="place-link"
+                  href="${escapeHTML(place.url)}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Anbieter besuchen →
+                </a>
+              </div>
+            </article>
+          `;
+        }).join("");
+      }
+
+      // Vorhandene Kartenmarkierungen entfernen.
+      if (!markers) {
+        return;
+      }
+
+      markers.clearLayers();
+
+      // Für jeden gefilterten Eintrag eine Markierung erstellen.
+      filtered.forEach(function (place) {
+        const popupContent = `
+          <strong>${escapeHTML(place.name)}</strong><br>
+          ${escapeHTML(place.town)}<br>
+          <small>Beispieldaten – Angaben bitte prüfen.</small><br>
+          <a
+            href="${escapeHTML(place.url)}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Anbieter besuchen
+          </a>
+        `;
+
+        L.marker([place.lat, place.lon])
+          .addTo(markers)
+          .bindPopup(popupContent);
+      });
+
+      // Karte auf die sichtbaren Einträge ausrichten.
+      if (filtered.length > 0) {
+        const visibleMarkers = markers.getLayers();
+
+        if (visibleMarkers.length === 1) {
+          map.setView(
+            [filtered[0].lat, filtered[0].lon],
+            10
+          );
+        } else {
+          const bounds = markers.getBounds();
+
+          if (bounds.isValid()) {
+            map.fitBounds(bounds, {
+              padding: [25, 25],
+              maxZoom: 10
+            });
+          }
+        }
+      }
+    }
+
+    // Suche und Filter reagieren sofort auf Änderungen.
+    searchInput.addEventListener("input", render);
+    typeSelect.addEventListener("change", render);
+
+    // Initiale Anzeige.
+    render();
+  </script>
+</body>
+</html>
