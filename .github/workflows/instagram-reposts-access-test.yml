@@ -13,7 +13,7 @@ jobs:
   test-access:
     runs-on: ubuntu-latest
     steps:
-      - name: Öffentlichen Repost-Bereich einmal prüfen
+      - name: Öffentlichen Repost-Bereich prüfen
         run: |
           python - <<'PY'
           import urllib.request
@@ -21,7 +21,6 @@ jobs:
           import re
 
           url = "https://www.instagram.com/campingkompassinfo/reposts/"
-
           request = urllib.request.Request(
               url,
               headers={
@@ -56,20 +55,11 @@ jobs:
                       print("Reel:", link)
 
                   if login_redirect:
-                      print(
-                          "ERGEBNIS: Instagram liefert die Anmeldeseite. "
-                          "Die Reposts sind damit nicht nachgewiesen auslesbar."
-                      )
+                      print("ERGEBNIS: Instagram liefert die Anmeldeseite.")
                   elif reel_links:
-                      print(
-                          "ERGEBNIS: Reel-Links gefunden. "
-                          "Bitte prüfen, ob sie tatsächlich zu den Reposts gehören."
-                      )
+                      print("ERGEBNIS: Reel-Links gefunden; Zugehörigkeit prüfen.")
                   else:
-                      print(
-                          "ERGEBNIS: Keine direkten Reel-Links gefunden. "
-                          "Die automatische Erkennung ist nicht nachgewiesen."
-                      )
+                      print("ERGEBNIS: Keine direkten Reel-Links gefunden.")
 
           except urllib.error.HTTPError as error:
               print("Instagram antwortet mit HTTP-Status:", error.code)
