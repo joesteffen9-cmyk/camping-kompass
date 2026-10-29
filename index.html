@@ -19,6 +19,100 @@
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   >
 
+.instagram-section {
+  margin-top: 50px;
+}
+
+.reels-intro {
+  max-width: 760px;
+  line-height: 1.6;
+}
+
+.reels-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.reel-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #dfe5df;
+  border-radius: 14px;
+  background: #fff;
+  color: #243127;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.reel-placeholder {
+  aspect-ratio: 9 / 16;
+  min-height: 230px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: #edf3e9;
+  color: #294c31;
+}
+
+.reel-placeholder span {
+  font-size: 36px;
+}
+
+.reel-placeholder p {
+  font-weight: 700;
+}
+
+.reel-placeholder small {
+  line-height: 1.5;
+}
+
+.reel-details {
+  padding: 15px;
+}
+
+.reel-details h3 {
+  margin-top: 0;
+  font-size: 1rem;
+}
+
+.product-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.product-links a {
+  display: inline-block;
+  padding: 9px 12px;
+  border-radius: 8px;
+  background: #e8f1e6;
+  color: #244a2b;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.reels-disclaimer {
+  margin: 20px 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 1000px) {
+  .reels-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .reels-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
   <style>
     :root {
       --green: #203d32;
