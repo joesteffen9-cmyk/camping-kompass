@@ -1,0 +1,63 @@
+
+name: Instagram-Reposts-Zugriff testen
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-access:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Öffentlichen Repost-Bereich prüfen
+        run: |
+          python - <<'PY'
+          import urllib.request
+          import urllib.error
+
+          url = "https://www.instagram.com/campingkompassinfo/reposts/"
+
+          request = urllib.request.Request(
+              url,
+              headers={
+                  "User-Agent": (
+                      "Mozilla/5.0 (X11; Linux x86_64) "
+                      "AppleWebKit/537.36 Chrome/131.0 Safari/537.36"
+                  )
+              }
+          )
+
+          try:
+              with urllib.request.urlopen(request, timeout=20) as response:
+                  html = response.read(500000).decode(
+                      "utf-8", errors="replace"
+                  )
+                  print("HTTP-Status:", response.status)
+                  print("Endadresse:", response.url)
+                  print("Antwortgröße:", len(html), "Zeichen")
+                  print(
+                      "Enthält Instagram-Seitenstruktur:",
+                      "instagram" in html.lower()
+                  )
+                  print(
+                      "Enthält Repost-Hinweise:",
+                      "repost" in html.lower()
+                  )
+                  print(
+                      "Enthält Anmeldehinweise:",
+                      "login" in html.lower()
+                      or "accounts/login" in html.lower()
+                  )
+                  print(
+                      "Hinweis: Diese Prüfung beweist noch nicht, "
+                      "dass die Reels zuverlässig auslesbar sind."
+                  )
+          except urllib.error.HTTPError as error:
+              print("Instagram antwortet mit HTTP-Status:", error.code)
+              print("Der öffentliche Zugriff ist damit eingeschränkt "
+                    "oder nicht verfügbar.")
+          except Exception as error:
+              print("Abruf nicht möglich:", type(error).__name__, str(error))
+          PY
