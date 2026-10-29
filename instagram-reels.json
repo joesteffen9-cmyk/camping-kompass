@@ -1,8 +1,12 @@
-
 {
   "account": "campingkompassinfo",
   "last_checked": null,
   "reels": [
+    {
+      "url": "https://www.instagram.com/reel/DavQfvMo3QT/",
+      "title": "Instagram Reel",
+      "description": "Neues Reel von Camping-Kompass."
+    },
     {
       "url": "https://www.instagram.com/reel/DagAdYAE8pE/",
       "title": "Camping-Inspiration",
@@ -23,13 +27,6 @@
       "description": "Entdecke hilfreiche Ausrüstung.",
       "product_url": "https://www.schlanser.ch/zelte/vorzelte/wohnwagenvorzelte/",
       "product_label": "🏕️ Vorzelte bei Schlanser entdecken"
-    },
-    {
-      "url": "https://www.instagram.com/reel/De_uAfRq55b/",
-      "title": "Campingplätze & Reiseziele",
-      "description": "Inspiration für deinen nächsten Urlaub.",
-      "product_url": "https://www.campingwagner.de/de/c/zelte/",
-      "product_label": "🏕️ Vorzelte bei Camping Wagner entdecken"
     }
   ]
 }
