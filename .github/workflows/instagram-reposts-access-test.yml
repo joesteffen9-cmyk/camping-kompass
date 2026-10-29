@@ -2,6 +2,8 @@
 name: Instagram-Reposts-Zugriff testen
 
 on:
+  schedule:
+    - cron: "47 6 * * *"
   workflow_dispatch:
 
 permissions:
