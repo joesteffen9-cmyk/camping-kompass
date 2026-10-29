@@ -115,6 +115,64 @@
   }
 }
 
+    /* Camping-Shops unter dem Titelbild */
+    .shop-logos {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 22px;
+    }
+
+    .shop-logos h2 {
+      margin: 0 0 16px;
+      text-align: center;
+      font-size: 20px;
+      color: #203d32;
+    }
+
+    .shop-logos-list {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      align-items: stretch;
+      gap: 16px;
+    }
+
+    .shop-logos-list a {
+      min-width: 0;
+      min-height: 100px;
+      padding: 14px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: #fff;
+      border: 1px solid #e0e5de;
+      border-radius: 12px;
+      color: #203d32;
+      text-align: center;
+      text-decoration: none;
+      font-weight: 700;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .shop-logos-list a:hover {
+      box-shadow: 0 4px 14px #203d321a;
+      transform: translateY(-2px);
+    }
+
+    .shop-logos-list img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+
+    @media (max-width: 700px) {
+      .shop-logos-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+    }
+
     :root {
       --green: #203d32;
       --sand: #d9c99a;
@@ -436,7 +494,6 @@
     </nav>
   </header>
 
- 
   <section class="hero">
     <p class="tag">ENTDECKEN · VERGLEICHEN · LOSFAHREN</p>
 
@@ -452,62 +509,33 @@
     </a>
   </section>
 
-  <section class="shop-logos" aria-label="Camping-Shops">
-    <h2>Unsere Camping-Shop-Empfehlungen</h2>
 
+  <section class="shop-logos" aria-labelledby="shop-heading">
+    <h2 id="shop-heading">Camping-Shops entdecken</h2>
     <div class="shop-logos-list">
-      <a href="https://www.obelink.de/" target="_blank"
-         rel="noopener noreferrer">
-        <img src="https://www.google.com/s2/favicons?domain=obelink.de&sz=128"
-             alt="Obelink">
+      <a href="https://www.obelink.de/" target="_blank" rel="noopener noreferrer" aria-label="Obelink Camping-Shop öffnen">
+        <img src="https://www.google.com/s2/favicons?domain=obelink.de&sz=128" alt="" width="48" height="48">
+        <span>Obelink</span>
       </a>
-
-      <a href="https://www.schlanser.ch/" target="_blank"
-         rel="noopener noreferrer">
-        <img src="https://www.google.com/s2/favicons?domain=schlanser.ch&sz=128"
-             alt="Schlanser">
+      <a href="https://www.schlanser.ch/" target="_blank" rel="noopener noreferrer" aria-label="Schlanser Camping-Shop öffnen">
+        <img src="https://www.google.com/s2/favicons?domain=schlanser.ch&sz=128" alt="" width="48" height="48">
+        <span>Schlanser</span>
       </a>
-
-      <a href="https://www.campingwagner.de/" target="_blank"
-         rel="noopener noreferrer">
-        <img src="https://www.google.com/s2/favicons?domain=campingwagner.de&sz=128"
-             alt="Camping Wagner">
+      <a href="https://www.campingwagner.de/" target="_blank" rel="noopener noreferrer" aria-label="Camping Wagner Shop öffnen">
+        <img src="https://www.google.com/s2/favicons?domain=campingwagner.de&sz=128" alt="" width="48" height="48">
+        <span>Camping Wagner</span>
       </a>
-
-      <a href="https://www.fritz-berger.de/" target="_blank"
-         rel="noopener noreferrer">
-        <img src="https://www.google.com/s2/favicons?domain=fritz-berger.de&sz=128"
-             alt="Fritz Berger Camping">
+      <a href="https://www.fritz-berger.de/" target="_blank" rel="noopener noreferrer" aria-label="Fritz Berger Camping-Shop öffnen">
+        <img src="https://www.google.com/s2/favicons?domain=fritz-berger.de&sz=128" alt="" width="48" height="48">
+        <span>Fritz Berger</span>
       </a>
-
-      <a href="https://www.amazon.de/" target="_blank"
-         rel="noopener noreferrer">
-        <img src="https://www.google.com/s2/favicons?domain=amazon.de&sz=128"
-             alt="Amazon">
+      <a href="https://www.amazon.de/" target="_blank" rel="noopener noreferrer" aria-label="Amazon Deutschland öffnen">
+        <img src="https://www.google.com/s2/favicons?domain=amazon.de&sz=128" alt="" width="48" height="48">
+        <span>Amazon</span>
       </a>
     </div>
   </section>
 
-  <main>
-
-  <section class="hero">
-    <p class="tag">ENTDECKEN · VERGLEICHEN · LOSFAHREN</p>
-
-    <h1>Dein nächstes Abenteuer beginnt hier.</h1>
-
-    <p>
-      Finde schöne Stellplätze, entdecke praktische Camping-Gadgets
-      und erhalte Inspiration für deine nächste Tour.
-    </p>
-
-    <a class="btn" href="#plaetze">
-      Stellplätze entdecken →
-    </a>
-  </section>
-
-  <!-- HIER den HTML-Code für die fünf Shop-Logos einfügen -->
-
-  <main>
   <main>
     
 <section id="news" style="margin-top: 40px">
