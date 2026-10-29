@@ -1,0 +1,204 @@
+
+name: E-Mail zu Instagram-Reels
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: email-to-instagram-reels
+  cancel-in-progress: false
+
+jobs:
+  update-reels:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+        with:
+          ref: camping-kompass.info
+
+      - name: E-Mails prüfen und Reels aktualisieren
+        env:
+          IMAP_HOST: ${{ secrets.IMAP_HOST }}
+          IMAP_USERNAME: ${{ secrets.IMAP_USERNAME }}
+          IMAP_PASSWORD: ${{ secrets.IMAP_PASSWORD }}
+          REEL_ALLOWED_SENDER: ${{ secrets.REEL_ALLOWED_SENDER }}
+        run: |
+          cat > /tmp/process_reels.py <<'PY'
+          import imaplib
+          import email
+          import json
+          import os
+          import re
+          from email import policy
+          from email.utils import parseaddr
+          from pathlib import Path
+
+          host = os.environ["IMAP_HOST"]
+          username = os.environ["IMAP_USERNAME"]
+          password = os.environ["IMAP_PASSWORD"]
+          allowed_sender = os.environ["REEL_ALLOWED_SENDER"].strip().lower()
+
+          json_path = Path("instagram-reels.json")
+          processed_path = Path("/tmp/reel_uids.txt")
+
+          def canonical_url(value):
+              match = re.search(
+                  r"https?://(?:www\.)?instagram\.com/(?:reel|reels)/([A-Za-z0-9_-]+)",
+                  value,
+                  re.I
+              )
+              if not match:
+                  return None
+              return f"https://www.instagram.com/reel/{match.group(1)}/"
+
+          def get_body(message):
+              parts = message.walk() if message.is_multipart() else [message]
+              bodies = []
+
+              for part in parts:
+                  if part.get_content_type() not in ("text/plain", "text/html"):
+                      continue
+                  if part.get_content_disposition() == "attachment":
+                      continue
+                  try:
+                      content = part.get_content()
+                  except Exception:
+                      continue
+                  bodies.append(str(content))
+
+              return "\n".join(bodies)
+
+          processed_uids = []
+          changed = False
+
+          with imaplib.IMAP4_SSL(host, 993) as mail:
+              mail.login(username, password)
+              mail.select("INBOX")
+
+              status, data = mail.uid("search", None, "UNSEEN")
+              if status != "OK":
+                  raise RuntimeError("Postfach konnte nicht durchsucht werden.")
+
+              uids = data[0].split() if data and data[0] else []
+              uids = uids[-100:]
+
+              with json_path.open(encoding="utf-8") as file:
+                  data_json = json.load(file)
+
+              reels = data_json.get("reels", [])
+              if not isinstance(reels, list):
+                  raise ValueError(
+                      "instagram-reels.json enthält keine gültige reels-Liste."
+                  )
+
+              for uid in uids:
+                  status, response = mail.uid("fetch", uid, "(RFC822)")
+                  if (
+                      status != "OK"
+                      or not response
+                      or not isinstance(response[0], tuple)
+                  ):
+                      continue
+
+                  message = email.message_from_bytes(
+                      response[0][1], policy=policy.default
+                  )
+
+                  sender = parseaddr(message.get("From", ""))[1].strip().lower()
+                  subject = str(message.get("Subject", "")).strip()
+
+                  if sender != allowed_sender or subject.casefold() != "reel":
+                      continue
+
+                  link = canonical_url(get_body(message))
+                  if not link:
+                      print(f"Keine gültige Reel-URL in Nachricht {uid.decode()}.")
+                      continue
+
+                  processed_uids.append(uid.decode())
+
+                  existing_links = {
+                      canonical_url(str(item.get("url", "")))
+                      for item in reels
+                      if isinstance(item, dict)
+                  }
+
+                  if link in existing_links:
+                      print(f"Reel bereits vorhanden: {link}")
+                      continue
+
+                  reels.insert(0, {
+                      "url": link,
+                      "title": "Instagram Reel",
+                      "description": "Neues Reel von Camping-Kompass."
+                  })
+
+                  reels = reels[:4]
+                  changed = True
+                  print(f"Neues Reel hinzugefügt: {link}")
+
+              if changed:
+                  data_json["reels"] = reels
+                  with json_path.open("w", encoding="utf-8") as file:
+                      json.dump(data_json, file, ensure_ascii=False, indent=2)
+                      file.write("\n")
+              else:
+                  print("Keine neuen Reels: JSON-Datei bleibt unverändert.")
+
+          processed_path.write_text(
+              "\n".join(processed_uids),
+              encoding="utf-8"
+          )
+          PY
+
+          python /tmp/process_reels.py
+
+      - name: Änderungen veröffentlichen
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add instagram-reels.json
+
+          if git diff --cached --quiet; then
+            echo "Keine Änderungen an den Reels."
+          else
+            git commit -m "Instagram-Reels automatisch aktualisieren"
+            git push origin HEAD:camping-kompass.info
+          fi
+
+      - name: Verarbeitete E-Mails als gelesen markieren
+        if: success()
+        env:
+          IMAP_HOST: ${{ secrets.IMAP_HOST }}
+          IMAP_USERNAME: ${{ secrets.IMAP_USERNAME }}
+          IMAP_PASSWORD: ${{ secrets.IMAP_PASSWORD }}
+        run: |
+          if [ ! -s /tmp/reel_uids.txt ]; then
+            echo "Keine passenden E-Mails zum Markieren."
+            exit 0
+          fi
+
+          python - <<'PY'
+          import imaplib
+          import os
+          from pathlib import Path
+
+          with imaplib.IMAP4_SSL(os.environ["IMAP_HOST"], 993) as mail:
+              mail.login(
+                  os.environ["IMAP_USERNAME"],
+                  os.environ["IMAP_PASSWORD"]
+              )
+              mail.select("INBOX")
+
+              for uid in Path("/tmp/reel_uids.txt").read_text().splitlines():
+                  if uid.isdigit():
+                      mail.uid("store", uid, "+FLAGS", "(\\Seen)")
+          PY
