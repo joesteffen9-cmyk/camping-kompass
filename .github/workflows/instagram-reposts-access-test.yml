@@ -13,11 +13,12 @@ jobs:
   test-access:
     runs-on: ubuntu-latest
     steps:
-      - name: Öffentlichen Repost-Bereich prüfen
+      - name: Öffentlichen Repost-Bereich einmal prüfen
         run: |
           python - <<'PY'
           import urllib.request
           import urllib.error
+          import re
 
           url = "https://www.instagram.com/campingkompassinfo/reposts/"
 
@@ -36,30 +37,44 @@ jobs:
                   html = response.read(500000).decode(
                       "utf-8", errors="replace"
                   )
+
                   print("HTTP-Status:", response.status)
                   print("Endadresse:", response.url)
                   print("Antwortgröße:", len(html), "Zeichen")
-                  print(
-                      "Enthält Instagram-Seitenstruktur:",
-                      "instagram" in html.lower()
-                  )
-                  print(
-                      "Enthält Repost-Hinweise:",
-                      "repost" in html.lower()
-                  )
-                  print(
-                      "Enthält Anmeldehinweise:",
-                      "login" in html.lower()
-                      or "accounts/login" in html.lower()
-                  )
-                  print(
-                      "Hinweis: Diese Prüfung beweist noch nicht, "
-                      "dass die Reels zuverlässig auslesbar sind."
-                  )
+
+                  login_redirect = "/accounts/login/" in response.url
+                  print("Zur Anmeldung weitergeleitet:", login_redirect)
+
+                  reel_links = sorted(set(re.findall(
+                      r'https?://(?:www\.)?instagram\.com/reel/[^"\\\s<>]+',
+                      html
+                  )))
+
+                  print("Gefundene öffentliche Reel-Links:", len(reel_links))
+
+                  for link in reel_links[:10]:
+                      print("Reel:", link)
+
+                  if login_redirect:
+                      print(
+                          "ERGEBNIS: Instagram liefert die Anmeldeseite. "
+                          "Die Reposts sind damit nicht nachgewiesen auslesbar."
+                      )
+                  elif reel_links:
+                      print(
+                          "ERGEBNIS: Reel-Links gefunden. "
+                          "Bitte prüfen, ob sie tatsächlich zu den Reposts gehören."
+                      )
+                  else:
+                      print(
+                          "ERGEBNIS: Keine direkten Reel-Links gefunden. "
+                          "Die automatische Erkennung ist nicht nachgewiesen."
+                      )
+
           except urllib.error.HTTPError as error:
               print("Instagram antwortet mit HTTP-Status:", error.code)
-              print("Der öffentliche Zugriff ist damit eingeschränkt "
-                    "oder nicht verfügbar.")
+              print("Keine weiteren Abrufversuche in diesem Lauf.")
+
           except Exception as error:
               print("Abruf nicht möglich:", type(error).__name__, str(error))
           PY
