@@ -671,6 +671,7 @@
     </section>
 
    
+
 <section id="instagram" class="instagram-section">
   <h2>🏕️ Camping-Reels & Produkttipps</h2>
   <p class="reels-intro">
@@ -679,114 +680,7 @@
   </p>
 
   <div id="camping-reels" class="reels-grid">
-    <article class="reel-card">
-    
-<blockquote
-  class="instagram-media"
-  data-instgrm-permalink="https://www.instagram.com/reel/DagAdYAE8pE/"
-  data-instgrm-version="14"
-  style="background:#fff; border:0; margin:0 auto; max-width:540px; width:100%;">
-</blockquote>
-  
-      <div class="reel-details">
-        <h3>Camping-Inspiration</h3>
-        <p>Praktische Ideen für unterwegs.</p>
-        
-<div class="product-links">
-  <p>
-    <a href="https://www.amazon.de/s?k=Camping+Gadgets"
-       target="_blank"
-       rel="noopener noreferrer">
-      🛒 Camping-Gadgets bei Amazon entdecken
-    </a>
-  </p>
-</div>
-
-      </div>
-    </article>
-
-    
-<article class="reel-card">
-  <blockquote
-    class="instagram-media"
-    data-instgrm-permalink="https://www.instagram.com/reel/DdCYyKex3nt/"
-    data-instgrm-version="14"
-    style="background:#fff; border:0; margin:0 auto; max-width:540px; width:100%;">
-  </blockquote>
-
-  <div class="reel-details">
-    <h3>Vanlife & Wohnmobil</h3>
-    <p>Sackmarkise am Wohnmobil bei stürmischem Wetter.</p>
-   
-
-<div class="product-links">
-  <p>
-    <a href="https://www.schlanser.ch/hersteller/dometic/73580/dometic-revo-zip-sackmarkise-2-4-m"
-       target="_blank"
-       rel="noopener noreferrer">
-      ☀️ Dometic Revo Zip Sackmarkise bei Schlanser
-    </a>
-  </p>
-</div>
-
-  </div>
-</article>
-
-
-    
-<article class="reel-card">
-  <blockquote
-    class="instagram-media"
-    data-instgrm-permalink="https://www.instagram.com/reel/DfCjBJgC0Ii/"
-    data-instgrm-version="14"
-    style="background:#fff; border:0; margin:0 auto; max-width:540px; width:100%;">
-  </blockquote>
-
-  <div class="reel-details">
-    <h3>Nützliches Campingzubehör</h3>
-    <p>Entdecke hilfreiche Ausrüstung.</p>
-   
-<div class="product-links">
-  <p>
-    <a href="https://www.schlanser.ch/zelte/vorzelte/wohnwagenvorzelte/"
-       target="_blank"
-       rel="noopener noreferrer">
-      🏕️ Vorzelte bei Schlanser entdecken
-    </a>
-  </p>
-</div>
-
-
-  </div>
-</article>
-
-
-   
-<article class="reel-card">
-  <blockquote
-    class="instagram-media"
-    data-instgrm-permalink="https://www.instagram.com/reel/De_uAfRq55b/"
-    data-instgrm-version="14"
-    style="background:#fff; border:0; margin:0 auto; max-width:540px; width:100%;">
-  </blockquote>
-
-  <div class="reel-details">
-    <h3>Campingplätze & Reiseziele</h3>
-    <p>Inspiration für deinen nächsten Urlaub.</p>
-   
-<div class="product-links">
-  <p>
-    <a href="https://www.campingwagner.de/de/c/zelte/"
-       target="_blank"
-       rel="noopener noreferrer">
-      🏕️ Vorzelte bei Camping Wagner entdecken
-    </a>
-  </p>
-</div>
-
-  </div>
-</article>
-
+    <p>Camping-Reels werden geladen …</p>
   </div>
 
   <p class="reels-disclaimer">
@@ -801,6 +695,88 @@
     Instagram öffnen
   </a>
 </section>
+
+<script>
+(async function () {
+  const container = document.getElementById("camping-reels");
+
+  try {
+    const response = await fetch("./instagram-reels.json", {
+      cache: "no-store"
+    });
+
+    if (!response.ok) {
+      throw new Error("Die Reels-Datei konnte nicht geladen werden.");
+    }
+
+    const data = await response.json();
+    container.replaceChildren();
+
+    data.reels.forEach(function (reel) {
+      const article = document.createElement("article");
+      article.className = "reel-card";
+
+      const embed = document.createElement("blockquote");
+      embed.className = "instagram-media";
+      embed.setAttribute("data-instgrm-permalink", reel.url);
+      embed.setAttribute("data-instgrm-version", "14");
+      embed.style.cssText =
+        "background:#fff;border:0;margin:0 auto;max-width:540px;width:100%;";
+
+      const details = document.createElement("div");
+      details.className = "reel-details";
+
+      const heading = document.createElement("h3");
+      heading.textContent = reel.title;
+
+      const description = document.createElement("p");
+      description.textContent = reel.description;
+
+      details.append(heading, description);
+
+      if (reel.product_url && reel.product_label) {
+        const links = document.createElement("div");
+        links.className = "product-links";
+
+        const paragraph = document.createElement("p");
+        const link = document.createElement("a");
+
+        link.href = reel.product_url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = reel.product_label;
+
+        paragraph.appendChild(link);
+        links.appendChild(paragraph);
+        details.appendChild(links);
+      }
+
+      article.append(embed, details);
+      container.appendChild(article);
+    });
+
+    if (window.instgrm && window.instgrm.Embeds) {
+      window.instgrm.Embeds.process();
+    } else {
+      const script = document.querySelector(
+        'script[src*="instagram.com/embed.js"]'
+      );
+
+      if (script) {
+        script.addEventListener("load", function () {
+          if (window.instgrm && window.instgrm.Embeds) {
+            window.instgrm.Embeds.process();
+          }
+        }, { once: true });
+      }
+    }
+  } catch (error) {
+    console.error("Instagram-Reels:", error);
+    container.textContent =
+      "Die Camping-Reels konnten gerade nicht geladen werden.";
+  }
+})();
+</script>
 
   </main>
 
