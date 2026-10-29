@@ -1,0 +1,60 @@
+
+name: Instagram-Reels-Daten prüfen
+
+on:
+  schedule:
+    - cron: "37 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-reels:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: Instagram-Reels-Datei prüfen
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("instagram-reels.json")
+
+          if not path.exists():
+              raise SystemExit("FEHLER: instagram-reels.json fehlt.")
+
+          try:
+              data = json.loads(path.read_text(encoding="utf-8"))
+          except json.JSONDecodeError as exc:
+              raise SystemExit(f"FEHLER: JSON ist ungültig: {exc}")
+
+          reels = data.get("reels")
+
+          if not isinstance(reels, list):
+              raise SystemExit("FEHLER: 'reels' muss eine Liste sein.")
+
+          for i, reel in enumerate(reels, start=1):
+              if not isinstance(reel, dict):
+                  raise SystemExit(f"FEHLER: Reel {i} ist ungültig.")
+
+              for field in ("url", "title", "description"):
+                  if not reel.get(field):
+                      raise SystemExit(
+                          f"FEHLER: Reel {i} hat kein Feld '{field}'."
+                      )
+
+              if not reel["url"].startswith(
+                  "https://www.instagram.com/reel/"
+              ):
+                  raise SystemExit(
+                      f"FEHLER: Instagram-Reel-URL {i} ist ungültig."
+                  )
+
+          print(f"Erfolgreich geprüft: {len(reels)} Reels.")
+          print("Hinweis: Neue Instagram-Reposts werden nicht automatisch entdeckt.")
+          PY
