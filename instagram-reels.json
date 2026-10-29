@@ -1,0 +1,35 @@
+
+{
+  "account": "campingkompassinfo",
+  "last_checked": null,
+  "reels": [
+    {
+      "url": "https://www.instagram.com/reel/DagAdYAE8pE/",
+      "title": "Camping-Inspiration",
+      "description": "Praktische Ideen für unterwegs.",
+      "product_url": "https://www.amazon.de/s?k=Camping+Gadgets",
+      "product_label": "🛒 Camping-Gadgets bei Amazon entdecken"
+    },
+    {
+      "url": "https://www.instagram.com/reel/DdCYyKex3nt/",
+      "title": "Vanlife & Wohnmobil",
+      "description": "Sackmarkise am Wohnmobil bei stürmischem Wetter.",
+      "product_url": "https://www.schlanser.ch/hersteller/dometic/73580/dometic-revo-zip-sackmarkise-2-4-m",
+      "product_label": "☀️ Dometic Revo Zip Sackmarkise bei Schlanser"
+    },
+    {
+      "url": "https://www.instagram.com/reel/DfCjBJgC0Ii/",
+      "title": "Nützliches Campingzubehör",
+      "description": "Entdecke hilfreiche Ausrüstung.",
+      "product_url": "https://www.schlanser.ch/zelte/vorzelte/wohnwagenvorzelte/",
+      "product_label": "🏕️ Vorzelte bei Schlanser entdecken"
+    },
+    {
+      "url": "https://www.instagram.com/reel/De_uAfRq55b/",
+      "title": "Campingplätze & Reiseziele",
+      "description": "Inspiration für deinen nächsten Urlaub.",
+      "product_url": "https://www.campingwagner.de/de/c/zelte/",
+      "product_label": "🏕️ Vorzelte bei Camping Wagner entdecken"
+    }
+  ]
+}
