@@ -115,6 +115,137 @@
   }
 }
 
+
+/* Drei Affiliate-Gadgets unter den Instagram-Reels */
+.gadgets-section {
+  margin-top: 42px;
+}
+
+.gadgets-intro {
+  max-width: 760px;
+  line-height: 1.6;
+}
+
+.gadgets-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.gadget-card {
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid #dfe5df;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.gadget-image-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 150px;
+  padding: 12px;
+  background: #fff;
+}
+
+.gadget-image-wrap .gadget-fallback {
+  position: absolute;
+  font-size: 42px;
+}
+
+.gadget-image {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 170px;
+  object-fit: contain;
+}
+
+.gadget-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 15px;
+}
+
+.gadget-content h3 {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+  line-height: 1.3;
+}
+
+.gadget-content p {
+  margin: 0 0 14px;
+  font-size: 0.94rem;
+  line-height: 1.5;
+}
+
+.gadget-button {
+  display: block;
+  width: 100%;
+  margin-top: auto;
+  padding: 10px 8px;
+  border-radius: 8px;
+  background: #203d32;
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.gadget-button:hover,
+.gadget-button:focus-visible {
+  background: #365b49;
+}
+
+.gadgets-disclaimer {
+  margin-top: 14px;
+  color: #68736b;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+/* Drei Karten bleiben nebeneinander; auf kleinen Displays kompakter. */
+@media (max-width: 600px) {
+  .gadgets-grid {
+    gap: 8px;
+  }
+
+  .gadget-image-wrap {
+    min-height: 95px;
+    padding: 5px;
+  }
+
+  .gadget-image {
+    height: 100px;
+  }
+
+  .gadget-content {
+    padding: 9px;
+  }
+
+  .gadget-content h3 {
+    font-size: 0.85rem;
+  }
+
+  .gadget-content p {
+    font-size: 0.78rem;
+    line-height: 1.35;
+  }
+
+  .gadget-button {
+    padding: 8px 4px;
+    font-size: 0.75rem;
+  }
+}
+
     /* Camping-Shops unter dem Titelbild */
     .shop-logos {
       max-width: 1180px;
@@ -889,6 +1020,87 @@
   }
 })();
 </script>
+
+
+<section id="produkte" class="gadgets-section" aria-labelledby="gadgets-heading">
+  <h2 id="gadgets-heading">🏕️ Unsere Camping-Gadgets</h2>
+  <p class="gadgets-intro">
+    Praktische Helfer für deinen nächsten Campingurlaub – von der Ausrichtung
+    des Fahrzeugs bis zu Dusche und Beleuchtung unterwegs.
+  </p>
+
+  <div class="gadgets-grid">
+    <article class="gadget-card">
+      <div class="gadget-image-wrap">
+        <span class="gadget-fallback" aria-hidden="true">📏</span>
+        <img
+          class="gadget-image"
+          src="https://m.media-amazon.com/images/P/B09QKNZQMS.01._SL500_.jpg"
+          alt="Wasserwaage für Wohnwagen und Wohnmobil"
+          loading="lazy"
+          onerror="this.style.display='none'"
+        >
+      </div>
+      <div class="gadget-content">
+        <h3>Camping-Wasserwaage</h3>
+        <p>Hilft dabei, Wohnwagen oder Wohnmobil auf dem Stellplatz auszurichten.</p>
+        <a
+          class="gadget-button"
+          href="https://link.amazon/B08oUGLA1"
+          target="_blank"
+          rel="sponsored nofollow noopener noreferrer"
+        >Bei Amazon ansehen →</a>
+      </div>
+    </article>
+
+    <article class="gadget-card">
+      <div class="gadget-image-wrap">
+        <span class="gadget-fallback" aria-hidden="true">🚿</span>
+        <img
+          class="gadget-image"
+          src="https://m.media-amazon.com/images/P/B0D4VDYRWB.01._SL500_.jpg"
+          alt="Tragbare Campingdusche mit Akku und Pumpe"
+          loading="lazy"
+          onerror="this.style.display='none'"
+        >
+      </div>
+      <div class="gadget-content">
+        <h3>Mobile Campingdusche</h3>
+        <p>Eine praktische Duschlösung für Camping, Strand, Garten und unterwegs.</p>
+        <a
+          class="gadget-button"
+          href="https://link.amazon/B0dfTThNM"
+          target="_blank"
+          rel="sponsored nofollow noopener noreferrer"
+        >Bei Amazon ansehen →</a>
+      </div>
+    </article>
+
+    <article class="gadget-card">
+      <div class="gadget-image-wrap">
+        <span class="gadget-fallback" aria-hidden="true">🔦</span>
+        <!-- Produktfoto erst ergänzen, sobald die richtige Lampen-Produktseite bestätigt ist. -->
+      </div>
+      <div class="gadget-content">
+        <h3>Campinglampe</h3>
+        <p>Zusätzliches Licht für gemütliche Abende im Zelt oder am Campingplatz.</p>
+        <a
+          class="gadget-button"
+          href="https://link.amazon/B0eEsT80u"
+          target="_blank"
+          rel="sponsored nofollow noopener noreferrer"
+        >Bei Amazon ansehen →</a>
+      </div>
+    </article>
+  </div>
+
+  <p class="gadgets-disclaimer">
+    Hinweis: Die Produktlinks sind Affiliate-Links. Wenn du über einen solchen
+    Link einkaufst, kann Camping-Kompass eine Provision erhalten. Für dich
+    ändert sich der Preis dadurch nicht.
+  </p>
+</section>
+
 
   </main>
 
