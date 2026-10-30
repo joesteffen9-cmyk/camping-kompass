@@ -286,6 +286,15 @@
       background: #eadbb0;
     }
 
+    /* News-Schaltfläche ausblenden, solange keine weiteren Meldungen da sind. */
+    #news-more {
+      margin-top: 18px;
+    }
+
+    #news-more[hidden] {
+      display: none;
+    }
+
     main {
       width: 100%;
       max-width: 1180px;
@@ -581,7 +590,7 @@
   const more = document.getElementById("news-more");
 
   let articles = [];
-  let visibleCount = 12;
+  let expanded = false;
 
   const escapeHTML = value =>
     String(value ?? "").replace(/[&<>"']/g, char => ({
@@ -609,6 +618,16 @@
     });
 
     list.replaceChildren();
+
+    // Im eingeklappten Zustand genau eine vollständige News-Reihe anzeigen.
+    // Die Spaltenzahl folgt der tatsächlich verfügbaren Breite des News-Grids.
+    const styles = window.getComputedStyle(list);
+    const gap = parseFloat(styles.columnGap) || 18;
+    const columns = Math.max(
+      1,
+      Math.floor((list.clientWidth + gap) / (220 + gap))
+    );
+    const visibleCount = expanded ? filtered.length : columns;
 
     filtered.slice(0, visibleCount).forEach(article => {
       const card = document.createElement("article");
@@ -667,22 +686,30 @@
         "Keine passenden News gefunden. Bitte Filter ändern oder später erneut versuchen.";
     }
 
-    more.hidden = visibleCount >= filtered.length;
+    more.hidden = filtered.length <= visibleCount;
+    more.textContent = expanded
+      ? "Weniger anzeigen"
+      : "Mehr News anzeigen";
   }
 
   search.addEventListener("input", () => {
-    visibleCount = 12;
+    expanded = false;
     render();
   });
 
   region.addEventListener("change", () => {
-    visibleCount = 12;
+    expanded = false;
     render();
   });
 
   more.addEventListener("click", () => {
-    visibleCount += 12;
+    expanded = !expanded;
     render();
+  });
+
+  // Bei einer Fenstergrößenänderung die Anzahl der Spalten neu berechnen.
+  window.addEventListener("resize", () => {
+    if (!expanded) render();
   });
 
   fetch("./news.json", { cache: "no-store" })
