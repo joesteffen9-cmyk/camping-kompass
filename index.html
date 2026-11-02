@@ -1406,29 +1406,49 @@
       const mapElement = document.getElementById("map");
       if (!mapElement || map) return;
 
-      // Nur wenn die Kartenbibliothek selbst nicht geladen werden kann,
-      // zeigen wir eine externe Übersicht. Die Liste darunter bleibt nutzbar.
+      // Eigenständige Karten-Ausweichansicht: Sie benötigt weder Leaflet
+      // noch externe Kartenkacheln und zeigt deshalb immer alle Koordinaten.
       const valid = places.filter(function (p) {
         const lat = Number(p.lat), lon = Number(p.lon);
         return Number.isFinite(lat) && Number.isFinite(lon) &&
           Math.abs(lat) <= 90 && Math.abs(lon) <= 180;
       });
-      if (valid.length) {
-        const lats = valid.map(function (p) { return Number(p.lat); });
-        const lons = valid.map(function (p) { return Number(p.lon); });
-        const padLat = Math.max((Math.max.apply(null, lats) - Math.min.apply(null, lats)) * 0.12, 0.4);
-        const padLon = Math.max((Math.max.apply(null, lons) - Math.min.apply(null, lons)) * 0.12, 0.6);
-        const bbox = [
-          Math.min.apply(null, lons) - padLon,
-          Math.min.apply(null, lats) - padLat,
-          Math.max.apply(null, lons) + padLon,
-          Math.max.apply(null, lats) + padLat
-        ].join(",");
-        mapElement.innerHTML =
-          '<iframe class="map-fallback-frame" title="OpenStreetMap-Kartenübersicht" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=' +
-          encodeURIComponent(bbox) + '&layer=mapnik"></iframe>' +
-          '<p class="camping-map-note">Die Kartenbibliothek ist nicht erreichbar. Die Campingplätze sind unten in der Platzliste mit ihren Koordinaten verlinkt.</p>';
+      if (!valid.length) {
+        mapElement.innerHTML = '<p class="camping-map-note">Für die Campingplätze sind derzeit keine gültigen Koordinaten vorhanden.</p>';
+        return;
       }
+      const lats = valid.map(function (p) { return Number(p.lat); });
+      const lons = valid.map(function (p) { return Number(p.lon); });
+      const minLat = Math.min.apply(null, lats), maxLat = Math.max.apply(null, lats);
+      const minLon = Math.min.apply(null, lons), maxLon = Math.max.apply(null, lons);
+      const padLat = Math.max((maxLat - minLat) * 0.10, 1.2);
+      const padLon = Math.max((maxLon - minLon) * 0.10, 1.5);
+      const south = minLat - padLat, north = maxLat + padLat;
+      const west = minLon - padLon, east = maxLon + padLon;
+      const width = 1000, height = 520, inset = 42;
+      const x = function (lon) { return inset + (lon - west) / (east - west || 1) * (width - inset * 2); };
+      const y = function (lat) { return height - inset - (lat - south) / (north - south || 1) * (height - inset * 2); };
+      const dots = valid.map(function (place) {
+        const cx = x(Number(place.lon)).toFixed(1), cy = y(Number(place.lat)).toFixed(1);
+        return '<circle cx="' + cx + '" cy="' + cy + '" r="9" fill="#d9482b" stroke="#ffffff" stroke-width="3"><title>' + escapeHTML(place.name + ' – ' + place.town) + '</title></circle>';
+      }).join('');
+      const labels = valid.map(function (place) {
+        return '<li><strong>' + escapeHTML(place.name) + '</strong> – ' + escapeHTML(place.town) + '</li>';
+      }).join('');
+      let grid = '';
+      for (let i = 1; i < 5; i++) {
+        const gx = inset + i * (width - inset * 2) / 5;
+        const gy = inset + i * (height - inset * 2) / 5;
+        grid += '<line x1="' + gx + '" y1="' + inset + '" x2="' + gx + '" y2="' + (height-inset) + '" />';
+        grid += '<line x1="' + inset + '" y1="' + gy + '" x2="' + (width-inset) + '" y2="' + gy + '" />';
+      }
+      mapElement.innerHTML =
+        '<div style="background:#eaf0e8;border:1px solid #cbd5c8;border-radius:10px;overflow:hidden">' +
+        '<svg viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="Kartenübersicht mit ' + valid.length + ' Camping- und Stellplätzen" style="display:block;width:100%;height:auto;min-height:300px">' +
+        '<rect width="100%" height="100%" fill="#eaf0e8"/><g stroke="#d3ddd0" stroke-width="1">' + grid + '</g>' +
+        '<g>' + dots + '</g><text x="30" y="30" fill="#425347" font-size="18">Camping-Kompass · ' + valid.length + ' markierte Plätze</text></svg></div>' +
+        '<p class="camping-map-note">Ersatz-Kartenansicht mit allen verfügbaren Standortmarkierungen. Für die interaktive Strassenkarte wird eine Verbindung zum Kartenanbieter benötigt.</p>' +
+        '<details><summary>Alle markierten Plätze anzeigen</summary><ul>' + labels + '</ul></details>';
     }
 
     function initializeCampingMap() {
