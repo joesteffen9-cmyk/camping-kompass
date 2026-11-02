@@ -1027,7 +1027,7 @@
 <script>
 (() => {
   "use strict";
-  const endpoint = "./fragen-api.php";
+  const endpoint = new URL("./fragen-api.php", document.baseURI).href;
   const form = document.getElementById("qa-form");
   const list = document.getElementById("qa-list");
   const more = document.getElementById("qa-more");
@@ -1037,17 +1037,26 @@
   const adminStatus = document.getElementById("qa-admin-status");
   const codeField = document.getElementById("qa-code");
   let questions = [], expanded = false;
-  async function request(action, data) {
-    const response = await fetch(endpoint + "?aktion=" + encodeURIComponent(action), {
-      method: data ? "POST" : "GET",
-      headers: data ? {"Content-Type":"application/json"} : {},
-      body: data ? JSON.stringify(data) : undefined,
+
+  async function request(action, data = {}) {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Accept": "application/json"},
+      credentials: "same-origin",
+      body: JSON.stringify({action, ...data}),
       cache: "no-store"
     });
+    const contentType = response.headers.get("content-type") || "";
+    if (!contentType.includes("application/json")) {
+      throw new Error("Der Server liefert keine JSON-Antwort (HTTP " + response.status + "). Bitte PHP-Datei und Hosting prüfen.");
+    }
     const result = await response.json();
-    if (!response.ok) throw new Error(result.error || "Anfrage fehlgeschlagen");
+    if (!response.ok || result.ok === false) {
+      throw new Error(result.message || "Anfrage fehlgeschlagen (HTTP " + response.status + ")");
+    }
     return result;
   }
+
   function node(tag, text, className) {
     const el = document.createElement(tag);
     if (text !== undefined) el.textContent = String(text ?? "");
@@ -1059,7 +1068,7 @@
     if (!questions.length) list.append(node("p", "Noch keine beantworteten Fragen vorhanden."));
     questions.slice(0, expanded ? questions.length : 3).forEach(q => {
       const item = node("article", undefined, "qa-item");
-      item.append(node("h3", q.frage), node("small", "Gefragt von " + q.name), node("p", "Antwort: " + (q.antwort || ""), "qa-answer"));
+      item.append(node("h3", q.question), node("small", "Gefragt von " + (q.author || "Gast")), node("p", "Antwort: " + (q.answer || ""), "qa-answer"));
       list.append(item);
     });
     more.hidden = questions.length <= 3;
@@ -1067,8 +1076,13 @@
     more.setAttribute("aria-expanded", String(expanded));
   }
   async function loadPublic() {
-    try { const result = await request("liste"); questions = Array.isArray(result.fragen) ? result.fragen : []; render(); }
-    catch { list.replaceChildren(node("p", "Fragen konnten nicht geladen werden. Bitte später erneut versuchen.")); }
+    try {
+      const result = await request("public");
+      questions = Array.isArray(result.questions) ? result.questions : [];
+      render();
+    } catch (err) {
+      list.replaceChildren(node("p", "Fragen konnten nicht geladen werden: " + err.message));
+    }
   }
   more.addEventListener("click", () => { expanded = !expanded; render(); });
   form.addEventListener("submit", async e => {
@@ -1078,35 +1092,37 @@
     submitStatus.textContent = "Frage wird gesendet …";
     try {
       const data = new FormData(form);
-      await request("fragen", {name:data.get("name"), frage:data.get("frage")});
+      await request("ask", {author: data.get("name"), question: data.get("frage"), place: ""});
       form.reset();
       submitStatus.textContent = "Danke! Deine Frage wurde übermittelt und wird nach meiner Antwort veröffentlicht.";
-    } catch (err) { submitStatus.textContent = "Senden fehlgeschlagen: " + err.message; }
-    finally { button.disabled = false; }
+    } catch (err) {
+      submitStatus.textContent = "Senden fehlgeschlagen: " + err.message;
+    } finally { button.disabled = false; }
   });
-  async function loadAdmin(code) {
-    const result = await request("admin-liste", {code});
+
+  async function loadAdmin() {
+    const result = await request("admin_list");
+    const pending = Array.isArray(result.questions) ? result.questions : [];
     adminList.replaceChildren();
-    if (!result.fragen.length) adminList.append(node("p", "Noch keine Fragen vorhanden."));
-    result.fragen.forEach(q => {
+    if (!pending.length) adminList.append(node("p", "Keine unbeantworteten Fragen vorhanden."));
+    pending.forEach(q => {
       const item = node("article", undefined, "qa-item qa-admin-item");
-      item.append(node("h3", q.frage), node("small", "Von " + q.name + " · " + q.status));
+      item.append(node("h3", q.question), node("small", "Von " + (q.author || "Gast")));
       const answer = node("textarea");
-      answer.setAttribute("aria-label", "Antwort auf die Frage von " + q.name);
-      answer.maxLength = 5000;
-      answer.value = q.antwort || "";
+      answer.setAttribute("aria-label", "Antwort auf die Frage von " + (q.author || "Gast"));
+      answer.maxLength = 3000;
       const save = node("button", "Antwort veröffentlichen");
       save.type = "button";
       save.addEventListener("click", async () => {
         save.disabled = true;
         try {
-          const outcome = await request("antworten", {code:codeField.value, id:q.id, antwort:answer.value});
-          if (!outcome.erfolg) throw new Error("Frage nicht gefunden");
+          await request("answer", {id: q.id, answer: answer.value});
           adminStatus.textContent = "Antwort veröffentlicht.";
           await loadPublic();
-          await loadAdmin(codeField.value);
-        } catch (err) { adminStatus.textContent = "Fehler: " + err.message; }
-        finally { save.disabled = false; }
+          await loadAdmin();
+        } catch (err) {
+          adminStatus.textContent = "Fehler: " + err.message;
+        } finally { save.disabled = false; }
       });
       item.append(answer, save);
       adminList.append(item);
@@ -1114,9 +1130,16 @@
   }
   adminForm.addEventListener("submit", async e => {
     e.preventDefault();
-    adminStatus.textContent = "Fragen werden geladen …";
-    try { await loadAdmin(codeField.value); adminStatus.textContent = "Fragen geladen."; }
-    catch (err) { adminList.replaceChildren(); adminStatus.textContent = "Anmeldung fehlgeschlagen: " + err.message; }
+    adminStatus.textContent = "Anmeldung läuft …";
+    try {
+      await request("login", {password: codeField.value});
+      codeField.value = "";
+      await loadAdmin();
+      adminStatus.textContent = "Angemeldet. Unbeantwortete Fragen geladen.";
+    } catch (err) {
+      adminList.replaceChildren();
+      adminStatus.textContent = "Anmeldung fehlgeschlagen: " + err.message;
+    }
   });
   loadPublic();
 })();
