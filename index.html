@@ -16,7 +16,7 @@
 
   <link
     rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
   >
 
   <style>
@@ -942,17 +942,19 @@
     <p>Die hier vorgestellten Plätze wurden persönlich besucht und getestet. Eine Ausnahme ist Union Lido Mare – dieser Platz ist noch nicht persönlich getestet. Die Empfehlungen und Eindrücke stammen aus eigener Erfahrung.</p>
   </div>
 
-  <h2>Unsere drei Top-Empfehlungen</h2>
-  <p class="camping-map-note">Die drei Titelbilder zeigen echte Aufnahmen der jeweiligen Anlagen. Bildquellen sind direkt bei den Fotos angegeben. Bitte vor einer kommerziellen Veröffentlichung die jeweiligen Bildnutzungsrechte klären.</p>
+  <h2>Unsere drei Empfehlungen</h2>
+  <p class="camping-map-note">Zunächst siehst du nur je einen empfohlenen Campingplatz aus Deutschland, der Schweiz und Spanien. Alle weiteren Länder und Plätze bleiben eingeklappt.</p>
   <div class="camping-top-picks" id="top-picks"></div>
-
-  <h2>Nach Ländern entdecken</h2>
-  <p>Wähle ein Land oder entdecke unten die vollständige Liste. Pro Land werden zunächst drei Plätze angezeigt. Mit „Mehr anzeigen“ öffnest du die ganze Liste.</p>
-  <div class="country-grid" id="country-grid"></div>
-  <div id="country-lists"></div>
+  <button class="more-button" id="all-places-toggle" type="button" aria-expanded="false">Mehr anzeigen – alle Länder und Plätze</button>
+  <div id="all-places-extra" hidden>
+    <h2>Alle Campingplätze nach Ländern</h2>
+    <p>Wähle ein Land. Innerhalb jedes Landes werden zunächst drei Plätze angezeigt; mit „Mehr anzeigen“ kannst du die restlichen Plätze öffnen.</p>
+    <div class="country-grid" id="country-grid"></div>
+    <div id="country-lists"></div>
+  </div>
 
   <h2 style="margin-top:36px">Alle Plätze auf der Karte</h2>
-  <p>Die Karte zeigt immer sämtliche erfassten Campingplätze und Wohnmobilstellplätze – unabhängig davon, welche Länderlisten geöffnet sind oder welche Suchfilter du verwendest.</p>
+  <p>Die Karte zeigt weiterhin alle erfassten Campingplätze und Wohnmobilstellplätze – auch wenn die zusätzlichen Kacheln zunächst eingeklappt sind.</p>
 
   <div class="filters">
     <input id="search" type="search" placeholder="Ort oder Name suchen …" aria-label="Stellplatz nach Ort oder Name suchen">
@@ -966,7 +968,8 @@
     </select>
   </div>
   <div id="results" class="grid" aria-live="polite" aria-label="Suchergebnisse der Campingplätze"></div>
-  <div id="map" role="region" aria-label="Interaktive Karte aller Campingplätze"></div>
+  <p id="map-status" class="camping-map-note" role="status" aria-live="polite">Karte wird geladen …</p>
+<div id="map" role="region" aria-label="Interaktive Karte aller Campingplätze"></div>
   <small class="camping-map-note">Die Kartenmarkierungen zeigen den jeweiligen Ort bzw. das Campingareal näherungsweise. Vor Veröffentlichung sollten die exakten Zufahrtskoordinaten nochmals geprüft werden. Kartendaten © OpenStreetMap-Mitwirkende.</small>
 </section>
 
@@ -1182,12 +1185,7 @@
     <small>&copy; 2026 Camping-Kompass.info – Alle Rechte vorbehalten.</small>
   </p>
 </footer>
-
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-  ></script>
-
-  <script>
+<script>
     "use strict";
 
     // Camping-Kompass: von Joe genannte und persönlich besuchte Plätze.
@@ -1242,8 +1240,8 @@
 
     const topPicks = [
       {code:"DE",name:"Camping Münstertal",rating:"Sehr gut"},
-      {code:"ES",name:"Playa Montroig Camping Resort",rating:"Sehr gut"},
-      {code:"IT",name:"Camping Village Capalonga",rating:"Deine persönliche Empfehlung"}
+      {code:"CH",name:"TCS Camping Sursee",rating:"Persönlich besucht und getestet"},
+      {code:"ES",name:"Playa Montroig Camping Resort",rating:"Sehr gut"}
     ];
 
     const searchInput = document.getElementById("search");
@@ -1282,7 +1280,7 @@
       const place = places.find(p => p.name === pick.name);
       const article = document.createElement("article");
       article.className = "camping-pick";
-      article.innerHTML = `<img src="${escapeHTML(place.image || '')}" alt="Originalaufnahme: ${escapeHTML(pick.name)}" loading="lazy">
+      article.innerHTML = `${place.image ? `<img src="${escapeHTML(place.image)}" alt="Originalaufnahme: ${escapeHTML(pick.name)}" loading="lazy">` : ''}
         <div class="camping-pick-content">
           <small class="photo-credit"><a href="${escapeHTML(place.imageSource || place.url || '#')}" target="_blank" rel="noopener noreferrer">${escapeHTML(place.imageCredit || 'Bildquelle öffnen')}</a></small>
           <span class="top-label">${countryInfo[pick.code].flag} Top-Empfehlung ${countryInfo[pick.code].name}</span>
@@ -1340,32 +1338,102 @@
       countryLists.appendChild(panel);
     });
 
+    // Alle Länder und zusätzlichen Plätze bleiben beim Laden verborgen.
+    const allPlacesToggle = document.getElementById("all-places-toggle");
+    const allPlacesExtra = document.getElementById("all-places-extra");
+    allPlacesToggle.addEventListener("click", function () {
+      const expanded = allPlacesToggle.getAttribute("aria-expanded") !== "true";
+      allPlacesExtra.hidden = !expanded;
+      allPlacesToggle.setAttribute("aria-expanded", String(expanded));
+      allPlacesToggle.textContent = expanded
+        ? "Weniger anzeigen – Länder und Plätze ausblenden"
+        : "Mehr anzeigen – alle Länder und Plätze";
+    });
+
     let map = null;
     let markers = null;
-    if (typeof L !== "undefined") {
-      map = L.map("map");
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-        maxZoom:19
-      }).addTo(map);
-      markers = L.layerGroup().addTo(map);
+    const mapStatus = document.getElementById("map-status");
 
+    function initializeCampingMap() {
+      if (typeof L === "undefined") {
+        throw new Error("Leaflet wurde nicht geladen.");
+      }
+
+      map = L.map("map", { scrollWheelZoom: false });
+      const tiles = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 19,
+        crossOrigin: true
+      }).addTo(map);
+
+      tiles.on("tileerror", function () {
+        if (mapStatus) {
+          mapStatus.textContent = "Die Karte ist geöffnet, aber einige Kartenausschnitte konnten nicht geladen werden. Bitte prüfe, ob dein Browser oder Werbe-/Trackingblocker OpenStreetMap blockiert.";
+        }
+      });
+
+      markers = L.layerGroup().addTo(map);
       places.forEach(function (place) {
         const popup = `<strong>${escapeHTML(place.name)}</strong><br>
           ${escapeHTML(place.town)}<br>${visitBadge(place)}
           ${place.url ? `<br><a href="${escapeHTML(place.url)}" target="_blank" rel="noopener noreferrer">Website öffnen</a>` : ""}`;
-        L.marker([place.lat, place.lon]).addTo(markers).bindPopup(popup);
+        L.marker([Number(place.lat), Number(place.lon)]).addTo(markers).bindPopup(popup);
       });
+
       const allBounds = markers.getBounds();
       if (allBounds.isValid()) {
-        map.fitBounds(allBounds, {padding:[30,30], maxZoom:6});
+        map.fitBounds(allBounds, { padding: [30, 30], maxZoom: 6 });
       } else {
-        map.setView([47,8],5);
+        map.setView([47, 8], 5);
       }
-    } else {
-      document.getElementById("map").textContent =
-        "Die Karte konnte nicht geladen werden. Bitte prüfe deine Internetverbindung.";
+
+      // Leaflet muss die tatsächliche Containergröße kennen, insbesondere
+      // nach verzögertem Laden oder bei zunächst eingeklappten Bereichen.
+      requestAnimationFrame(function () { map.invalidateSize(true); });
+      window.addEventListener("resize", function () {
+        if (map) map.invalidateSize();
+      });
+
+      if (mapStatus) mapStatus.textContent = "Karte geladen – alle Camping- und Stellplätze sind markiert.";
     }
+
+    function loadLeaflet(urls, index) {
+      if (typeof L !== "undefined") {
+        try { initializeCampingMap(); }
+        catch (error) {
+          console.error("Camping-Karte konnte nicht initialisiert werden:", error);
+          if (mapStatus) mapStatus.textContent = "Die Karte konnte nicht gestartet werden. Bitte lade die Seite neu.";
+        }
+        return;
+      }
+
+      if (index >= urls.length) {
+        if (mapStatus) {
+          mapStatus.textContent = "Die Kartenbibliothek konnte nicht geladen werden. Bitte prüfe deine Internetverbindung oder ob ein Browser-/Trackingblocker die CDN-Adresse blockiert.";
+        }
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.src = urls[index];
+      script.onload = function () {
+        try { initializeCampingMap(); }
+        catch (error) {
+          console.error("Fehler beim Starten der Camping-Karte:", error);
+          if (mapStatus) mapStatus.textContent = "Die Karte konnte nicht gestartet werden. Bitte lade die Seite neu.";
+        }
+      };
+      script.onerror = function () {
+        console.warn("Leaflet-CDN nicht erreichbar, versuche Ersatzquelle:", script.src);
+        loadLeaflet(urls, index + 1);
+      };
+      document.head.appendChild(script);
+    }
+
+    loadLeaflet([
+      "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js",
+      "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    ], 0);
 
     function renderResults() {
       const query = searchInput.value.trim().toLocaleLowerCase("de");
@@ -1379,14 +1447,19 @@
         return matchesQuery && matchesType && matchesCountry;
       });
 
-      resultsContainer.innerHTML = filtered.length
-        ? filtered.map(placeCard).join("")
-        : '<p class="empty-state">Keine passenden Plätze gefunden. Bitte ändere deine Suche oder Filter.</p>';
+      const hasActiveFilter = query !== "" || selectedType !== "alle" || selectedCountry !== "alle";
+      resultsContainer.hidden = !hasActiveFilter;
+      resultsContainer.innerHTML = hasActiveFilter
+        ? (filtered.length
+            ? filtered.map(placeCard).join("")
+            : '<p class="empty-state">Keine passenden Plätze gefunden. Bitte ändere deine Suche oder Filter.</p>')
+        : "";
     }
 
     searchInput.addEventListener("input", renderResults);
     typeSelect.addEventListener("change", renderResults);
     countryFilter.addEventListener("change", renderResults);
+    resultsContainer.hidden = true;
     renderResults();
   </script>
 
