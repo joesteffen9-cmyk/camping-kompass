@@ -379,10 +379,7 @@
 
     .hero {
       padding: 75px 7%;
-      background:
-        linear-gradient(90deg, #203d32ed, #203d3270),
-        url("https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?auto=format&fit=crop&w=1800&q=85")
-        center / cover;
+      background: linear-gradient(115deg, #203d32, #52745c);
       color: var(--white);
     }
 
@@ -615,6 +612,75 @@
         transition-duration: 0.01ms !important;
       }
     }
+  
+/* Camping-Kompass: Länderübersicht, persönliche Empfehlungen und Campingkarte */
+.camping-trust {
+  margin: 0 0 24px;
+  padding: 22px;
+  border: 1px solid #dce7dc;
+  border-left: 5px solid #3f7651;
+  border-radius: 12px;
+  background: #edf4eb;
+}
+.camping-trust strong { color: #203d32; }
+.camping-top-picks, .country-grid, .country-places {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+.country-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.camping-pick, .country-tile, .country-panel {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #dfe5df;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 3px 14px #203d3210;
+}
+.camping-pick img, .country-tile img {
+  display: block; width: 100%; height: 175px; object-fit: cover;
+}
+.camping-pick-content, .country-tile-content { padding: 14px; }
+.photo-credit { display:block; margin-top:7px; color:#68736b; font-size:.75rem; line-height:1.35; }
+.photo-credit a { color:#526b5b; }
+.country-tile:not(:has(img)) { background:linear-gradient(135deg,#e7efe7,#f6f3e9); }
+.country-tile:not(:has(img)) .country-tile-content { min-height:145px; display:flex; flex-direction:column; justify-content:center; }
+.camping-pick h3, .country-tile h3 { margin: 5px 0; line-height: 1.3; }
+.camping-pick p, .country-tile p { margin: 5px 0; }
+.country-tile { color: inherit; text-decoration: none; transition: transform .18s, box-shadow .18s; }
+.country-tile:hover { transform: translateY(-2px); box-shadow: 0 7px 18px #203d3220; }
+.country-tile .country-flag { font-size: 1.7rem; }
+.country-panel { margin: 20px 0; padding: 18px; }
+.country-panel > h3 { margin: 0 0 4px; color: #203d32; }
+.country-panel > p { margin: 0 0 12px; color: #68736b; }
+.country-places { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.country-place {
+  padding: 14px; border: 1px solid #e4e9e3; border-radius: 10px; background: #fbfcfa;
+}
+.place-card-image { width:100%; height:135px; object-fit:cover; border-radius:7px; margin-bottom:7px; }
+.country-place h4 { margin: 4px 0 6px; line-height: 1.3; }
+.country-place p { margin: 5px 0; font-size: .92rem; }
+.visited-label { display: inline-block; color: #28613a; background: #e7f3e8; border-radius: 20px; padding: 3px 8px; font-size: .76rem; font-weight: 750; }
+.not-tested-label { display: inline-block; color: #725b23; background: #f7f0d9; border-radius: 20px; padding: 3px 8px; font-size: .76rem; font-weight: 750; }
+.top-label { display: inline-block; color: #6b4c10; background: #f8edc9; border-radius: 20px; padding: 3px 8px; font-size: .76rem; font-weight: 750; }
+.more-button {
+  margin-top: 14px; padding: 10px 15px; border: 0; border-radius: 8px;
+  background: #203d32; color: #fff; font: inherit; font-weight: 700; cursor: pointer;
+}
+.more-button:hover { background: #365b49; }
+.country-place a { color: #203d32; font-weight: 700; }
+.camping-map-note { display:block; margin-top:10px; color:#68736b; font-size:.88rem; }
+@media (max-width: 850px) {
+  .country-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .camping-top-picks, .country-places { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .camping-top-picks, .country-places { grid-template-columns: 1fr; }
+  .country-panel { padding: 13px; }
+  .camping-pick img, .country-tile img { height: 165px; }
+}
+
   </style>
 </head>
 
@@ -869,49 +935,40 @@
     </section>
 
     <section id="plaetze" style="margin-top: 55px">
-      <h2>Stellplätze entdecken</h2>
+  <h2>Campingplätze entdecken – persönlich erlebt</h2>
 
-      <p>
-        Entdecke Campingplätze und filtere die Einträge nach Name,
-        Ort oder Platztyp. Bitte prüfe aktuelle Preise,
-        Verfügbarkeit und Ausstattung direkt beim Anbieter.
-      </p>
+  <div class="camping-trust">
+    <strong>🏕️ Echte Camping-Erfahrungen statt anonymer Empfehlungen</strong>
+    <p>Die hier vorgestellten Plätze wurden persönlich besucht und getestet. Eine Ausnahme ist Union Lido Mare – dieser Platz ist noch nicht persönlich getestet. Die Empfehlungen und Eindrücke stammen aus eigener Erfahrung.</p>
+  </div>
 
-      <div class="filters">
-        <input
-          id="search"
-          type="search"
-          placeholder="Ort oder Name suchen …"
-          aria-label="Stellplatz nach Ort oder Name suchen"
-        >
+  <h2>Unsere drei Top-Empfehlungen</h2>
+  <p class="camping-map-note">Die drei Titelbilder zeigen echte Aufnahmen der jeweiligen Anlagen. Bildquellen sind direkt bei den Fotos angegeben. Bitte vor einer kommerziellen Veröffentlichung die jeweiligen Bildnutzungsrechte klären.</p>
+  <div class="camping-top-picks" id="top-picks"></div>
 
-        <select id="type" aria-label="Platztyp filtern">
-          <option value="alle">Alle Platztypen</option>
-          <option value="Wohnmobil">Wohnmobil</option>
-          <option value="Campingplatz">Campingplatz</option>
-        </select>
-      </div>
+  <h2>Nach Ländern entdecken</h2>
+  <p>Wähle ein Land oder entdecke unten die vollständige Liste. Pro Land werden zunächst drei Plätze angezeigt. Mit „Mehr anzeigen“ öffnest du die ganze Liste.</p>
+  <div class="country-grid" id="country-grid"></div>
+  <div id="country-lists"></div>
 
-      <div
-        id="results"
-        class="grid"
-        aria-live="polite"
-        aria-label="Suchergebnisse der Campingplätze"
-      ></div>
+  <h2 style="margin-top:36px">Alle Plätze auf der Karte</h2>
+  <p>Die Karte zeigt immer sämtliche erfassten Campingplätze und Wohnmobilstellplätze – unabhängig davon, welche Länderlisten geöffnet sind oder welche Suchfilter du verwendest.</p>
 
-      <div
-        id="map"
-        role="region"
-        aria-label="Interaktive Karte der Campingplätze"
-      ></div>
-
-      <small class="note">
-        Hinweis: Die Einträge sind Beispieldaten. Adressen,
-        Koordinaten, Preise, Ausstattung und Verfügbarkeit müssen
-        vor einer Veröffentlichung geprüft werden.
-        Kartendaten © OpenStreetMap-Mitwirkende.
-      </small>
-    </section>
+  <div class="filters">
+    <input id="search" type="search" placeholder="Ort oder Name suchen …" aria-label="Stellplatz nach Ort oder Name suchen">
+    <select id="country-filter" aria-label="Nach Land filtern">
+      <option value="alle">Alle Länder</option>
+    </select>
+    <select id="type" aria-label="Platztyp filtern">
+      <option value="alle">Alle Platztypen</option>
+      <option value="Wohnmobilstellplatz">Wohnmobilstellplätze</option>
+      <option value="Campingplatz">Campingplätze</option>
+    </select>
+  </div>
+  <div id="results" class="grid" aria-live="polite" aria-label="Suchergebnisse der Campingplätze"></div>
+  <div id="map" role="region" aria-label="Interaktive Karte aller Campingplätze"></div>
+  <small class="camping-map-note">Die Kartenmarkierungen zeigen den jeweiligen Ort bzw. das Campingareal näherungsweise. Vor Veröffentlichung sollten die exakten Zufahrtskoordinaten nochmals geprüft werden. Kartendaten © OpenStreetMap-Mitwirkende.</small>
+</section>
 
    
 
@@ -1133,198 +1190,204 @@
   <script>
     "use strict";
 
-    // Campingplätze: Beispieldaten, vor Veröffentlichung prüfen.
+    // Camping-Kompass: von Joe genannte und persönlich besuchte Plätze.
+    // Alle bisher genannten Plätze gelten als persönlich besucht und getestet.
+    // Einzige Ausnahme: Union Lido Mare (tested:false).
     const places = [
-      {
-        name: "Camping Münstertal",
-        town: "Münstertal, Schwarzwald, Deutschland",
-        type: "Campingplatz",
-        wohnmobil: true,
-        lat: 47.859584,
-        lon: 7.763714,
-        description:
-          "Komfort-Camping im Schwarzwald mit Freizeit- und Wellnessangeboten.",
-        url: "https://www.camping-muenstertal.de/"
-      },
-      {
-        name: "Camping Schwarzwälder Hof",
-        town: "Seelbach, Schwarzwald, Deutschland",
-        type: "Campingplatz",
-        wohnmobil: true,
-        lat: 48.300278,
-        lon: 7.945,
-        description:
-          "Campingurlaub im Schwarzwald bei Seelbach.",
-        url: "https://www.spacamping.de/"
-      },
-      {
-        name: "Camping Village Capalonga",
-        town: "Bibione Pineda, Venetien, Italien",
-        type: "Campingplatz",
-        wohnmobil: true,
-        lat: 45.630535,
-        lon: 12.994383,
-        description:
-          "Camping zwischen Sandstrand und Lagune an der italienischen Adriaküste.",
-        url: "https://www.capalonga.com/de/"
-      }
+      {name:"TCS Camping Sursee",town:"Sursee, Luzern",country:"Schweiz",code:"CH",type:"Campingplatz",lat:47.172,lon:8.107,description:"Camping am Sempachersee."},
+      {name:"Campofelice Camping Village",town:"Tenero, Tessin",country:"Schweiz",code:"CH",type:"Campingplatz",lat:46.173,lon:8.854,description:"Ferienanlage am Lago Maggiore.",url:"https://www.campofelice.ch/"},
+      {name:"TCS Camping Flaach am Rhein",town:"Flaach, Zürich",country:"Schweiz",code:"CH",type:"Campingplatz",lat:47.576,lon:8.607,description:"Camping am Rhein."},
+      {name:"TCS Camping Genève-Vésenaz / Pointe à la Bise",town:"Vésenaz, Genf",country:"Schweiz",code:"CH",type:"Campingplatz",lat:46.247,lon:6.202,description:"Camping direkt am Genfersee."},
+      {name:"Frutigresort",town:"Frutigen, Bern",country:"Schweiz",code:"CH",type:"Campingplatz",lat:46.587,lon:7.65,description:"Camping- und Ferienanlage im Berner Oberland.",url:"https://www.frutigresort.ch/"},
+      {name:"Alpencamping Nenzing",town:"Nenzing, Vorarlberg",country:"Österreich",code:"AT",type:"Campingplatz",lat:47.184,lon:9.71,description:"Alpencamping mit Wellnessangebot.",url:"https://www.alpencamping.at/"},
+      {name:"Camping Piani di Clodia",town:"Lazise, Gardasee",country:"Italien",code:"IT",type:"Campingplatz",lat:45.49,lon:10.72,description:"Ferienanlage am Gardasee.",url:"https://www.pianidiclodia.it/"},
+      {name:"Area Sosta Camper Parma",town:"Parma, Emilia-Romagna",country:"Italien",code:"IT",type:"Wohnmobilstellplatz",lat:44.801,lon:10.328,description:"Wohnmobil-Stellplatz in Parma."},
+      {name:"Camping Le Rossane",town:"Italien",country:"Italien",code:"IT",type:"Campingplatz",lat:45.0,lon:10.5,description:"Campingplatz – genaue Ortskoordinate bitte noch verifizieren."},
+      {name:"Camping Mare Monti",town:"Italien",country:"Italien",code:"IT",type:"Campingplatz",lat:44.27,lon:9.43,description:"Campingplatz – Lagepunkt vor Veröffentlichung prüfen."},
+      {name:"Camping Acqua Dolce",town:"Levanto, Ligurien",country:"Italien",code:"IT",type:"Campingplatz",lat:44.17,lon:9.61,description:"Camping in Levanto nahe der ligurischen Küste."},
+      {name:"hu Firenze camping in town",town:"Florenz, Toskana",country:"Italien",code:"IT",type:"Campingplatz",lat:43.79,lon:11.29,description:"Stadtnaher Campingplatz in Florenz.",url:"https://huopenair.com/"},
+      {name:"Alveare del Pinzi",town:"Italien",country:"Italien",code:"IT",type:"Wohnmobilstellplatz",lat:43.0,lon:12.0,description:"Wohnmobil-Stopp – genauer Standort bitte noch verifizieren."},
+      {name:"Union Lido Mare",town:"Cavallino-Treporti, Venetien",country:"Italien",code:"IT",type:"Campingplatz",lat:45.474,lon:12.535,description:"Grosse 5-Sterne-Ferienanlage an der Adria.",url:"https://mare.unionlido.com/en/",tested:false},
+      {name:"Camping Village Capalonga",town:"Bibione Pineda, Venetien",country:"Italien",code:"IT",type:"Campingplatz",lat:45.638,lon:13.018,description:"Deine Top-Empfehlung in Italien – zwischen Strand und Lagune.",url:"https://www.capalonga.com/de/",top:true,rating:"Top-Empfehlung",image:"https://www.capalonga.com/inc/scripts/source/www.capalonga.com/crp1920x1080-slide-homepage-1.jpg?v=1786111891.jpg",imageCredit:"Foto: Camping Village Capalonga (Betreiber-Website)",imageSource:"https://www.capalonga.com/de/galerie-foto.php"},
+      {name:"Camping Village Pino Mare",town:"Lignano Riviera, Friaul-Julisch Venetien",country:"Italien",code:"IT",type:"Campingplatz",lat:45.638,lon:13.105,description:"Camping-Feriendorf an der Adriaküste.",url:"https://www.campingpinomare.it/"},
+      {name:"Hegi Familien Camping",town:"Tengen, Baden-Württemberg",country:"Deutschland",code:"DE",type:"Campingplatz",lat:47.82,lon:8.67,description:"Familiencamping im Hegau."},
+      {name:"Camping Münstertal",town:"Münstertal, Schwarzwald",country:"Deutschland",code:"DE",type:"Campingplatz",lat:47.859584,lon:7.763714,description:"Deine Top-Empfehlung in Deutschland. Persönliche Bewertung: sehr gut.",url:"https://www.camping-muenstertal.de/",top:true,rating:"Sehr gut",image:"https://mein.toubiz.de/api/v1/media/58748a97-98e6-4081-b504-f567e56d8839/view",imageCredit:"Foto: Schwarzwald Tourismus / mein.toubiz",imageSource:"https://www.schwarzwald-tourismus.info/unterkuenfte/camping-muenstertal-4a0d0e7088"},
+      {name:"Camping Schwarzwälder Hof",town:"Seelbach, Schwarzwald",country:"Deutschland",code:"DE",type:"Campingplatz",lat:48.300278,lon:7.945,description:"Campingurlaub im Schwarzwald.",url:"https://www.spacamping.de/"},
+      {name:"Camping Hopfensee",town:"Hopfen am See, Füssen, Bayern",country:"Deutschland",code:"DE",type:"Campingplatz",lat:47.603,lon:10.686,description:"Camping am Hopfensee."},
+      {name:"Camping Kreuzhof",town:"Lenzkirch, Hochschwarzwald",country:"Deutschland",code:"DE",type:"Campingplatz",lat:47.87,lon:8.18,description:"Camping im Hochschwarzwald.",url:"https://www.camping-kreuzhof.de/"},
+      {name:"Camping Aquarius",town:"Sant Pere Pescador, Costa Brava",country:"Spanien",code:"ES",type:"Campingplatz",lat:42.18,lon:3.09,description:"Camping an der Costa Brava.",url:"https://www.campingaquarius.com/"},
+      {name:"Playa Montroig Camping Resort",town:"Mont-roig del Camp, Costa Dorada",country:"Spanien",code:"ES",type:"Campingplatz",lat:41.04,lon:0.99,description:"Deine Top-Empfehlung in Spanien. Persönliche Bewertung: sehr gut.",url:"https://www.playamontroig.com/",top:true,rating:"Sehr gut",image:"https://content.breakfreeholidays.co.uk/images/parks/1/1281/gallery/1281-02.jpg",imageCredit:"Foto: BreakFree Holidays – Galerie Playa Montroig",imageSource:"https://www.breakfreeholidays.co.uk/holidays/1281/playa-montroig"},
+      {name:"Camping Eucaliptus",town:"Eucaliptus, Delta de l’Ebre",country:"Spanien",code:"ES",type:"Campingplatz",lat:40.66,lon:0.75,description:"Camping in der Landschaft des Ebro-Deltas."},
+      {name:"Little Texas",town:"Tabernas, Almería",country:"Spanien",code:"ES",type:"Wohnmobilstellplatz",lat:37.05,lon:-2.39,description:"Wohnmobilstellplatz mit Campingangebot in der Tabernas-Wüste."},
+      {name:"Camping Reina Isabel",town:"La Zubia, Granada",country:"Spanien",code:"ES",type:"Campingplatz",lat:37.12,lon:-3.59,description:"Camping südlich von Granada."},
+      {name:"Camping SurEuropa",town:"La Línea de la Concepción, Cádiz",country:"Spanien",code:"ES",type:"Campingplatz",lat:36.18,lon:-5.34,description:"Campingangebot bei Gibraltar. Aktuellen Betriebsstatus vor Anreise prüfen."},
+      {name:"Área de Servicios Autocaravanas Tarifa-Bolonia",town:"El Lentiscal, Bolonia, Tarifa",country:"Spanien",code:"ES",type:"Wohnmobilstellplatz",lat:36.09,lon:-5.77,description:"Wohnmobilstellplatz nahe der Düne von Bolonia; laut Verzeichnis geschlossen."},
+      {name:"Camperstop Alegría",town:"Montánchez, Extremadura",country:"Spanien",code:"ES",type:"Wohnmobilstellplatz",lat:39.23,lon:-6.15,description:"Ruhiger Wohnmobilstellplatz in der Extremadura."},
+      {name:"Camping Osuna",town:"Madrid",country:"Spanien",code:"ES",type:"Campingplatz",lat:40.45,lon:-3.59,description:"Campingplatz mit Metroanbindung ins Zentrum von Madrid.",url:"https://www.campingosuna.com/"},
+      {name:"Autocaravans Sevilla / Puerto Gelves",town:"Gelves, Sevilla",country:"Spanien",code:"ES",type:"Wohnmobilstellplatz",lat:37.33,lon:-6.02,description:"Wohnmobil-Stellplatz am Yachthafen Puerto Gelves."},
+      {name:"Welscamp Matarraña S.L.",town:"Fayón, Aragón",country:"Spanien",code:"ES",type:"Campingplatz",lat:41.2,lon:0.32,description:"Camping- und Angelplatz am Ebro-Stausee."},
+      {name:"Costa do Vizir Beach Village",town:"Porto Covo, Alentejo",country:"Portugal",code:"PT",type:"Campingplatz",lat:37.85,lon:-8.79,description:"Camping-Feriendorf nahe dem Strand.",url:"https://www.costadovizir.com/"},
+      {name:"Praguecamp",town:"Prag",country:"Tschechien",code:"CZ",type:"Campingplatz",lat:50.07,lon:14.42,description:"Campingplatz in Prag."}
+    ];
+
+    const countryInfo = {
+      CH:{name:"Schweiz",flag:"🇨🇭",featured:"TCS Camping Sursee"},
+      DE:{name:"Deutschland",flag:"🇩🇪",featured:"Camping Münstertal"},
+      IT:{name:"Italien",flag:"🇮🇹",featured:"Camping Village Capalonga"},
+      ES:{name:"Spanien",flag:"🇪🇸",featured:"Playa Montroig Camping Resort"},
+      PT:{name:"Portugal",flag:"🇵🇹",featured:"Costa do Vizir Beach Village"},
+      CZ:{name:"Tschechien",flag:"🇨🇿",featured:"Praguecamp"},
+      AT:{name:"Österreich",flag:"🇦🇹",featured:"Alpencamping Nenzing"}
+    };
+
+    const topPicks = [
+      {code:"DE",name:"Camping Münstertal",rating:"Sehr gut"},
+      {code:"ES",name:"Playa Montroig Camping Resort",rating:"Sehr gut"},
+      {code:"IT",name:"Camping Village Capalonga",rating:"Deine persönliche Empfehlung"}
     ];
 
     const searchInput = document.getElementById("search");
     const typeSelect = document.getElementById("type");
+    const countryFilter = document.getElementById("country-filter");
     const resultsContainer = document.getElementById("results");
+    const countryGrid = document.getElementById("country-grid");
+    const countryLists = document.getElementById("country-lists");
 
-    // Karte initialisieren, wenn Leaflet geladen wurde.
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, function (character) {
+        return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[character];
+      });
+    }
+
+    function visitBadge(place) {
+      return place.tested === false
+        ? '<span class="not-tested-label">Noch nicht persönlich getestet</span>'
+        : '<span class="visited-label">✓ Persönlich besucht &amp; getestet</span>';
+    }
+
+    function placeCard(place) {
+      return `<article class="country-place">
+        ${place.image ? `<img class="place-card-image" src="${escapeHTML(place.image)}" alt="Originalaufnahme: ${escapeHTML(place.name)}" loading="lazy"><small class="photo-credit"><a href="${escapeHTML(place.imageSource || place.url || '#')}" target="_blank" rel="noopener noreferrer">${escapeHTML(place.imageCredit || 'Bildquelle öffnen')}</a></small>` : ''}
+        ${place.top ? '<span class="top-label">★ Top-Empfehlung</span>' : ''}
+        <h4>${escapeHTML(place.name)}</h4>
+        <p>${escapeHTML(place.town)} · ${escapeHTML(place.type)}</p>
+        <p>${escapeHTML(place.description || "")}</p>
+        ${visitBadge(place)}
+        ${place.rating ? `<p><strong>${escapeHTML(place.rating)}</strong></p>` : ""}
+        ${place.url ? `<p><a href="${escapeHTML(place.url)}" target="_blank" rel="noopener noreferrer">Website des Platzes ↗</a></p>` : ""}
+      </article>`;
+    }
+
+    topPicks.forEach(function (pick) {
+      const place = places.find(p => p.name === pick.name);
+      const article = document.createElement("article");
+      article.className = "camping-pick";
+      article.innerHTML = `<img src="${escapeHTML(place.image || '')}" alt="Originalaufnahme: ${escapeHTML(pick.name)}" loading="lazy">
+        <div class="camping-pick-content">
+          <small class="photo-credit"><a href="${escapeHTML(place.imageSource || place.url || '#')}" target="_blank" rel="noopener noreferrer">${escapeHTML(place.imageCredit || 'Bildquelle öffnen')}</a></small>
+          <span class="top-label">${countryInfo[pick.code].flag} Top-Empfehlung ${countryInfo[pick.code].name}</span>
+          <h3>${escapeHTML(pick.name)}</h3>
+          <p>${escapeHTML(place.description)}</p>
+          <strong>${escapeHTML(pick.rating)}</strong>
+          <p>${visitBadge(place)}</p>
+          ${place.url ? `<a class="place-link" href="${escapeHTML(place.url)}" target="_blank" rel="noopener noreferrer">Campingplatz besuchen →</a>` : ""}
+        </div>`;
+      document.getElementById("top-picks").appendChild(article);
+    });
+
+    const countryCodes = Object.keys(countryInfo);
+    countryCodes.forEach(function (code) {
+      const info = countryInfo[code];
+      const countryPlaces = places.filter(p => p.code === code);
+      const featured = places.find(p => p.name === info.featured);
+      const option = document.createElement("option");
+      option.value = code;
+      option.textContent = info.name;
+      countryFilter.appendChild(option);
+
+      const tile = document.createElement("a");
+      tile.className = "country-tile";
+      tile.href = "#country-" + code;
+      const featuredImage = featured && featured.image ? `<img src="${escapeHTML(featured.image)}" alt="Originalaufnahme ${escapeHTML(featured.name)}" loading="lazy">` : '';
+      tile.innerHTML = `${featuredImage}
+        <div class="country-tile-content">
+          <span class="country-flag">${info.flag}</span>
+          <h3>${info.name}</h3>
+          <p><strong>${escapeHTML(featured ? featured.name : "Campingplätze entdecken")}</strong></p>
+          <small>${countryPlaces.length} Einträge</small>
+        </div>`;
+      countryGrid.appendChild(tile);
+
+      const panel = document.createElement("section");
+      panel.className = "country-panel";
+      panel.id = "country-" + code;
+      panel.innerHTML = `<h3>${info.flag} ${info.name}</h3>
+        <p>${countryPlaces.length} Campingplätze und Stellplätze</p>
+        <div class="country-places"></div>
+        <button class="more-button" type="button" aria-expanded="false">Mehr anzeigen</button>`;
+      const grid = panel.querySelector(".country-places");
+      const button = panel.querySelector("button");
+      function updateCountryList(expanded) {
+        grid.innerHTML = countryPlaces.slice(0, expanded ? countryPlaces.length : 3).map(placeCard).join("");
+        button.textContent = expanded ? "Weniger anzeigen" : "Mehr anzeigen";
+        button.setAttribute("aria-expanded", String(expanded));
+        button.hidden = countryPlaces.length <= 3;
+      }
+      button.addEventListener("click", function () {
+        updateCountryList(button.getAttribute("aria-expanded") !== "true");
+      });
+      updateCountryList(false);
+      countryLists.appendChild(panel);
+    });
+
     let map = null;
     let markers = null;
-
     if (typeof L !== "undefined") {
-      map = L.map("map").setView([48.2, 9.7], 6);
-
-      L.tileLayer(
-        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        {
-          attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-          maxZoom: 19
-        }
-      ).addTo(map);
-
+      map = L.map("map");
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom:19
+      }).addTo(map);
       markers = L.layerGroup().addTo(map);
+
+      places.forEach(function (place) {
+        const popup = `<strong>${escapeHTML(place.name)}</strong><br>
+          ${escapeHTML(place.town)}<br>${visitBadge(place)}
+          ${place.url ? `<br><a href="${escapeHTML(place.url)}" target="_blank" rel="noopener noreferrer">Website öffnen</a>` : ""}`;
+        L.marker([place.lat, place.lon]).addTo(markers).bindPopup(popup);
+      });
+      const allBounds = markers.getBounds();
+      if (allBounds.isValid()) {
+        map.fitBounds(allBounds, {padding:[30,30], maxZoom:6});
+      } else {
+        map.setView([47,8],5);
+      }
     } else {
       document.getElementById("map").textContent =
         "Die Karte konnte nicht geladen werden. Bitte prüfe deine Internetverbindung.";
     }
 
-    // HTML-Sonderzeichen in dynamischen Texten sicher behandeln.
-    function escapeHTML(value) {
-      return String(value).replace(/[&<>"']/g, function (character) {
-        const entities = {
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          '"': "&quot;",
-          "'": "&#39;"
-        };
-
-        return entities[character];
-      });
-    }
-
-    // Ergebnisse und Markierungen anhand der Filter aktualisieren.
-    function render() {
+    function renderResults() {
       const query = searchInput.value.trim().toLocaleLowerCase("de");
       const selectedType = typeSelect.value;
-
+      const selectedCountry = countryFilter.value;
       const filtered = places.filter(function (place) {
-        const searchableText =
-          (place.name + " " + place.town).toLocaleLowerCase("de");
-
-        const matchesQuery = searchableText.includes(query);
-
-        const matchesType =
-          selectedType === "alle" ||
-          place.type === selectedType ||
-          (
-            selectedType === "Wohnmobil" &&
-            place.wohnmobil === true
-          );
-
-        return matchesQuery && matchesType;
+        const matchesQuery = (place.name + " " + place.town + " " + place.country)
+          .toLocaleLowerCase("de").includes(query);
+        const matchesType = selectedType === "alle" || place.type === selectedType;
+        const matchesCountry = selectedCountry === "alle" || place.code === selectedCountry;
+        return matchesQuery && matchesType && matchesCountry;
       });
 
-      if (filtered.length === 0) {
-        resultsContainer.innerHTML =
-          '<p class="empty-state">Keine passenden Einträge gefunden. ' +
-          'Versuche einen anderen Suchbegriff oder Filter.</p>';
-      } else {
-        resultsContainer.innerHTML = filtered.map(function (place) {
-          return `
-            <article class="card">
-              <div class="pad">
-                <span class="tag">
-                  ${escapeHTML(place.type)} · BEISPIEL
-                </span>
-
-                <h3>${escapeHTML(place.name)}</h3>
-
-                <p>${escapeHTML(place.town)}</p>
-
-                <p>${escapeHTML(place.description)}</p>
-
-                <small>
-                  Beispieldatensatz – Angebot und Angaben bitte prüfen.
-                </small>
-
-                <a
-                  class="place-link"
-                  href="${escapeHTML(place.url)}"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Anbieter besuchen →
-                </a>
-              </div>
-            </article>
-          `;
-        }).join("");
-      }
-
-      // Vorhandene Kartenmarkierungen entfernen.
-      if (!markers) {
-        return;
-      }
-
-      markers.clearLayers();
-
-      // Für jeden gefilterten Eintrag eine Markierung erstellen.
-      filtered.forEach(function (place) {
-        const popupContent = `
-          <strong>${escapeHTML(place.name)}</strong><br>
-          ${escapeHTML(place.town)}<br>
-          <small>Beispieldaten – Angaben bitte prüfen.</small><br>
-          <a
-            href="${escapeHTML(place.url)}"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Anbieter besuchen
-          </a>
-        `;
-
-        L.marker([place.lat, place.lon])
-          .addTo(markers)
-          .bindPopup(popupContent);
-      });
-
-      // Karte auf die sichtbaren Einträge ausrichten.
-      if (filtered.length > 0) {
-        const visibleMarkers = markers.getLayers();
-
-        if (visibleMarkers.length === 1) {
-          map.setView(
-            [filtered[0].lat, filtered[0].lon],
-            10
-          );
-        } else {
-          const bounds = markers.getBounds();
-
-          if (bounds.isValid()) {
-            map.fitBounds(bounds, {
-              padding: [25, 25],
-              maxZoom: 10
-            });
-          }
-        }
-      }
+      resultsContainer.innerHTML = filtered.length
+        ? filtered.map(placeCard).join("")
+        : '<p class="empty-state">Keine passenden Plätze gefunden. Bitte ändere deine Suche oder Filter.</p>';
     }
 
-    // Suche und Filter reagieren sofort auf Änderungen.
-    searchInput.addEventListener("input", render);
-    typeSelect.addEventListener("change", render);
-
-    // Initiale Anzeige.
-    render();
+    searchInput.addEventListener("input", renderResults);
+    typeSelect.addEventListener("change", renderResults);
+    countryFilter.addEventListener("change", renderResults);
+    renderResults();
   </script>
 
 <script async src="https://www.instagram.com/embed.js"></script>
