@@ -1465,7 +1465,7 @@
       const mapElement = document.getElementById("map");
       if (!mapElement || map) return;
       map = L.map(mapElement, { scrollWheelZoom: false, preferCanvas: true });
-      markers = L.layerGroup().addTo(map);
+      markers = L.featureGroup().addTo(map);
       let markerCount = 0;
       places.forEach(function (place) {
         const lat = Number(place.lat), lon = Number(place.lon);
