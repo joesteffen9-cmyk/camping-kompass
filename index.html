@@ -514,13 +514,21 @@
     }
 
     #map {
+      display: block;
+      position: relative;
       width: 100%;
-      height: 400px;
+      height: 440px;
+      min-height: 330px;
       margin-top: 20px;
+      border: 1px solid #dfe5df;
       border-radius: 12px;
+      overflow: hidden;
       z-index: 1;
       background: #e6e8e1;
     }
+    #map .map-fallback-frame { display:block; width:100%; height:100%; min-height:330px; border:0; }
+    .place-card-image { display:block; width:100%; height:150px; object-fit:cover; border-radius:7px; margin-bottom:7px; background:#e8eee7; }
+    .image-fallback-note { display:block; margin:-2px 0 7px; color:#68736b; font-size:.72rem; }
 
     .place-link {
       display: inline-block;
@@ -593,7 +601,8 @@
       }
 
       #map {
-        height: 330px;
+        height: 360px;
+        min-height: 330px;
       }
 
       #type {
@@ -639,8 +648,9 @@
   box-shadow: 0 3px 14px #203d3210;
 }
 .camping-pick img, .country-tile img {
-  display: block; width: 100%; height: 175px; object-fit: cover;
+  display: block; width: 100%; height: 175px; object-fit: cover; background:#e8eee7;
 }
+.country-tile .image-fallback-note { padding:0 12px; }
 .camping-pick-content, .country-tile-content { padding: 14px; }
 .photo-credit { display:block; margin-top:7px; color:#68736b; font-size:.75rem; line-height:1.35; }
 .photo-credit a { color:#526b5b; }
@@ -1257,6 +1267,32 @@
       });
     }
 
+    function fallbackCampingImage(place) {
+      const title = escapeHTML(place.name || "Camping-Kompass");
+      const town = escapeHTML(place.town || place.country || "Europa");
+      const country = escapeHTML(place.country || "Camping");
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+        <defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#b9d9e8"/><stop offset="1" stop-color="#eef3e8"/></linearGradient><linearGradient id="hill" x2="0" y2="1"><stop stop-color="#729779"/><stop offset="1" stop-color="#315c46"/></linearGradient></defs>
+        <rect width="1200" height="675" fill="url(#sky)"/><circle cx="970" cy="135" r="65" fill="#f6d98b"/>
+        <path d="M0 390 L210 205 390 375 590 170 820 395 1010 230 1200 390 V675 H0Z" fill="#8da99a"/>
+        <path d="M0 455 Q220 360 430 455 T850 445 T1200 420 V675 H0Z" fill="url(#hill)"/>
+        <path d="M0 540 Q250 470 500 545 T1000 520 T1200 525 V675 H0Z" fill="#284b3b"/>
+        <g transform="translate(450 330)"><path d="M0 120 L150 5 300 120Z" fill="#f5f1e5" stroke="#284b3b" stroke-width="12"/><rect x="35" y="120" width="230" height="135" rx="8" fill="#f8f4e8" stroke="#284b3b" stroke-width="12"/><path d="M150 5 V255" stroke="#284b3b" stroke-width="8"/><rect x="75" y="155" width="50" height="55" fill="#8bb7c6"/><rect x="175" y="155" width="50" height="55" fill="#8bb7c6"/></g>
+        <rect x="35" y="35" width="1130" height="605" rx="28" fill="none" stroke="#ffffff" stroke-opacity=".6" stroke-width="5"/>
+        <text x="65" y="90" font-family="Arial,sans-serif" font-size="28" font-weight="700" fill="#234333">CAMPING-KOMPASS · ${country}</text>
+        <text x="65" y="590" font-family="Arial,sans-serif" font-size="42" font-weight="700" fill="#ffffff" stroke="#203d32" stroke-width="1">${title}</text>
+        <text x="67" y="628" font-family="Arial,sans-serif" font-size="23" fill="#ffffff">${town}</text></svg>`;
+      return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+    }
+
+    function placeImage(place, className) {
+      const fallback = fallbackCampingImage(place);
+      const hasPhoto = Boolean(place.image);
+      const src = hasPhoto ? place.image : fallback;
+      return `<img class="${className || 'place-card-image'}" src="${escapeHTML(src)}" data-fallback="${escapeHTML(fallback)}" alt="${escapeHTML('Camping-Motiv: ' + place.name)}" loading="lazy" onerror="this.onerror=null;this.src=this.dataset.fallback;this.dataset.failed='true'">` +
+        (hasPhoto ? `<small class="photo-credit"><a href="${escapeHTML(place.imageSource || place.url || '#')}" target="_blank" rel="noopener noreferrer">${escapeHTML(place.imageCredit || 'Bildquelle öffnen')}</a></small>` : '<small class="image-fallback-note">Camping-Motiv · illustrative Ersatzgrafik</small>');
+    }
+
     function visitBadge(place) {
       return place.tested === false
         ? '<span class="not-tested-label">Noch nicht persönlich getestet</span>'
@@ -1265,7 +1301,7 @@
 
     function placeCard(place) {
       return `<article class="country-place">
-        ${place.image ? `<img class="place-card-image" src="${escapeHTML(place.image)}" alt="Originalaufnahme: ${escapeHTML(place.name)}" loading="lazy"><small class="photo-credit"><a href="${escapeHTML(place.imageSource || place.url || '#')}" target="_blank" rel="noopener noreferrer">${escapeHTML(place.imageCredit || 'Bildquelle öffnen')}</a></small>` : ''}
+        ${placeImage(place, 'place-card-image')}
         ${place.top ? '<span class="top-label">★ Top-Empfehlung</span>' : ''}
         <h4>${escapeHTML(place.name)}</h4>
         <p>${escapeHTML(place.town)} · ${escapeHTML(place.type)}</p>
@@ -1280,9 +1316,8 @@
       const place = places.find(p => p.name === pick.name);
       const article = document.createElement("article");
       article.className = "camping-pick";
-      article.innerHTML = `${place.image ? `<img src="${escapeHTML(place.image)}" alt="Originalaufnahme: ${escapeHTML(pick.name)}" loading="lazy">` : ''}
+      article.innerHTML = `${placeImage(place, 'place-card-image')}
         <div class="camping-pick-content">
-          <small class="photo-credit"><a href="${escapeHTML(place.imageSource || place.url || '#')}" target="_blank" rel="noopener noreferrer">${escapeHTML(place.imageCredit || 'Bildquelle öffnen')}</a></small>
           <span class="top-label">${countryInfo[pick.code].flag} Top-Empfehlung ${countryInfo[pick.code].name}</span>
           <h3>${escapeHTML(pick.name)}</h3>
           <p>${escapeHTML(place.description)}</p>
@@ -1306,7 +1341,7 @@
       const tile = document.createElement("a");
       tile.className = "country-tile";
       tile.href = "#country-" + code;
-      const featuredImage = featured && featured.image ? `<img src="${escapeHTML(featured.image)}" alt="Originalaufnahme ${escapeHTML(featured.name)}" loading="lazy">` : '';
+      const featuredImage = featured ? placeImage(featured, 'country-feature-image') : placeImage({name:info.name,country:info.name,town:'Camping in Europa'}, 'country-feature-image');
       tile.innerHTML = `${featuredImage}
         <div class="country-tile-content">
           <span class="country-flag">${info.flag}</span>
@@ -1354,74 +1389,99 @@
     let markers = null;
     const mapStatus = document.getElementById("map-status");
 
-    function initializeCampingMap() {
-      if (typeof L === "undefined") {
-        throw new Error("Leaflet wurde nicht geladen.");
-      }
-
-      map = L.map("map", { scrollWheelZoom: false });
-      const tiles = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-        maxZoom: 19,
-        crossOrigin: true
-      }).addTo(map);
-
-      tiles.on("tileerror", function () {
-        if (mapStatus) {
-          mapStatus.textContent = "Die Karte ist geöffnet, aber einige Kartenausschnitte konnten nicht geladen werden. Bitte prüfe, ob dein Browser oder Werbe-/Trackingblocker OpenStreetMap blockiert.";
-        }
-      });
-
-      markers = L.layerGroup().addTo(map);
-      places.forEach(function (place) {
-        const popup = `<strong>${escapeHTML(place.name)}</strong><br>
-          ${escapeHTML(place.town)}<br>${visitBadge(place)}
-          ${place.url ? `<br><a href="${escapeHTML(place.url)}" target="_blank" rel="noopener noreferrer">Website öffnen</a>` : ""}`;
-        L.marker([Number(place.lat), Number(place.lon)]).addTo(markers).bindPopup(popup);
-      });
-
-      const allBounds = markers.getBounds();
-      if (allBounds.isValid()) {
-        map.fitBounds(allBounds, { padding: [30, 30], maxZoom: 6 });
+    function showMapFallback(message) {
+      if (mapStatus) mapStatus.textContent = message;
+      const mapElement = document.getElementById("map");
+      if (!mapElement || mapElement.dataset.fallbackShown === "true") return;
+      mapElement.dataset.fallbackShown = "true";
+      const valid = places.filter(p => Number.isFinite(Number(p.lat)) && Number.isFinite(Number(p.lon)) && Math.abs(Number(p.lat)) <= 90 && Math.abs(Number(p.lon)) <= 180);
+      if (valid.length) {
+        const lats = valid.map(p => Number(p.lat)), lons = valid.map(p => Number(p.lon));
+        const padLat = Math.max((Math.max(...lats)-Math.min(...lats))*0.12, 0.4);
+        const padLon = Math.max((Math.max(...lons)-Math.min(...lons))*0.12, 0.6);
+        const bbox = [Math.min(...lons)-padLon, Math.min(...lats)-padLat, Math.max(...lons)+padLon, Math.max(...lats)+padLat].join(',');
+        mapElement.innerHTML = `<iframe class="map-fallback-frame" title="OpenStreetMap-Kartenübersicht" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik"></iframe>`;
       } else {
-        map.setView([47, 8], 5);
+        mapElement.innerHTML = '<p style="padding:20px">Die Kartenansicht ist momentan nicht verfügbar.</p>';
       }
+    }
 
-      // Leaflet muss die tatsächliche Containergröße kennen, insbesondere
-      // nach verzögertem Laden oder bei zunächst eingeklappten Bereichen.
-      requestAnimationFrame(function () { map.invalidateSize(true); });
-      window.addEventListener("resize", function () {
-        if (map) map.invalidateSize();
+    function initializeCampingMap() {
+      if (typeof L === "undefined") throw new Error("Leaflet wurde nicht geladen.");
+      const mapElement = document.getElementById("map");
+      if (!mapElement || map) return;
+      map = L.map(mapElement, { scrollWheelZoom: false, preferCanvas: true });
+      markers = L.layerGroup().addTo(map);
+      let markerCount = 0;
+      places.forEach(function (place) {
+        const lat = Number(place.lat), lon = Number(place.lon);
+        if (!Number.isFinite(lat) || !Number.isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180) return;
+        const popup = `<strong>${escapeHTML(place.name)}</strong><br>${escapeHTML(place.town)}<br>${visitBadge(place)}${place.url ? `<br><a href="${escapeHTML(place.url)}" target="_blank" rel="noopener noreferrer">Website öffnen</a>` : ""}`;
+        L.marker([lat, lon]).addTo(markers).bindPopup(popup);
+        markerCount++;
       });
+      if (markerCount) map.fitBounds(markers.getBounds(), { padding: [28, 28], maxZoom: 6 });
+      else map.setView([47, 8], 5);
 
-      if (mapStatus) mapStatus.textContent = "Karte geladen – alle Camping- und Stellplätze sind markiert.";
+      const tileSources = [
+        { url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", options: { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 19, subdomains: "abc" } },
+        { url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", options: { attribution: '&copy; OpenStreetMap &copy; <a href="https://carto.com/attributions">CARTO</a>', maxZoom: 19, subdomains: "abcd" } }
+      ];
+      let sourceIndex = 0, tileErrors = 0, gotTile = false;
+      let tileLayer = L.tileLayer(tileSources[0].url, tileSources[0].options).addTo(map);
+      function switchTileSource() {
+        if (sourceIndex + 1 >= tileSources.length) {
+          showMapFallback("Die interaktive Karte konnte keine Kartendaten laden. Es wird eine OpenStreetMap-Übersicht als Ersatz angezeigt.");
+          return;
+        }
+        sourceIndex++;
+        tileErrors = 0;
+        if (tileLayer) map.removeLayer(tileLayer);
+        tileLayer = L.tileLayer(tileSources[sourceIndex].url, tileSources[sourceIndex].options).addTo(map);
+        tileLayer.on("tileload", function () {
+          gotTile = true;
+          if (mapStatus) mapStatus.textContent = `Karte geladen – ${markerCount} Camping- und Stellplätze sind markiert.`;
+        });
+        tileLayer.on("tileerror", function () {
+          tileErrors++;
+          if (tileErrors >= 4 && !gotTile) switchTileSource();
+        });
+      }
+      tileLayer.on("tileload", function () {
+        gotTile = true;
+        if (mapStatus) mapStatus.textContent = `Karte geladen – ${markerCount} Camping- und Stellplätze sind markiert.`;
+      });
+      tileLayer.on("tileerror", function () {
+        tileErrors++;
+        if (tileErrors >= 4 && !gotTile) switchTileSource();
+      });
+      if (mapStatus) mapStatus.textContent = "Kartenbibliothek geladen – Kartenausschnitte werden angefordert …";
+      requestAnimationFrame(function () { if (map) map.invalidateSize(true); });
+      window.addEventListener("resize", function () { if (map) map.invalidateSize(); });
+      setTimeout(function () {
+        if (!gotTile && sourceIndex === 0) switchTileSource();
+        setTimeout(function () {
+          if (!gotTile && sourceIndex === 1) showMapFallback("Die Kartenanbieter antworten nicht. Es wird eine OpenStreetMap-Übersicht als Ersatz angezeigt.");
+        }, 7000);
+      }, 7000);
     }
 
     function loadLeaflet(urls, index) {
       if (typeof L !== "undefined") {
         try { initializeCampingMap(); }
-        catch (error) {
-          console.error("Camping-Karte konnte nicht initialisiert werden:", error);
-          if (mapStatus) mapStatus.textContent = "Die Karte konnte nicht gestartet werden. Bitte lade die Seite neu.";
-        }
+        catch (error) { console.error("Camping-Karte konnte nicht initialisiert werden:", error); showMapFallback("Die interaktive Karte konnte nicht gestartet werden. Eine Kartenübersicht wird als Ersatz geladen."); }
         return;
       }
-
       if (index >= urls.length) {
-        if (mapStatus) {
-          mapStatus.textContent = "Die Kartenbibliothek konnte nicht geladen werden. Bitte prüfe deine Internetverbindung oder ob ein Browser-/Trackingblocker die CDN-Adresse blockiert.";
-        }
+        showMapFallback("Die Kartenbibliothek ist nicht erreichbar. Eine OpenStreetMap-Übersicht wird als Ersatz geladen.");
         return;
       }
-
       const script = document.createElement("script");
       script.src = urls[index];
+      script.async = true;
       script.onload = function () {
         try { initializeCampingMap(); }
-        catch (error) {
-          console.error("Fehler beim Starten der Camping-Karte:", error);
-          if (mapStatus) mapStatus.textContent = "Die Karte konnte nicht gestartet werden. Bitte lade die Seite neu.";
-        }
+        catch (error) { console.error("Fehler beim Starten der Camping-Karte:", error); showMapFallback("Die interaktive Karte konnte nicht gestartet werden. Eine Kartenübersicht wird als Ersatz geladen."); }
       };
       script.onerror = function () {
         console.warn("Leaflet-CDN nicht erreichbar, versuche Ersatzquelle:", script.src);
@@ -1432,7 +1492,8 @@
 
     loadLeaflet([
       "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js",
-      "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js",
+      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"
     ], 0);
 
     function renderResults() {
