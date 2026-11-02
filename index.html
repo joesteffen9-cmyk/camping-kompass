@@ -948,8 +948,8 @@
   <h2>Campingplätze entdecken – persönlich erlebt</h2>
 
   <div class="camping-trust">
-    <strong>🏕️ Echte Camping-Erfahrungen statt anonymer Empfehlungen</strong>
-    <p>Die hier vorgestellten Plätze wurden persönlich besucht und getestet. Eine Ausnahme ist Union Lido Mare – dieser Platz ist noch nicht persönlich getestet. Die Empfehlungen und Eindrücke stammen aus eigener Erfahrung.</p>
+    <strong>🏕️ Persönlich ausgewählt, laufend erweitert – entdecke immer mehr Plätze!</strong>
+    <p>Hier findest du zahlreiche Camping- und Stellplätze aus verschiedenen Ländern – und es kommen stetig neue hinzu. Die vorgestellten Plätze wurden vom Website-Inhaber persönlich besucht und getestet. Sie sind entweder besonders empfehlenswert oder bieten eine praktische Übernachtungsmöglichkeit in unmittelbarer Nähe zu Sehenswürdigkeiten, Ausflugszielen und weiteren interessanten Orten. Eine Ausnahme bildet Union Lido Mare in Italien: Dieser Platz wurde bisher noch nicht persönlich besucht und getestet.</p>
   </div>
 
   <h2>Unsere drei Empfehlungen</h2>
@@ -1390,19 +1390,44 @@
     const mapStatus = document.getElementById("map-status");
 
     function showMapFallback(message) {
-      if (mapStatus) mapStatus.textContent = message;
+      // Wichtig: Den Kartencontainer NICHT durch ein OSM-iframe ersetzen.
+      // Das würde sämtliche bereits gesetzten Camping-Markierungen löschen.
+      // Wenn Leaflet geladen ist, bleiben Karte und Markierungen sichtbar,
+      // auch wenn ein Kachel-Anbieter vorübergehend nicht antwortet.
+      if (mapStatus) {
+        const count = places.filter(function (p) {
+          const lat = Number(p.lat), lon = Number(p.lon);
+          return Number.isFinite(lat) && Number.isFinite(lon) &&
+            Math.abs(lat) <= 90 && Math.abs(lon) <= 180;
+        }).length;
+        mapStatus.textContent = message + " " + count +
+          " Camping- und Stellplätze sind in der Karte markiert.";
+      }
       const mapElement = document.getElementById("map");
-      if (!mapElement || mapElement.dataset.fallbackShown === "true") return;
-      mapElement.dataset.fallbackShown = "true";
-      const valid = places.filter(p => Number.isFinite(Number(p.lat)) && Number.isFinite(Number(p.lon)) && Math.abs(Number(p.lat)) <= 90 && Math.abs(Number(p.lon)) <= 180);
+      if (!mapElement || map) return;
+
+      // Nur wenn die Kartenbibliothek selbst nicht geladen werden kann,
+      // zeigen wir eine externe Übersicht. Die Liste darunter bleibt nutzbar.
+      const valid = places.filter(function (p) {
+        const lat = Number(p.lat), lon = Number(p.lon);
+        return Number.isFinite(lat) && Number.isFinite(lon) &&
+          Math.abs(lat) <= 90 && Math.abs(lon) <= 180;
+      });
       if (valid.length) {
-        const lats = valid.map(p => Number(p.lat)), lons = valid.map(p => Number(p.lon));
-        const padLat = Math.max((Math.max(...lats)-Math.min(...lats))*0.12, 0.4);
-        const padLon = Math.max((Math.max(...lons)-Math.min(...lons))*0.12, 0.6);
-        const bbox = [Math.min(...lons)-padLon, Math.min(...lats)-padLat, Math.max(...lons)+padLon, Math.max(...lats)+padLat].join(',');
-        mapElement.innerHTML = `<iframe class="map-fallback-frame" title="OpenStreetMap-Kartenübersicht" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik"></iframe>`;
-      } else {
-        mapElement.innerHTML = '<p style="padding:20px">Die Kartenansicht ist momentan nicht verfügbar.</p>';
+        const lats = valid.map(function (p) { return Number(p.lat); });
+        const lons = valid.map(function (p) { return Number(p.lon); });
+        const padLat = Math.max((Math.max.apply(null, lats) - Math.min.apply(null, lats)) * 0.12, 0.4);
+        const padLon = Math.max((Math.max.apply(null, lons) - Math.min.apply(null, lons)) * 0.12, 0.6);
+        const bbox = [
+          Math.min.apply(null, lons) - padLon,
+          Math.min.apply(null, lats) - padLat,
+          Math.max.apply(null, lons) + padLon,
+          Math.max.apply(null, lats) + padLat
+        ].join(",");
+        mapElement.innerHTML =
+          '<iframe class="map-fallback-frame" title="OpenStreetMap-Kartenübersicht" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=' +
+          encodeURIComponent(bbox) + '&layer=mapnik"></iframe>' +
+          '<p class="camping-map-note">Die Kartenbibliothek ist nicht erreichbar. Die Campingplätze sind unten in der Platzliste mit ihren Koordinaten verlinkt.</p>';
       }
     }
 
@@ -1417,7 +1442,16 @@
         const lat = Number(place.lat), lon = Number(place.lon);
         if (!Number.isFinite(lat) || !Number.isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180) return;
         const popup = `<strong>${escapeHTML(place.name)}</strong><br>${escapeHTML(place.town)}<br>${visitBadge(place)}${place.url ? `<br><a href="${escapeHTML(place.url)}" target="_blank" rel="noopener noreferrer">Website öffnen</a>` : ""}`;
-        L.marker([lat, lon]).addTo(markers).bindPopup(popup);
+        // Vektor-Kreis statt Standard-Pin-Bild: Markierung bleibt sichtbar,
+        // auch wenn Leaflet-Icon-Bilddateien von einem CDN blockiert werden.
+        L.circleMarker([lat, lon], {
+          radius: 7,
+          color: "#ffffff",
+          weight: 2,
+          opacity: 1,
+          fillColor: "#d9482b",
+          fillOpacity: 0.95
+        }).addTo(markers).bindPopup(popup);
         markerCount++;
       });
       if (markerCount) map.fitBounds(markers.getBounds(), { padding: [28, 28], maxZoom: 6 });
@@ -1440,7 +1474,7 @@
         tileLayer = L.tileLayer(tileSources[sourceIndex].url, tileSources[sourceIndex].options).addTo(map);
         tileLayer.on("tileload", function () {
           gotTile = true;
-          if (mapStatus) mapStatus.textContent = `Karte geladen – ${markerCount} Camping- und Stellplätze sind markiert.`;
+          if (mapStatus) mapStatus.textContent = `Karte geladen – ${markerCount} Camping- und Stellplätze sind markiert (rote Punkte).`;
         });
         tileLayer.on("tileerror", function () {
           tileErrors++;
@@ -1449,7 +1483,7 @@
       }
       tileLayer.on("tileload", function () {
         gotTile = true;
-        if (mapStatus) mapStatus.textContent = `Karte geladen – ${markerCount} Camping- und Stellplätze sind markiert.`;
+        if (mapStatus) mapStatus.textContent = `Karte geladen – ${markerCount} Camping- und Stellplätze sind markiert (rote Punkte).`;
       });
       tileLayer.on("tileerror", function () {
         tileErrors++;
