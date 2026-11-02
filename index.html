@@ -1404,7 +1404,16 @@
           " Camping- und Stellplätze sind in der Karte markiert.";
       }
       const mapElement = document.getElementById("map");
-      if (!mapElement || map) return;
+      if (!mapElement) return;
+
+      // Wenn Leaflet zwar gestartet ist, aber keine Kacheln laden, muss die
+      // leere graue Leaflet-Fläche entfernt werden. Sonst verhindert das
+      // vorhandene map-Objekt die sichtbare Ersatzansicht.
+      if (map) {
+        try { map.remove(); } catch (error) { console.warn("Leaflet-Karte konnte nicht entfernt werden:", error); }
+        map = null;
+        markers = null;
+      }
 
       // Eigenständige Karten-Ausweichansicht: Sie benötigt weder Leaflet
       // noch externe Kartenkacheln und zeigt deshalb immer alle Koordinaten.
