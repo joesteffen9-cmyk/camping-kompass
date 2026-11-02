@@ -691,7 +691,25 @@
   .camping-pick img, .country-tile img { height: 165px; }
 }
 
-  </style>
+  
+/* Fragen und Antworten zu Campingplätzen */
+.qa-section{margin:38px 0 48px;padding:24px;background:#fff;border:1px solid #dfe5df;border-radius:14px}
+.qa-section h2{margin-top:0;color:#203d32}
+.qa-form{display:grid;gap:12px;max-width:720px}
+.qa-form label{display:grid;gap:5px;font-weight:650}
+.qa-form input,.qa-form textarea,.qa-admin input,.qa-admin textarea{width:100%;max-width:100%;padding:11px;border:1px solid #bbc9bd;border-radius:8px;font:inherit}
+.qa-form textarea,.qa-admin textarea{min-height:95px;resize:vertical}
+.qa-section button{background:#203d32;color:white;border:0;border-radius:8px;padding:10px 15px;font:inherit;font-weight:700;cursor:pointer}
+.qa-section button:hover{background:#365b49}.qa-section button:disabled{opacity:.55;cursor:wait}
+.qa-status{min-height:1.5em;color:#365b49}.qa-list{display:grid;gap:12px;margin:18px 0}
+.qa-item{border:1px solid #e0e9df;background:#f9fbf8;border-radius:10px;padding:16px;overflow-wrap:anywhere}
+.qa-item h3{font-size:1rem;margin:0 0 6px}.qa-item p{margin:5px 0}.qa-answer{border-left:3px solid #5e866a;padding-left:12px;margin-top:12px!important}
+.qa-admin{margin-top:24px;border-top:1px solid #e1e8e0;padding-top:16px}.qa-admin summary{cursor:pointer;font-weight:700;color:#203d32}
+.qa-admin-login{display:flex;flex-wrap:wrap;align-items:end;gap:10px;margin:12px 0}.qa-admin-login label{display:grid;gap:5px}
+.qa-admin-item{margin-top:12px}.qa-admin-item textarea{margin:8px 0}.qa-admin-item button{display:block}
+[hidden]{display:none!important}
+
+</style>
 </head>
 
 <body>
@@ -982,6 +1000,128 @@
 <div id="map" role="region" aria-label="Interaktive Karte aller Campingplätze"></div>
   <small class="camping-map-note">Die Kartenmarkierungen zeigen den jeweiligen Ort bzw. das Campingareal näherungsweise. Vor Veröffentlichung sollten die exakten Zufahrtskoordinaten nochmals geprüft werden. Kartendaten © OpenStreetMap-Mitwirkende.</small>
 </section>
+
+<section id="camping-fragen" class="qa-section" aria-labelledby="qa-heading">
+  <h2 id="qa-heading">Fragen zu unseren Campingplätzen</h2>
+  <p>Du hast Fragen zu einem Campingplatz oder Stellplatz? Stelle sie hier. Ich beantworte sie persönlich. Fragen werden erst zusammen mit meiner Antwort veröffentlicht.</p>
+  <form id="qa-form" class="qa-form">
+    <label>Dein Name <input name="name" maxlength="100" required autocomplete="name"></label>
+    <label>Deine Frage <textarea name="frage" maxlength="2000" required placeholder="Zu welchem Campingplatz möchtest du etwas wissen?"></textarea></label>
+    <button type="submit">Frage absenden</button>
+    <p id="qa-submit-status" class="qa-status" role="status" aria-live="polite"></p>
+  </form>
+  <h3>Bereits beantwortete Fragen</h3>
+  <div id="qa-list" class="qa-list" aria-live="polite"><p>Fragen werden geladen …</p></div>
+  <button id="qa-more" type="button" hidden>Mehr anzeigen</button>
+  <details class="qa-admin" id="qa-admin">
+    <summary>Administrator – Fragen beantworten</summary>
+    <form id="qa-admin-login" class="qa-admin-login">
+      <label>Administrator-Zahlencode <input id="qa-code" type="password" autocomplete="off" required></label>
+      <button type="submit">Fragen laden</button>
+    </form>
+    <p id="qa-admin-status" class="qa-status" role="status" aria-live="polite"></p>
+    <div id="qa-admin-list"></div>
+  </details>
+</section>
+
+<script>
+(() => {
+  "use strict";
+  const endpoint = "./fragen-api.php";
+  const form = document.getElementById("qa-form");
+  const list = document.getElementById("qa-list");
+  const more = document.getElementById("qa-more");
+  const submitStatus = document.getElementById("qa-submit-status");
+  const adminForm = document.getElementById("qa-admin-login");
+  const adminList = document.getElementById("qa-admin-list");
+  const adminStatus = document.getElementById("qa-admin-status");
+  const codeField = document.getElementById("qa-code");
+  let questions = [], expanded = false;
+  async function request(action, data) {
+    const response = await fetch(endpoint + "?aktion=" + encodeURIComponent(action), {
+      method: data ? "POST" : "GET",
+      headers: data ? {"Content-Type":"application/json"} : {},
+      body: data ? JSON.stringify(data) : undefined,
+      cache: "no-store"
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "Anfrage fehlgeschlagen");
+    return result;
+  }
+  function node(tag, text, className) {
+    const el = document.createElement(tag);
+    if (text !== undefined) el.textContent = String(text ?? "");
+    if (className) el.className = className;
+    return el;
+  }
+  function render() {
+    list.replaceChildren();
+    if (!questions.length) list.append(node("p", "Noch keine beantworteten Fragen vorhanden."));
+    questions.slice(0, expanded ? questions.length : 3).forEach(q => {
+      const item = node("article", undefined, "qa-item");
+      item.append(node("h3", q.frage), node("small", "Gefragt von " + q.name), node("p", "Antwort: " + (q.antwort || ""), "qa-answer"));
+      list.append(item);
+    });
+    more.hidden = questions.length <= 3;
+    more.textContent = expanded ? "Weniger anzeigen" : "Mehr anzeigen";
+    more.setAttribute("aria-expanded", String(expanded));
+  }
+  async function loadPublic() {
+    try { const result = await request("liste"); questions = Array.isArray(result.fragen) ? result.fragen : []; render(); }
+    catch { list.replaceChildren(node("p", "Fragen konnten nicht geladen werden. Bitte später erneut versuchen.")); }
+  }
+  more.addEventListener("click", () => { expanded = !expanded; render(); });
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    const button = form.querySelector('button[type="submit"]');
+    button.disabled = true;
+    submitStatus.textContent = "Frage wird gesendet …";
+    try {
+      const data = new FormData(form);
+      await request("fragen", {name:data.get("name"), frage:data.get("frage")});
+      form.reset();
+      submitStatus.textContent = "Danke! Deine Frage wurde übermittelt und wird nach meiner Antwort veröffentlicht.";
+    } catch (err) { submitStatus.textContent = "Senden fehlgeschlagen: " + err.message; }
+    finally { button.disabled = false; }
+  });
+  async function loadAdmin(code) {
+    const result = await request("admin-liste", {code});
+    adminList.replaceChildren();
+    if (!result.fragen.length) adminList.append(node("p", "Noch keine Fragen vorhanden."));
+    result.fragen.forEach(q => {
+      const item = node("article", undefined, "qa-item qa-admin-item");
+      item.append(node("h3", q.frage), node("small", "Von " + q.name + " · " + q.status));
+      const answer = node("textarea");
+      answer.setAttribute("aria-label", "Antwort auf die Frage von " + q.name);
+      answer.maxLength = 5000;
+      answer.value = q.antwort || "";
+      const save = node("button", "Antwort veröffentlichen");
+      save.type = "button";
+      save.addEventListener("click", async () => {
+        save.disabled = true;
+        try {
+          const outcome = await request("antworten", {code:codeField.value, id:q.id, antwort:answer.value});
+          if (!outcome.erfolg) throw new Error("Frage nicht gefunden");
+          adminStatus.textContent = "Antwort veröffentlicht.";
+          await loadPublic();
+          await loadAdmin(codeField.value);
+        } catch (err) { adminStatus.textContent = "Fehler: " + err.message; }
+        finally { save.disabled = false; }
+      });
+      item.append(answer, save);
+      adminList.append(item);
+    });
+  }
+  adminForm.addEventListener("submit", async e => {
+    e.preventDefault();
+    adminStatus.textContent = "Fragen werden geladen …";
+    try { await loadAdmin(codeField.value); adminStatus.textContent = "Fragen geladen."; }
+    catch (err) { adminList.replaceChildren(); adminStatus.textContent = "Anmeldung fehlgeschlagen: " + err.message; }
+  });
+  loadPublic();
+})();
+</script>
+
 
    
 
