@@ -778,6 +778,50 @@
 .seo-guide-card span{display:block;margin-top:7px;font-size:.91rem;line-height:1.5}
 .seo-guide-all{display:inline-block;margin-top:20px;font-weight:750;color:#203d32}
 
+
+/* Persönlich genutzte Campingausrüstung – unabhängig von den bestehenden Gadgets */
+.tested-gear { margin: 38px 0 48px; padding: clamp(20px, 4vw, 38px); background: #f2f7f2; border: 1px solid #dce8df; border-radius: 20px; color: #18382e; }
+.tested-gear h2 { margin: 0 0 12px; font-size: clamp(1.5rem, 3vw, 2rem); }
+.tested-gear .gear-lead { max-width: 780px; line-height: 1.7; }
+.gear-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 24px 0; }
+.gear-card { padding: 22px; border: 1px solid #dbe6dc; border-radius: 16px; background: white; }
+.gear-symbol { display: inline-block; font-size: 2rem; margin-bottom: 10px; }
+.gear-card h3 { margin: 0 0 10px; font-size: 1.2rem; }
+.gear-card p, .gear-review p, .gear-review li { line-height: 1.7; }
+.gear-buy { display:inline-block; margin-top:10px; padding:11px 16px; border-radius:10px; background:#206547; color:#fff !important; text-decoration:none; font-weight:700; }
+.gear-buy:hover,.gear-buy:focus-visible {background:#174b35;}
+.gear-affiliate {font-size:.82rem;color:#496458;margin:8px 0 0;}
+.gear-extra {margin-top:16px;}
+.gear-review { padding: 22px; border-radius: 16px; background: #fff; }
+.gear-review h3 { margin-top: 0; }
+.gear-note { font-size: .9rem; color: #496458; }
+.gear-details { margin-top: 18px; border-top: 1px solid #dce8df; padding-top: 15px; }
+.gear-details summary { cursor: pointer; display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px; background: #206547; color: white; border-radius: 10px; font-weight: 700; list-style: none; }
+.gear-details summary::-webkit-details-marker { display: none; }
+.gear-details summary:hover, .gear-details summary:focus-visible { background: #174b35; }
+.gear-details[open] summary { margin-bottom: 18px; }
+.gear-details[open] summary span { transform: rotate(180deg); }
+.gear-details-content h4 { margin: 22px 0 8px; font-size: 1.08rem; }
+.gear-collapse { margin-top: 14px; padding: 11px 16px; background: white; border: 1px solid #206547; border-radius: 10px; color: #206547; font-weight: 700; cursor: pointer; }
+@media (max-width: 680px) { .gear-cards { grid-template-columns: 1fr; } .gear-card, .gear-review { padding: 18px; } }
+
+
+/* Vier Einhell-Produktkacheln mit echten bereitgestellten Bildern */
+.tested-gear {background:#f7faf8;}
+.tested-gear .gear-cards {grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;}
+.tested-gear .gear-card {display:flex;flex-direction:column;padding:15px;min-width:0;}
+.tested-gear .gear-product-img {display:block;width:100%;aspect-ratio:1/1;object-fit:contain;background:#fff;border-radius:10px;margin-bottom:12px;}
+.tested-gear .gear-card h3 {font-size:1.05rem;line-height:1.3;}
+.tested-gear .gear-card p {font-size:.9rem;line-height:1.5;}
+.tested-gear .gear-status {display:inline-block;align-self:flex-start;border-radius:30px;background:#dff3e2;color:#185d31;padding:5px 9px;font-size:.76rem;font-weight:700;margin-bottom:9px;}
+.tested-gear .gear-status.extra {background:#e3eefb;color:#24517b;}
+.tested-gear .gear-buy {margin-top:auto;text-align:center;background:#c51f22;}
+.tested-gear .gear-buy:hover,.tested-gear .gear-buy:focus-visible {background:#991619;}
+.tested-gear .gear-benefits {background:#e9f2fa;border:1px solid #c8dce9;border-radius:14px;padding:16px 20px;margin:16px 0;}
+.tested-gear .gear-benefits h3 {margin:0 0 8px;}
+.tested-gear .gear-benefits ul {margin:0;padding-left:22px;line-height:1.7;}
+@media(max-width:950px){.tested-gear .gear-cards{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:520px){.tested-gear .gear-cards{grid-template-columns:1fr 1fr;gap:9px}.tested-gear .gear-card{padding:10px}.tested-gear .gear-card h3{font-size:.94rem}.tested-gear .gear-card p{font-size:.82rem}.tested-gear .gear-buy{font-size:.8rem;padding:10px 6px}}
 </style>
 </head>
 
@@ -1423,6 +1467,68 @@
   </p>
 </section>
 
+
+<section id="persoenlich-getestet" class="tested-gear" aria-labelledby="gear-heading">
+  <h2 id="gear-heading">🔧 Persönlich genutzt &amp; empfohlen: Unsere Camping-Ausrüstung</h2>
+  <p class="gear-lead">Unser Einhell Akkuschrauber und Kompressor begleiten uns seit vier Jahren beim Camping. Beide funktionieren weiterhin einwandfrei. Ergänzend zeigen wir zwei weitere passende Geräte des Akkusystems – diese haben wir nicht selbst getestet.</p>
+  <div class="gear-cards">
+    <article class="gear-card">
+      <img class="gear-product-img" src="einhell-akkuschrauber.webp" alt="Einhell Akku-Bohrschrauber – vom Websiteinhaber bereitgestelltes Produktbild" loading="lazy" decoding="async" width="900" height="900">
+      <h3>Einhell Akku-Bohrschrauber</h3>
+      <span class="gear-status">Seit 4 Jahren im Einsatz</span>
+      <p>Für die Wohnwagenstützen mit geeignetem Adapter.</p>
+      <a class="gear-buy" href="https://link.amazon/B02X4RMXv" target="_blank" rel="sponsored nofollow noopener noreferrer" aria-label="Einhell Akku-Bohrschrauber bei Amazon ansehen – Werbelink">Bei Amazon ansehen ↗</a>
+    </article>
+    <article class="gear-card">
+      <img class="gear-product-img" src="einhell-kompressor.webp" alt="Einhell Akku-Kompressor – vom Websiteinhaber bereitgestelltes Produktbild" loading="lazy" decoding="async" width="900" height="900">
+      <h3>Einhell Akku-Kompressor</h3>
+      <span class="gear-status">Seit 4 Jahren im Einsatz</span>
+      <p>Für geeignete Reifen und aufblasbare Campingartikel.</p>
+      <a class="gear-buy" href="https://link.amazon/B0drT3MmS" target="_blank" rel="sponsored nofollow noopener noreferrer" aria-label="Einhell Akku-Kompressor bei Amazon ansehen – Werbelink">Bei Amazon ansehen ↗</a>
+    </article>
+    <article class="gear-card">
+      <img class="gear-product-img" src="einhell-staubsauger.webp" alt="Einhell Akku-Staubsauger – vom Websiteinhaber bereitgestelltes Produktbild" loading="lazy" decoding="async" width="900" height="900">
+      <h3>Einhell Akku-Staubsauger</h3>
+      <span class="gear-status extra">Weitere Möglichkeit</span>
+      <p>Für Sand, Staub und Krümel im Wohnwagen. Nicht selbst getestet.</p>
+      <a class="gear-buy" href="https://link.amazon/B0bZF9fBg" target="_blank" rel="sponsored nofollow noopener noreferrer" aria-label="Einhell Akku-Staubsauger bei Amazon ansehen – Werbelink">Bei Amazon ansehen ↗</a>
+    </article>
+    <article class="gear-card">
+      <img class="gear-product-img" src="einhell-laubblaeser.webp" alt="Einhell Akku-Laubbläser – vom Websiteinhaber bereitgestelltes Produktbild" loading="lazy" decoding="async" width="900" height="900">
+      <h3>Einhell Akku-Laubbläser</h3>
+      <span class="gear-status extra">Weitere Möglichkeit</span>
+      <p>Für trockenes Laub am Vorzelt. Nicht selbst getestet.</p>
+      <a class="gear-buy" href="https://link.amazon/B00Jz2a6D" target="_blank" rel="sponsored nofollow noopener noreferrer" aria-label="Einhell Akku-Laubbläser bei Amazon ansehen – Werbelink">Bei Amazon ansehen ↗</a>
+    </article>
+  </div>
+  <div class="gear-benefits"><h3>🔋 Ein Akkusystem – viele Vorteile</h3><ul><li>Ein kompatibler Power-X-Change-Akku für verschiedene Geräte</li><li>Platzsparend und flexibel im Wohnwagen</li><li>Preiswerte Einsteigergeräte: Unsere beiden Geräte funktionieren auch nach vier Jahren noch einwandfrei</li><li>Weitere passende Geräte: Staubsauger und Bläser</li></ul></div>
+  <p class="gear-affiliate"><strong>Werbung / Affiliate-Links:</strong> Bei qualifizierten Käufen über unsere Amazon-Links erhalten wir möglicherweise eine Provision. Für dich entstehen dadurch keine zusätzlichen Kosten.</p>
+  <article class="gear-review">
+    <h3>Einhell beim Camping: unsere Erfahrungen nach vier Jahren</h3>
+    <p>Seit vier Jahren begleiten uns ein Einhell Akku-Bohrschrauber und ein Akku-Kompressor auf unseren Campingreisen – beide funktionieren bis heute einwandfrei. Der Akkuschrauber erleichtert das Bedienen der Wohnwagenstützen, der Kompressor hilft bei geeigneten Reifen und aufblasbaren Freizeitartikeln. Besonders praktisch finden wir, dass unsere beiden Geräte denselben kompatiblen Power-X-Change-Akku nutzen. Und schon die preiswerten Einsteigergeräte haben sich bei uns bewährt.</p>
+    <details class="gear-details">
+      <summary>Mehr anzeigen – unseren vollständigen Erfahrungsbericht lesen <span aria-hidden="true">⌄</span></summary>
+      <div class="gear-details-content">
+        <h4>1. Akkuschrauber: schnellerer Wohnwagenaufbau</h4>
+        <p>Bei der Ankunft am Stellplatz gehört das Aus- und Eindrehen der Wohnwagenstützen zu den wiederkehrenden Handgriffen. Mit unserem Einhell Akku-Bohrschrauber und einem geeigneten Stützenadapter geht das komfortabler als das Kurbeln von Hand. Gerade bei mehreren Campingplatzwechseln ist diese Erleichterung für uns spürbar.</p>
+        <p><strong>Wichtig:</strong> Die Stützen dienen der Stabilisierung, nicht zum Anheben oder Ausnivellieren des Wohnwagens. Wir achten auf einen passenden Adapter, langsames Arbeiten und ein angemessenes Drehmoment.</p>
+        <h4>2. Akku-Kompressor: Reifen und Schwimmhilfen</h4>
+        <p>Auch der Einhell Akku-Kompressor gehört zu unserer Reiseausrüstung. Wir haben ihn selbst für geeignete Reifenanwendungen sowie für Schwimmhilfen und weitere passende Aufblasartikel verwendet. Besonders am Meer oder am See ist es angenehm, nicht für jede Kleinigkeit eine separate Pumpe suchen zu müssen.</p>
+        <p>Bei Reifen halten wir uns an die Druckvorgaben von Fahrzeug- und Reifenhersteller. Entscheidend ist ausserdem, dass das konkrete Kompressormodell den benötigten Druck und die passende Funktion bietet. Nicht jedes Modell eignet sich für jeden Wohnwagenreifen oder grossvolumige Aufblasartikel.</p>
+        <h4>3. Ein Akkusystem für mehrere Campinghelfer</h4>
+        <p>Der grösste Vorteil ist für uns das gemeinsame Einhell Power-X-Change-Akkusystem: Unsere beiden Geräte können mit demselben kompatiblen Akku betrieben werden. Das reduziert unterschiedliche Akkutypen und Ladegeräte im Wohnwagen. Der Akku wird einfach von einem Gerät zum anderen gewechselt.</p>
+        <p>Das System lässt sich ausserdem mit passenden <strong>Akku-Staubsaugern</strong> und <strong>Akku-Bläsern</strong> erweitern. Damit kann man Sand, Krümel und Staub im Wohnwagen entfernen oder trockenes Laub und Schmutz aus dem Vorzelt beseitigen – eine interessante Möglichkeit, um mit demselben Akkusystem auch die Campingunterkunft sauber zu halten. Diese zusätzlichen Geräte beschreiben wir als Erweiterungsmöglichkeit, nicht als von uns persönlich getestete Produkte.</p>
+        <h4>4. Günstige Einsteigergeräte und vier Jahre Praxiserfahrung</h4>
+        <p>Wir haben uns bewusst für preiswerte Einhell-Einsteigergeräte entschieden. Für unsere typischen Campingaufgaben mussten es keine teuren Profiwerkzeuge sein. Besonders erfreulich: <strong>Auch nach vier Jahren Nutzung funktionieren unser Akkuschrauber und unser Kompressor weiterhin einwandfrei.</strong> Das ist unsere persönliche Erfahrung, keine allgemeine Haltbarkeitsgarantie für alle Modelle.</p>
+        <h4>5. Grenzen und unser Fazit</h4>
+        <p>Ein Akku kann jeweils nur ein Gerät gleichzeitig versorgen und muss regelmässig geladen werden. Beim Akkuschrauber sind ein geeigneter Adapter und vorsichtige Bedienung wichtig; beim Kompressor müssen Leistung, Druckbereich und Aufsätze zum Einsatz passen.</p>
+        <p><strong>Unser Fazit:</strong> Die Kombination aus Akku-Bohrschrauber und Akku-Kompressor ist für uns eine praktische, bezahlbare Lösung beim Camping. Beide Geräte sind seit vier Jahren im Einsatz, wir nehmen sie weiterhin auf Reisen mit und schätzen besonders den gemeinsamen Akku. Wer das System erweitern möchte, findet auch passende Sauger und Bläser für Wohnwagen und Vorzelt.</p>
+        <p class="gear-note"><strong>Hinweis:</strong> Die verlinkten Amazon-Angebote wurden anhand der bereitgestellten Links eingebunden. Bitte vor dem Kauf genaue Modellbezeichnung, Akku-Kompatibilität und Lieferumfang prüfen. Alle vier Amazon-Buttons sind Werbe-/Affiliate-Links.</p>
+      </div>
+      <button type="button" class="gear-collapse" onclick="this.closest('details').open=false;document.getElementById('persoenlich-getestet').scrollIntoView({behavior:'smooth',block:'start'})">Weniger anzeigen ↑</button>
+    </details>
+  </article>
+</section>
 
   </main>
 
