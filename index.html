@@ -410,9 +410,21 @@
       object-fit: contain;
     }
 
-    .hero-content {
-      padding: 26px 7% 34px;
-      background: linear-gradient(115deg, #203d32, #52745c);
+    .hero-action {
+      padding: 12px 7%;
+      background: #203d32;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
 
     .hero-content h1 {
@@ -633,8 +645,8 @@
         padding: 0;
       }
 
-      .hero-content {
-        padding: 24px 6% 30px;
+      .hero-action {
+        padding: 12px 6%;
       }
 
       main {
@@ -788,9 +800,8 @@
 
   <section class="hero" aria-label="Camping-Kompass – Camping am Mittelmeer">
     <img class="hero-banner" src="camping-kompass-titelbild.webp" width="1671" height="941" fetchpriority="high" decoding="async" alt="Camping-Kompass: sonniger Campingplatz am Mittelmeer mit Strand, Wohnwagen KNAUS Südwind 580 QS Silver Edition und weissem Dodge Durango" />
-    <div class="hero-content">
-      <h1>Campingplätze entdecken – persönliche Erfahrungen &amp; Tipps</h1>
-      <p>Entdecke persönlich besuchte Campingplätze in der Schweiz, Deutschland, Italien und Spanien, hilfreiche Wohnwagen-Tipps und aktuelle Camping-News.</p>
+    <div class="hero-action">
+      <h1 class="visually-hidden">Campingplätze entdecken – persönliche Erfahrungen &amp; Tipps</h1>
       <a class="btn" href="#plaetze">Stellplätze entdecken →</a>
     </div>
   </section>
