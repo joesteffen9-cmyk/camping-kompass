@@ -709,6 +709,18 @@
 .qa-admin-item{margin-top:12px}.qa-admin-item textarea{margin:8px 0}.qa-admin-item button{display:block}
 [hidden]{display:none!important}
 
+
+/* SEO-Ratgeberverzeichnis – unabhängig von bestehenden Skripten */
+.seo-guide-section{margin:42px 0;padding:26px 22px;background:#edf4eb;border:1px solid #dce7dc;border-radius:14px}
+.seo-guide-section h2{margin:0 0 10px;color:#203d32}
+.seo-guide-section>p{max-width:850px;margin:0 0 20px}
+.seo-guide-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.seo-guide-card{display:block;padding:17px;background:#fff;border:1px solid #dfe5df;border-radius:11px;color:#24312a;text-decoration:none;box-shadow:0 3px 12px #203d3210}
+.seo-guide-card:hover,.seo-guide-card:focus-visible{border-color:#3f7651;box-shadow:0 5px 18px #203d3220}
+.seo-guide-card strong{display:block;color:#203d32;font-size:1.04rem;line-height:1.4}
+.seo-guide-card span{display:block;margin-top:7px;font-size:.91rem;line-height:1.5}
+.seo-guide-all{display:inline-block;margin-top:20px;font-weight:750;color:#203d32}
+
 </style>
 </head>
 
@@ -723,6 +735,7 @@
         <a href="#news">News</a>
         <a href="#produkte">Gadgets</a>
         <a href="#plaetze">Stellplätze</a>
+        <a href="#camping-ratgeber">Ratgeber</a>
         <a href="#instagram">Instagram</a>
       </div>
     </nav>
@@ -999,6 +1012,26 @@
   <p id="map-status" class="camping-map-note" role="status" aria-live="polite">Karte wird geladen …</p>
 <div id="map" role="region" aria-label="Interaktive Karte aller Campingplätze"></div>
   <small class="camping-map-note">Die Kartenmarkierungen zeigen den jeweiligen Ort bzw. das Campingareal näherungsweise. Vor Veröffentlichung sollten die exakten Zufahrtskoordinaten nochmals geprüft werden. Kartendaten © OpenStreetMap-Mitwirkende.</small>
+</section>
+
+
+<!-- Neue SEO-Links: keine Änderungen an Karte, Fragen-API oder News -->
+<section id="camping-ratgeber" class="seo-guide-section" aria-labelledby="seo-guide-heading">
+  <h2 id="seo-guide-heading">Campingplätze &amp; Reisetipps – unsere Erfahrungen</h2>
+  <p>Entdecke unsere Campingplatzberichte, regionale Campingziele und Tipps für deine nächste Reise mit dem Wohnwagen. Hier findest du die passenden Ratgeber zu den vorgestellten Plätzen.</p>
+  <div class="seo-guide-grid">
+    <a class="seo-guide-card" href="/campingplaetze/camping-muenstertal-erfahrungen/"><strong>Camping Münstertal – Erfahrungen</strong><span>Persönlicher Campingplatzbericht aus dem Schwarzwald.</span></a>
+    <a class="seo-guide-card" href="/campingplaetze/playa-montroig-erfahrungen/"><strong>Playa Montroig – Erfahrungen</strong><span>Camping an der spanischen Mittelmeerküste.</span></a>
+    <a class="seo-guide-card" href="/campingplaetze/camping-capalonga-erfahrungen/"><strong>Camping Capalonga – Erfahrungen</strong><span>Campingurlaub an der italienischen Adriaküste.</span></a>
+    <a class="seo-guide-card" href="/regionen/camping-schwarzwald/"><strong>Camping im Schwarzwald</strong><span>Ideen für Campingreisen in Süddeutschland.</span></a>
+    <a class="seo-guide-card" href="/regionen/camping-gardasee/"><strong>Camping am Gardasee</strong><span>Campingplätze und Reiseplanung rund um den Gardasee.</span></a>
+    <a class="seo-guide-card" href="/regionen/camping-tessin/"><strong>Camping im Tessin</strong><span>Camping-Inspiration für die Südschweiz.</span></a>
+    <a class="seo-guide-card" href="/regionen/camping-spanien/"><strong>Camping in Spanien</strong><span>Campingziele und Tipps für Spanien.</span></a>
+    <a class="seo-guide-card" href="/regionen/camping-italien/"><strong>Camping in Italien</strong><span>Campingziele und Tipps für Italien.</span></a>
+    <a class="seo-guide-card" href="/regionen/camping-schweiz/"><strong>Camping in der Schweiz</strong><span>Campingplätze und Regionen in der Schweiz.</span></a>
+    <a class="seo-guide-card" href="/ratgeber/camping-mit-wohnwagen/"><strong>Camping mit Wohnwagen</strong><span>Praktische Hinweise für Reisen mit dem Wohnwagen.</span></a>
+  </div>
+  <a class="seo-guide-all" href="/seo-camping/">Alle Camping-Ratgeber im Überblick →</a>
 </section>
 
 <section id="camping-fragen" class="qa-section" aria-labelledby="qa-heading">
