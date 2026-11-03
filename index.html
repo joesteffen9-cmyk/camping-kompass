@@ -822,6 +822,18 @@
 .tested-gear .gear-benefits ul {margin:0;padding-left:22px;line-height:1.7;}
 @media(max-width:950px){.tested-gear .gear-cards{grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media(max-width:520px){.tested-gear .gear-cards{grid-template-columns:1fr 1fr;gap:9px}.tested-gear .gear-card{padding:10px}.tested-gear .gear-card h3{font-size:.94rem}.tested-gear .gear-card p{font-size:.82rem}.tested-gear .gear-buy{font-size:.8rem;padding:10px 6px}}
+/* Kompakte Einhell-Produktkarten: kein vertikaler Leerraum um Bilder */
+.tested-gear .gear-cards { align-items:stretch; }
+.tested-gear .gear-card { justify-content:flex-start; gap:0; }
+.tested-gear .gear-product-img {
+  width:100%; height:170px; min-height:0; max-height:170px;
+  aspect-ratio:auto; object-fit:contain; object-position:center;
+  margin:0 0 12px; padding:0; background:transparent;
+}
+.tested-gear .gear-card h3 { margin-top:0; }
+@media (max-width:520px) {
+  .tested-gear .gear-product-img {height:135px;max-height:135px;margin-bottom:9px;}
+}
 </style>
 </head>
 
