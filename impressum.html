@@ -2,124 +2,279 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#203d32">
-  <title>Impressum – Camping-Kompass</title>
-  <meta name="description" content="Impressum und Kontakt von Camping-Kompass.info.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Impressum | Camping-Kompass</title>
+  <meta name="description"
+        content="Impressum und Kontaktangaben von Camping-Kompass für Website und Instagram.">
+
   <style>
     :root {
-      --green: #203d32;
-      --cream: #f7f5ef;
-      --ink: #24312a;
+      --green: #216b48;
+      --dark: #20342b;
+      --light: #f4f7f3;
+      --border: #dce6dc;
     }
-    * { box-sizing: border-box; }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
-      background: var(--cream);
-      color: var(--ink);
-      font: 16px/1.65 system-ui, sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--light);
+      color: #27332c;
+      line-height: 1.75;
     }
-    header, footer {
+
+    header {
       background: var(--green);
       color: white;
-      padding: 20px max(6%, calc((100% - 900px)/2));
+      padding: 30px 20px;
+      text-align: center;
     }
-    header a, footer a { color: white; }
+
+    header h1 {
+      margin: 0;
+      font-size: 32px;
+    }
+
+    header p {
+      margin: 8px 0 0;
+    }
+
     main {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 32px 22px 55px;
-    }
-    h1, h2 { color: var(--green); line-height: 1.25; }
-    .notice {
-      padding: 14px 16px;
+      max-width: 850px;
+      margin: 35px auto;
+      padding: 35px;
       background: white;
-      border-left: 4px solid #d9c99a;
-      border-radius: 6px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 5px 20px rgba(0,0,0,.04);
+    }
+
+    h2 {
+      color: var(--green);
+      font-size: 21px;
+      margin-top: 32px;
+      margin-bottom: 10px;
+    }
+
+    h2:first-child {
+      margin-top: 0;
+    }
+
+    a {
+      color: var(--green);
+      overflow-wrap: anywhere;
+    }
+
+    a:hover {
+      text-decoration: none;
+    }
+
+    .notice {
+      background: #eef5ee;
+      border-left: 4px solid var(--green);
+      padding: 16px;
+      border-radius: 5px;
+      margin: 22px 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px 15px;
+      font-size: 14px;
+      color: #526057;
+    }
+
+    footer a {
+      margin: 0 8px;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 26px;
+      }
+
+      main {
+        margin: 15px 10px;
+        padding: 22px;
+      }
     }
   </style>
 </head>
+
 <body>
-  <header>
-    <a href="./index.html">← Zurück zu Camping-Kompass</a>
-  </header>
 
-  <main>
-    <h1>Impressum</h1>
+<header>
+  <h1>Impressum</h1>
+  <p>Camping-Kompass – Campingplätze, Reisen und Erfahrungen</p>
+</header>
 
-    <p class="notice">
-      Bitte prüfe vor der Veröffentlichung, ob alle Angaben
-      vollständig sind und die gesetzlichen Anforderungen erfüllen.
-    </p>
+<main>
 
-    <h2>Verantwortlich für diese Website</h2>
-    <p>
-      Johannes Steffen<br>
-      Edelmannstrasse 296<br>
-      8195 Wasterkingen<br>
-      Schweiz
-    </p>
+  <div class="notice">
+    Dieses Impressum gilt für die Website
+    <strong>camping-kompass.info</strong>
+    sowie den dazugehörigen offiziellen
+    Instagram-Auftritt von Camping-Kompass.
+  </div>
 
-    <h2>Kontakt</h2>
-    <p>
-      E-Mail:
-      <a href="mailto:info@camping-kompass.info">
-        info@camping-kompass.info
-      </a>
-    </p>
+  <h2>Verantwortlich für die Inhalte</h2>
+  <p>
+    Johannes Steffen<br>
+    Edelmannstrasse 296<br>
+    8195 Wasterkingen<br>
+    Schweiz
+  </p>
 
-    <h2>Inhalte und Angaben</h2>
-    <p>
-      Die Inhalte dieser Website werden mit Sorgfalt erstellt.
-      Dennoch kann keine Gewähr für die Richtigkeit,
-      Vollständigkeit und Aktualität sämtlicher Angaben
-      übernommen werden. Insbesondere Informationen zu
-      Campingplätzen, Ausstattung, Preisen, Öffnungszeiten
-      und Verfügbarkeit können sich ändern. Bitte prüfe
-      solche Angaben direkt beim jeweiligen Anbieter.
-    </p>
+  <h2>Kontakt</h2>
+  <p>
+    E-Mail:
+    <a href="mailto:info@camping-kompass.info">
+      info@camping-kompass.info
+    </a><br>
 
-    <h2>Externe Links</h2>
-    <p>
-      Diese Website enthält Links zu externen Websites Dritter.
-      Auf deren Inhalte und Datenschutzpraktiken haben wir
-      keinen Einfluss. Für die Inhalte der verlinkten Seiten
-      sind die jeweiligen Anbieter oder Betreiber verantwortlich.
-    </p>
+    Website:
+    <a href="https://camping-kompass.info">
+      camping-kompass.info
+    </a>
+  </p>
 
-    <h2>Werbung und Affiliate-Links</h2>
-    <p>
-      Camping-Kompass.info plant, künftig Werbung und
-      Affiliate-Links einzusetzen. Wenn du über einen
-      entsprechend gekennzeichneten Affiliate-Link einen
-      Einkauf tätigst, kann eine Provision anfallen.
-      Für dich entstehen dadurch grundsätzlich keine
-      zusätzlichen Kosten.
-    </p>
-    <p>
-      Werbung und Affiliate-Links werden bei ihrer Verwendung
-      klar und verständlich gekennzeichnet. Zum Zeitpunkt
-      der Erstellung dieses Textes sind solche Links nach
-      Betreiberangabe geplant, aber noch nicht aktiv.
-      Sobald konkrete Partnerprogramme eingesetzt werden,
-      werden die erforderlichen Angaben ergänzt.
-    </p>
+  <h2>Redaktionelle Verantwortung</h2>
+  <p>
+    Johannes Steffen<br>
+    Edelmannstrasse 296<br>
+    8195 Wasterkingen<br>
+    Schweiz
+  </p>
 
-    <h2>Urheberrecht</h2>
-    <p>
-      Die auf dieser Website veröffentlichten Inhalte
-      unterliegen den jeweils geltenden urheberrechtlichen
-      Bestimmungen. Inhalte Dritter bleiben Eigentum der
-      jeweiligen Rechteinhaber.
-    </p>
+  <h2>Inhalte und Haftung</h2>
+  <p>
+    Die Inhalte von Camping-Kompass werden mit
+    grösstmöglicher Sorgfalt erstellt und
+    regelmässig überprüft.
+  </p>
 
-    <p><small>Stand: Oktober 2026</small></p>
-  </main>
+  <p>
+    Dennoch kann keine Gewähr für die Richtigkeit,
+    Vollständigkeit und Aktualität sämtlicher
+    Informationen übernommen werden.
+  </p>
 
-  <footer>
-    <a href="./index.html">Camping-Kompass</a> ·
-    <a href="./datenschutz.html">Datenschutzerklärung</a>
-  </footer>
+  <p>
+    Dies betrifft insbesondere Angaben zu
+    Campingplätzen, Ausstattungen, Preisen,
+    Öffnungszeiten, Verfügbarkeiten und
+    touristischen Angeboten.
+  </p>
+
+  <p>
+    Bitte überprüfe wichtige Informationen vor
+    einer Buchung oder Reise direkt beim
+    jeweiligen Anbieter. Gesetzlich zwingende
+    Haftungsbestimmungen bleiben unberührt.
+  </p>
+
+  <h2>Externe Links</h2>
+  <p>
+    Camping-Kompass enthält Verlinkungen zu
+    externen Websites und Angeboten Dritter.
+  </p>
+
+  <p>
+    Für deren Inhalte und Datenschutzpraktiken
+    sind die jeweiligen Anbieter verantwortlich.
+    Auf spätere Änderungen dieser Inhalte hat
+    Camping-Kompass grundsätzlich keinen Einfluss.
+  </p>
+
+  <p>
+    Bei Bekanntwerden rechtswidriger Inhalte
+    werden entsprechende Links geprüft und
+    gegebenenfalls entfernt.
+  </p>
+
+  <h2>Werbung, Kooperationen und Affiliate-Links</h2>
+  <p>
+    Camping-Kompass kann Werbung, bezahlte
+    Kooperationen, Produktempfehlungen und
+    sogenannte Affiliate-Links enthalten.
+  </p>
+
+  <p>
+    Bei einem Kauf oder einer Buchung über einen
+    Affiliate-Link kann Camping-Kompass eine
+    Provision erhalten. Für Besucher entstehen
+    dadurch in der Regel keine zusätzlichen Kosten.
+  </p>
+
+  <p>
+    Werbliche Inhalte und Affiliate-Links werden
+    entsprechend den geltenden gesetzlichen
+    Anforderungen gekennzeichnet.
+  </p>
+
+  <h2>Amazon-Partnerprogramm</h2>
+  <div class="notice">
+    Als Amazon-Partner verdiene ich an
+    qualifizierten Verkäufen.
+  </div>
+
+  <p>
+    Diese Hinweise gelten entsprechend auch für
+    werbliche Inhalte auf dem zugehörigen
+    Instagram-Auftritt.
+  </p>
+
+  <h2>Urheberrecht</h2>
+  <p>
+    Texte, Bilder, Grafiken und sonstige Inhalte
+    dieser Website unterliegen den jeweils
+    geltenden urheberrechtlichen Bestimmungen.
+  </p>
+
+  <p>
+    Eine Verwendung, Vervielfältigung oder
+    Weiterverbreitung geschützter Inhalte ist
+    nur im gesetzlich zulässigen Umfang oder
+    mit entsprechender Zustimmung der
+    Rechteinhaber gestattet.
+  </p>
+
+  <p>
+    Inhalte Dritter bleiben Eigentum der
+    jeweiligen Rechteinhaber.
+  </p>
+
+  <h2>Datenschutz</h2>
+  <p>
+    Informationen zur Verarbeitung
+    personenbezogener Daten, zum Einsatz von
+    Cookies und zu weiteren Datenschutzthemen
+    findest du in unserer
+    <a href="https://camping-kompass.info/datenschutz.html">
+      Datenschutzerklärung
+    </a>.
+  </p>
+
+  <p><small>Stand: November 2026</small></p>
+
+</main>
+
+<footer>
+  © 2026 Camping-Kompass<br>
+  <a href="https://camping-kompass.info/index.html">
+    Startseite
+  </a>
+  |
+  <a href="https://camping-kompass.info/datenschutz.html">
+    Datenschutz
+  </a>
+</footer>
+
 </body>
 </html>
