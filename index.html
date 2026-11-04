@@ -889,7 +889,7 @@ header{background:#fff;color:#183a2a;border-bottom:1px solid #e5eae3;position:re
 .logo,nav .links a{color:#173a2a!important}
 nav .links a:hover{color:#2c7850!important}
 .hero{background:#173a2a}
-.hero-banner{display:block;width:100%;height:clamp(260px,35vw,510px);object-fit:cover;object-position:center}
+.hero-banner{display:block;width:100%;height:auto;max-height:none;object-fit:contain;object-position:center}
 .hero-action{padding:24px clamp(20px,5vw,80px) 35px;max-width:1450px}
 .hero-action h1{font-size:clamp(30px,4.2vw,64px)}
 main{max-width:1380px;padding-top:20px}
@@ -908,6 +908,52 @@ main{max-width:1380px;padding-top:20px}
 .shop-logos{max-width:1380px;margin:18px auto}
 @media(min-width:900px){.map-feature{display:grid;grid-template-columns:minmax(0,2fr) minmax(260px,1fr);column-gap:20px}.map-feature>h2,.map-feature>p,.map-feature>#results,.map-feature>small{grid-column:1/-1}.map-feature .filters{grid-column:2;grid-row:3;align-content:start;display:flex;flex-direction:column}.map-feature #map{grid-column:1;grid-row:3;margin-top:0}.map-feature #map-status{grid-column:1/-1}.map-feature .filters>*{width:100%;flex:auto!important}}
 @media(max-width:600px){.hero-banner{height:auto;max-height:none;object-fit:contain}.map-feature{padding:14px}.map-feature #map{height:370px}.camping-top-picks{grid-template-columns:1fr}}
+</style><style>
+/* Such- und Filterfunktionen unterhalb der Karte, bewusst kompakt */
+.map-feature .filters {
+  display:flex !important;
+  flex-direction:row !important;
+  flex-wrap:wrap !important;
+  align-items:center !important;
+  gap:8px !important;
+  width:100% !important;
+  margin:12px 0 8px !important;
+  padding:0 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  grid-template-columns:none !important;
+}
+.map-feature .filters > input,
+.map-feature .filters > select,
+.map-feature .filters #search,
+.map-feature .filters #country-filter,
+.map-feature .filters #type {
+  display:block !important;
+  flex:0 1 auto !important;
+  width:auto !important;
+  min-width:0 !important;
+  max-width:100% !important;
+  min-height:34px !important;
+  height:34px !important;
+  padding:5px 9px !important;
+  margin:0 !important;
+  border:1px solid #d6dfd6 !important;
+  border-radius:7px !important;
+  background:#fff !important;
+  font-size:12px !important;
+  line-height:1.2 !important;
+  box-shadow:none !important;
+}
+.map-feature .filters #search { flex:1 1 180px !important; max-width:270px !important; }
+.map-feature .filters #country-filter { flex:0 1 145px !important; }
+.map-feature .filters #type { flex:0 1 175px !important; }
+@media(max-width:600px){
+  .map-feature .filters {gap:6px !important;}
+  .map-feature .filters #search {flex:1 1 100% !important;max-width:100% !important;}
+  .map-feature .filters #country-filter,
+  .map-feature .filters #type {flex:1 1 calc(50% - 6px) !important;width:calc(50% - 6px) !important;font-size:11px !important;}
+}
 </style></head>
 <body>
 <header>
@@ -941,9 +987,7 @@ main{max-width:1380px;padding-top:20px}
 </div>
 </div>
 </section>
-
 <main>
-
 <script>
 (() => {
   const list = document.getElementById("news-list");
@@ -1097,8 +1141,7 @@ main{max-width:1380px;padding-top:20px}
     });
 })();
 </script>
-
-<section class="map-feature" id="campingkarte"><h2>Campingplätze auf der Karte</h2><p>Entdecke alle Campingplätze auf einen Blick. Filtere nach Land oder Platztyp und öffne die Markierungen für weitere Informationen.</p><p>Die Karte zeigt weiterhin alle erfassten Campingplätze und Wohnmobilstellplätze – auch wenn die zusätzlichen Kacheln zunächst eingeklappt sind.</p><div class="filters">
+<section class="map-feature" id="campingkarte"><h2>Campingplätze auf der Karte</h2><p>Entdecke alle Campingplätze auf einen Blick. Filtere nach Land oder Platztyp und öffne die Markierungen für weitere Informationen.</p><p>Die Karte zeigt weiterhin alle erfassten Campingplätze und Wohnmobilstellplätze – auch wenn die zusätzlichen Kacheln zunächst eingeklappt sind.</p><div aria-label="Suchergebnisse der Campingplätze" aria-live="polite" class="grid" id="results"></div><p aria-live="polite" class="camping-map-note" id="map-status" role="status">Karte wird geladen …</p><div aria-label="Interaktive Karte aller Campingplätze" id="map" role="region"></div><div class="filters">
 <input aria-label="Stellplatz nach Ort oder Name suchen" id="search" placeholder="Ort oder Name suchen …" type="search"/>
 <select aria-label="Nach Land filtern" id="country-filter">
 <option value="alle">Alle Länder</option>
@@ -1108,7 +1151,7 @@ main{max-width:1380px;padding-top:20px}
 <option value="Wohnmobilstellplatz">Wohnmobilstellplätze</option>
 <option value="Campingplatz">Campingplätze</option>
 </select>
-</div><div aria-label="Suchergebnisse der Campingplätze" aria-live="polite" class="grid" id="results"></div><p aria-live="polite" class="camping-map-note" id="map-status" role="status">Karte wird geladen …</p><div aria-label="Interaktive Karte aller Campingplätze" id="map" role="region"></div><small class="camping-map-note">Die Kartenmarkierungen zeigen den jeweiligen Ort bzw. das Campingareal näherungsweise. Vor Veröffentlichung sollten die exakten Zufahrtskoordinaten nochmals geprüft werden. Kartendaten © OpenStreetMap-Mitwirkende.</small></section><section aria-labelledby="qa-heading" class="qa-section" id="camping-fragen">
+</div><small class="camping-map-note">Die Kartenmarkierungen zeigen den jeweiligen Ort bzw. das Campingareal näherungsweise. Vor Veröffentlichung sollten die exakten Zufahrtskoordinaten nochmals geprüft werden. Kartendaten © OpenStreetMap-Mitwirkende.</small></section><section aria-labelledby="qa-heading" class="qa-section" id="camping-fragen">
 <h2 id="qa-heading">Fragen zu unseren Campingplätzen</h2>
 <p>Du hast Fragen zu einem Campingplatz oder Stellplatz? Stelle sie hier. Ich beantworte sie persönlich. Fragen werden erst zusammen mit meiner Antwort veröffentlicht.</p>
 <form class="qa-form" id="qa-form">
@@ -1145,13 +1188,6 @@ main{max-width:1380px;padding-top:20px}
 <div class="country-grid" id="country-grid"></div>
 <div id="country-lists"></div>
 </div>
-
-
-
-
-
-
-
 </section><section aria-labelledby="shop-heading" class="shop-logos">
 <h2 id="shop-heading">Camping-Shops entdecken</h2>
 <div class="shop-logos-list">
@@ -1217,7 +1253,6 @@ main{max-width:1380px;padding-top:20px}
 </div>
 <a class="seo-guide-all" href="/seo-camping/">Alle Camping-Ratgeber im Überblick →</a>
 </section>
-
 <script>
 (() => {
   "use strict";
@@ -1565,12 +1600,12 @@ main{max-width:1380px;padding-top:20px}
     // Einzige Ausnahme: Union Lido Mare (tested:false).
     const places = [
       {name:"TCS Camping Sursee",town:"Sursee, Luzern",country:"Schweiz",code:"CH",type:"Campingplatz",lat:47.172,lon:8.107,description:"Camping am Sempachersee."},
-      {name:"Campofelice Camping Village",town:"Tenero, Tessin",country:"Schweiz",code:"CH",type:"Campingplatz",lat:46.173,lon:8.854,description:"Ferienanlage am Lago Maggiore.",url:"https://www.campofelice.ch/"},
-      {name:"TCS Camping Flaach am Rhein",town:"Flaach, Zürich",country:"Schweiz",code:"CH",type:"Campingplatz",lat:47.576,lon:8.607,description:"Camping am Rhein."},
+      {name:"Campofelice Camping Village",town:"Tenero, Tessin",country:"Schweiz",code:"CH",type:"Campingplatz",lat:46.173,lon:8.854,description:"Ferienanlage am Lago Maggiore.",url:"https://www.campofelice.ch/",image:"https://5227660.fs1.hubspotusercontent-na1.net/hub/5227660/hubfs/Social%20media%20-%20photos/Campofelice%20Camping%20Village-panoramica-2020_Web_mini.jpg?name=Campofelice+Camping+Village-panoramica-2020_Web_mini.jpg&width=2500",imageCredit:"Foto: Campofelice Camping Village",imageSource:"https://www.campofelice.ch/it/webcam"},
+      {name:"TCS Camping Flaach am Rhein",town:"Flaach, Zürich",country:"Schweiz",code:"CH",type:"Campingplatz",lat:47.576,lon:8.607,description:"Camping am Rhein.",image:"https://storage.googleapis.com/campingcare-websites/administration/2568/original-1718890216-2406_04-3869-HDR_by.davidbirri.jpg",imageCredit:"Foto: PiNCAMP / Campingplatz Flaach",imageSource:"https://www.pincamp.com/campings/tcs-camping-flaach-am-rhein"},
       {name:"TCS Camping Genève-Vésenaz / Pointe à la Bise",town:"Vésenaz, Genf",country:"Schweiz",code:"CH",type:"Campingplatz",lat:46.247,lon:6.202,description:"Camping direkt am Genfersee."},
-      {name:"Frutigresort",town:"Frutigen, Bern",country:"Schweiz",code:"CH",type:"Campingplatz",lat:46.587,lon:7.65,description:"Camping- und Ferienanlage im Berner Oberland.",url:"https://www.frutigresort.ch/"},
-      {name:"Alpencamping Nenzing",town:"Nenzing, Vorarlberg",country:"Österreich",code:"AT",type:"Campingplatz",lat:47.184,lon:9.71,description:"Alpencamping mit Wellnessangebot.",url:"https://www.alpencamping.at/"},
-      {name:"Camping Piani di Clodia",town:"Lazise, Gardasee",country:"Italien",code:"IT",type:"Campingplatz",lat:45.49,lon:10.72,description:"Ferienanlage am Gardasee.",url:"https://www.pianidiclodia.it/"},
+      {name:"Frutigresort",town:"Frutigen, Bern",country:"Schweiz",code:"CH",type:"Campingplatz",lat:46.587,lon:7.65,description:"Camping- und Ferienanlage im Berner Oberland.",url:"https://www.frutigresort.ch/",image:"https://images.squarespace-cdn.com/content/v1/5ae2265075f9ee72412e87ad/1704903289842-IVWP9G31PFF1G2SRBANC/Ansicht%2BNord_3.jpg",imageCredit:"Foto: Frutigresort / Betreiber-Website",imageSource:"https://www.frutigresort.ch/camping/unsere-campinganlage"},
+      {name:"Alpencamping Nenzing",town:"Nenzing, Vorarlberg",country:"Österreich",code:"AT",type:"Campingplatz",lat:47.184,lon:9.71,description:"Alpencamping mit Wellnessangebot.",url:"https://www.alpencamping.at/",image:"https://www.alpencamping.at/fileadmin/_processed_/5/2/csm_alpencamping-0515-3243_d482e49174.jpg",imageCredit:"Foto: Alpencamping Nenzing / Betreiber-Website",imageSource:"https://www.alpencamping.at/anreise/"},
+      {name:"Camping Piani di Clodia",town:"Lazise, Gardasee",country:"Italien",code:"IT",type:"Campingplatz",lat:45.49,lon:10.72,description:"Ferienanlage am Gardasee.",url:"https://www.pianidiclodia.it/",image:"https://clodia.hqcdn.it/media?f=2025%2F12%2F35347%2F1920x1080.jpg",imageCredit:"Foto: Piani di Clodia / Betreiber-Website",imageSource:"https://www.pianidiclodia.it/de/unterkunfte/camping/top/panorama"},
       {name:"Area Sosta Camper Parma",town:"Parma, Emilia-Romagna",country:"Italien",code:"IT",type:"Wohnmobilstellplatz",lat:44.801,lon:10.328,description:"Wohnmobil-Stellplatz in Parma."},
       {name:"Camping Le Rossane",town:"Italien",country:"Italien",code:"IT",type:"Campingplatz",lat:45.0,lon:10.5,description:"Campingplatz – genaue Ortskoordinate bitte noch verifizieren."},
       {name:"Camping Mare Monti",town:"Italien",country:"Italien",code:"IT",type:"Campingplatz",lat:44.27,lon:9.43,description:"Campingplatz – Lagepunkt vor Veröffentlichung prüfen."},
@@ -1579,7 +1614,7 @@ main{max-width:1380px;padding-top:20px}
       {name:"Alveare del Pinzi",town:"Italien",country:"Italien",code:"IT",type:"Wohnmobilstellplatz",lat:43.0,lon:12.0,description:"Wohnmobil-Stopp – genauer Standort bitte noch verifizieren."},
       {name:"Union Lido Mare",town:"Cavallino-Treporti, Venetien",country:"Italien",code:"IT",type:"Campingplatz",lat:45.474,lon:12.535,description:"Grosse 5-Sterne-Ferienanlage an der Adria.",url:"https://mare.unionlido.com/en/",tested:false},
       {name:"Camping Village Capalonga",town:"Bibione Pineda, Venetien",country:"Italien",code:"IT",type:"Campingplatz",lat:45.638,lon:13.018,description:"Deine Top-Empfehlung in Italien – zwischen Strand und Lagune.",url:"https://www.capalonga.com/de/",top:true,rating:"Top-Empfehlung",image:"https://www.capalonga.com/inc/scripts/source/www.capalonga.com/crp1920x1080-slide-homepage-1.jpg?v=1786111891.jpg",imageCredit:"Foto: Camping Village Capalonga (Betreiber-Website)",imageSource:"https://www.capalonga.com/de/galerie-foto.php"},
-      {name:"Camping Village Pino Mare",town:"Lignano Riviera, Friaul-Julisch Venetien",country:"Italien",code:"IT",type:"Campingplatz",lat:45.638,lon:13.105,description:"Camping-Feriendorf an der Adriaküste.",url:"https://www.campingpinomare.it/"},
+      {name:"Camping Village Pino Mare",town:"Lignano Riviera, Friaul-Julisch Venetien",country:"Italien",code:"IT",type:"Campingplatz",lat:45.638,lon:13.105,description:"Camping-Feriendorf an der Adriaküste.",url:"https://www.campingpinomare.it/",image:"https://api.campingpinomare.it/images/images/71485/villaggio_3580431e48aedf97dcedf972d1481942.webp",imageCredit:"Foto: Camping Village Pino Mare / Betreiber-Website",imageSource:"https://www.campingpinomare.it/en/deals/prenota-prima/"},
       {name:"Hegi Familien Camping",town:"Tengen, Baden-Württemberg",country:"Deutschland",code:"DE",type:"Campingplatz",lat:47.82,lon:8.67,description:"Familiencamping im Hegau."},
       {name:"Camping Münstertal",town:"Münstertal, Schwarzwald",country:"Deutschland",code:"DE",type:"Campingplatz",lat:47.859584,lon:7.763714,description:"Deine Top-Empfehlung in Deutschland. Persönliche Bewertung: sehr gut.",url:"https://www.camping-muenstertal.de/",top:true,rating:"Sehr gut",image:"https://mein.toubiz.de/api/v1/media/58748a97-98e6-4081-b504-f567e56d8839/view",imageCredit:"Foto: Schwarzwald Tourismus / mein.toubiz",imageSource:"https://www.schwarzwald-tourismus.info/unterkuenfte/camping-muenstertal-4a0d0e7088"},
       {name:"Camping Schwarzwälder Hof",town:"Seelbach, Schwarzwald",country:"Deutschland",code:"DE",type:"Campingplatz",lat:48.300278,lon:7.945,description:"Campingurlaub im Schwarzwald.",url:"https://www.spacamping.de/"},
@@ -1651,7 +1686,7 @@ main{max-width:1380px;padding-top:20px}
       const fallback = fallbackCampingImage(place);
       const hasPhoto = Boolean(place.image);
       const src = hasPhoto ? place.image : fallback;
-      return `<img class="${className || 'place-card-image'}" src="${escapeHTML(src)}" data-fallback="${escapeHTML(fallback)}" alt="${escapeHTML('Camping-Motiv: ' + place.name)}" loading="lazy" onerror="this.onerror=null;this.src=this.dataset.fallback;this.dataset.failed='true'">` +
+      return `<img class="${className || 'place-card-image'}" src="${escapeHTML(src)}" data-fallback="${escapeHTML(fallback)}" alt="${escapeHTML((hasPhoto ? 'Foto: ' : 'Illustration: ') + place.name)}" loading="lazy" onerror="this.onerror=null;this.src=this.dataset.fallback;this.dataset.failed='true'">` +
         (hasPhoto ? `<small class="photo-credit"><a href="${escapeHTML(place.imageSource || place.url || '#')}" target="_blank" rel="noopener noreferrer">${escapeHTML(place.imageCredit || 'Bildquelle öffnen')}</a></small>` : '<small class="image-fallback-note">Camping-Motiv · illustrative Ersatzgrafik</small>');
     }
 
