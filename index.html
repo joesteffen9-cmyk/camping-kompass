@@ -996,6 +996,102 @@ main{max-width:1380px;padding-top:20px}
 </div>
 </section>
 <main>
+
+<section class="map-feature" id="campingkarte"><h2>Campingplätze auf der Karte</h2><p>Entdecke alle Campingplätze auf einen Blick. Filtere nach Land oder Platztyp und öffne die Markierungen für weitere Informationen.</p><p>Die Karte zeigt weiterhin alle erfassten Campingplätze und Wohnmobilstellplätze – auch wenn die zusätzlichen Kacheln zunächst eingeklappt sind.</p><div aria-label="Suchergebnisse der Campingplätze" aria-live="polite" class="grid" id="results"></div><p aria-live="polite" class="camping-map-note" id="map-status" role="status">Karte wird geladen …</p><div aria-label="Interaktive Karte aller Campingplätze" id="map" role="region"></div><div class="filters">
+<input aria-label="Stellplatz nach Ort oder Name suchen" id="search" placeholder="Ort oder Name suchen …" type="search"/>
+<select aria-label="Nach Land filtern" id="country-filter">
+<option value="alle">Alle Länder</option>
+</select>
+<select aria-label="Platztyp filtern" id="type">
+<option value="alle">Alle Platztypen</option>
+<option value="Wohnmobilstellplatz">Wohnmobilstellplätze</option>
+<option value="Campingplatz">Campingplätze</option>
+</select>
+</div><small class="camping-map-note">Die Kartenmarkierungen zeigen den jeweiligen Ort bzw. das Campingareal näherungsweise. Vor Veröffentlichung sollten die exakten Zufahrtskoordinaten nochmals geprüft werden. Kartendaten © OpenStreetMap-Mitwirkende.</small></section><section aria-labelledby="qa-heading" class="qa-section" id="camping-fragen">
+<h2 id="qa-heading">Fragen zu unseren Campingplätzen</h2>
+<p>Du hast Fragen zu einem Campingplatz oder Stellplatz? Stelle sie hier. Ich beantworte sie persönlich. Fragen werden erst zusammen mit meiner Antwort veröffentlicht.</p>
+<form class="qa-form" id="qa-form">
+<label>Dein Name <input autocomplete="name" maxlength="100" name="name" required=""/></label>
+<label>Deine Frage <textarea maxlength="2000" name="frage" placeholder="Zu welchem Campingplatz möchtest du etwas wissen?" required=""></textarea></label>
+<button type="submit">Frage absenden</button>
+<p aria-live="polite" class="qa-status" id="qa-submit-status" role="status"></p>
+</form>
+<h3>Bereits beantwortete Fragen</h3>
+<div aria-live="polite" class="qa-list" id="qa-list"><p>Fragen werden geladen …</p></div>
+<button hidden="" id="qa-more" type="button">Mehr anzeigen</button>
+<details class="qa-admin" id="qa-admin">
+<summary>Administrator – Fragen beantworten</summary>
+<form class="qa-admin-login" id="qa-admin-login">
+<label>Administrator-Zahlencode <input autocomplete="off" id="qa-code" required="" type="password"/></label>
+<button type="submit">Fragen laden</button>
+</form>
+<p aria-live="polite" class="qa-status" id="qa-admin-status" role="status"></p>
+<div id="qa-admin-list"></div>
+</details>
+</section><section id="plaetze" style="margin-top: 55px">
+<h2>Campingplätze entdecken – persönlich erlebt</h2>
+<div class="camping-trust">
+<strong>🏕️ Persönlich ausgewählt, laufend erweitert – entdecke immer mehr Plätze!</strong>
+<p>Hier findest du zahlreiche Camping- und Stellplätze aus verschiedenen Ländern – und es kommen stetig neue hinzu. Die vorgestellten Plätze wurden vom Website-Inhaber persönlich besucht und getestet. Sie sind entweder besonders empfehlenswert oder bieten eine praktische Übernachtungsmöglichkeit in unmittelbarer Nähe zu Sehenswürdigkeiten, Ausflugszielen und weiteren interessanten Orten. Eine Ausnahme bildet Union Lido Mare in Italien: Dieser Platz wurde bisher noch nicht persönlich besucht und getestet.</p>
+</div>
+<h2>Unsere drei Empfehlungen</h2>
+<p class="camping-map-note">Zunächst siehst du je einen empfohlenen Campingplatz aus Deutschland, Spanien und Italien. Alle weiteren Länder und Plätze bleiben eingeklappt.</p>
+<div class="camping-top-picks" id="top-picks"></div>
+<button aria-expanded="false" class="more-button" id="all-places-toggle" type="button">Mehr anzeigen – alle Länder und Plätze</button>
+<div hidden="" id="all-places-extra">
+<h2>Alle Campingplätze nach Ländern</h2>
+<p>Wähle ein Land. Innerhalb jedes Landes werden zunächst drei Plätze angezeigt; mit „Mehr anzeigen“ kannst du die restlichen Plätze öffnen.</p>
+<div class="country-grid" id="country-grid"></div>
+<div id="country-lists"></div>
+</div>
+</section><section aria-labelledby="shop-heading" class="shop-logos">
+<h2 id="shop-heading">Camping-Shops entdecken</h2>
+<div class="shop-logos-list">
+<a aria-label="Obelink Camping-Shop öffnen" href="https://www.obelink.de/" rel="noopener noreferrer" target="_blank">
+<img alt="" height="48" src="https://www.google.com/s2/favicons?domain=obelink.de&amp;sz=128" width="48"/>
+<span>Obelink</span>
+</a>
+<a aria-label="Schlanser Camping-Shop öffnen" href="https://www.schlanser.ch/" rel="noopener noreferrer" target="_blank">
+<img alt="" height="48" src="https://www.google.com/s2/favicons?domain=schlanser.ch&amp;sz=128" width="48"/>
+<span>Schlanser</span>
+</a>
+<a aria-label="Camping Wagner Shop öffnen" href="https://www.campingwagner.de/" rel="noopener noreferrer" target="_blank">
+<img alt="" height="48" src="https://www.google.com/s2/favicons?domain=campingwagner.de&amp;sz=128" width="48"/>
+<span>Camping Wagner</span>
+</a>
+<a aria-label="Fritz Berger Camping-Shop öffnen" href="https://www.fritz-berger.de/" rel="noopener noreferrer" target="_blank">
+<img alt="" height="48" src="https://www.google.com/s2/favicons?domain=fritz-berger.de&amp;sz=128" width="48"/>
+<span>Fritz Berger</span>
+</a>
+<a aria-label="Amazon Deutschland öffnen" href="https://www.amazon.de/" rel="noopener noreferrer" target="_blank">
+<img alt="" height="48" src="https://www.google.com/s2/favicons?domain=amazon.de&amp;sz=128" width="48"/>
+<span>Amazon</span>
+</a>
+</div>
+</section><section id="news" style="margin-top: 40px">
+<h2>Aktuelle Camping-News</h2>
+<p>
+    Die neuesten Meldungen aus der Schweiz und Europa.
+    Alle Beiträge verlinken auf ihre Originalquellen.
+  </p>
+<div class="filters">
+<input aria-label="Camping-News suchen" id="news-search" placeholder="News suchen ..." type="search"/>
+<select aria-label="Region filtern" id="news-region">
+<option value="Alle">Alle Regionen</option>
+<option value="Schweiz">Schweiz</option>
+<option value="Europa">Europa</option>
+<option value="Allgemein">Allgemein</option>
+</select>
+</div>
+<p aria-live="polite" id="news-status">
+    Camping-News werden geladen ...
+  </p>
+<div class="grid" id="news-list"></div>
+<button class="btn" hidden="" id="news-more" type="button">
+    Weitere News laden
+  </button>
+</section>
+<!-- Camping-News: Skript nach den News-Elementen ausführen -->
 <script>
 (() => {
   const list = document.getElementById("news-list");
@@ -1149,100 +1245,6 @@ main{max-width:1380px;padding-top:20px}
     });
 })();
 </script>
-<section class="map-feature" id="campingkarte"><h2>Campingplätze auf der Karte</h2><p>Entdecke alle Campingplätze auf einen Blick. Filtere nach Land oder Platztyp und öffne die Markierungen für weitere Informationen.</p><p>Die Karte zeigt weiterhin alle erfassten Campingplätze und Wohnmobilstellplätze – auch wenn die zusätzlichen Kacheln zunächst eingeklappt sind.</p><div aria-label="Suchergebnisse der Campingplätze" aria-live="polite" class="grid" id="results"></div><p aria-live="polite" class="camping-map-note" id="map-status" role="status">Karte wird geladen …</p><div aria-label="Interaktive Karte aller Campingplätze" id="map" role="region"></div><div class="filters">
-<input aria-label="Stellplatz nach Ort oder Name suchen" id="search" placeholder="Ort oder Name suchen …" type="search"/>
-<select aria-label="Nach Land filtern" id="country-filter">
-<option value="alle">Alle Länder</option>
-</select>
-<select aria-label="Platztyp filtern" id="type">
-<option value="alle">Alle Platztypen</option>
-<option value="Wohnmobilstellplatz">Wohnmobilstellplätze</option>
-<option value="Campingplatz">Campingplätze</option>
-</select>
-</div><small class="camping-map-note">Die Kartenmarkierungen zeigen den jeweiligen Ort bzw. das Campingareal näherungsweise. Vor Veröffentlichung sollten die exakten Zufahrtskoordinaten nochmals geprüft werden. Kartendaten © OpenStreetMap-Mitwirkende.</small></section><section aria-labelledby="qa-heading" class="qa-section" id="camping-fragen">
-<h2 id="qa-heading">Fragen zu unseren Campingplätzen</h2>
-<p>Du hast Fragen zu einem Campingplatz oder Stellplatz? Stelle sie hier. Ich beantworte sie persönlich. Fragen werden erst zusammen mit meiner Antwort veröffentlicht.</p>
-<form class="qa-form" id="qa-form">
-<label>Dein Name <input autocomplete="name" maxlength="100" name="name" required=""/></label>
-<label>Deine Frage <textarea maxlength="2000" name="frage" placeholder="Zu welchem Campingplatz möchtest du etwas wissen?" required=""></textarea></label>
-<button type="submit">Frage absenden</button>
-<p aria-live="polite" class="qa-status" id="qa-submit-status" role="status"></p>
-</form>
-<h3>Bereits beantwortete Fragen</h3>
-<div aria-live="polite" class="qa-list" id="qa-list"><p>Fragen werden geladen …</p></div>
-<button hidden="" id="qa-more" type="button">Mehr anzeigen</button>
-<details class="qa-admin" id="qa-admin">
-<summary>Administrator – Fragen beantworten</summary>
-<form class="qa-admin-login" id="qa-admin-login">
-<label>Administrator-Zahlencode <input autocomplete="off" id="qa-code" required="" type="password"/></label>
-<button type="submit">Fragen laden</button>
-</form>
-<p aria-live="polite" class="qa-status" id="qa-admin-status" role="status"></p>
-<div id="qa-admin-list"></div>
-</details>
-</section><section id="plaetze" style="margin-top: 55px">
-<h2>Campingplätze entdecken – persönlich erlebt</h2>
-<div class="camping-trust">
-<strong>🏕️ Persönlich ausgewählt, laufend erweitert – entdecke immer mehr Plätze!</strong>
-<p>Hier findest du zahlreiche Camping- und Stellplätze aus verschiedenen Ländern – und es kommen stetig neue hinzu. Die vorgestellten Plätze wurden vom Website-Inhaber persönlich besucht und getestet. Sie sind entweder besonders empfehlenswert oder bieten eine praktische Übernachtungsmöglichkeit in unmittelbarer Nähe zu Sehenswürdigkeiten, Ausflugszielen und weiteren interessanten Orten. Eine Ausnahme bildet Union Lido Mare in Italien: Dieser Platz wurde bisher noch nicht persönlich besucht und getestet.</p>
-</div>
-<h2>Unsere drei Empfehlungen</h2>
-<p class="camping-map-note">Zunächst siehst du je einen empfohlenen Campingplatz aus Deutschland, Spanien und Italien. Alle weiteren Länder und Plätze bleiben eingeklappt.</p>
-<div class="camping-top-picks" id="top-picks"></div>
-<button aria-expanded="false" class="more-button" id="all-places-toggle" type="button">Mehr anzeigen – alle Länder und Plätze</button>
-<div hidden="" id="all-places-extra">
-<h2>Alle Campingplätze nach Ländern</h2>
-<p>Wähle ein Land. Innerhalb jedes Landes werden zunächst drei Plätze angezeigt; mit „Mehr anzeigen“ kannst du die restlichen Plätze öffnen.</p>
-<div class="country-grid" id="country-grid"></div>
-<div id="country-lists"></div>
-</div>
-</section><section aria-labelledby="shop-heading" class="shop-logos">
-<h2 id="shop-heading">Camping-Shops entdecken</h2>
-<div class="shop-logos-list">
-<a aria-label="Obelink Camping-Shop öffnen" href="https://www.obelink.de/" rel="noopener noreferrer" target="_blank">
-<img alt="" height="48" src="https://www.google.com/s2/favicons?domain=obelink.de&amp;sz=128" width="48"/>
-<span>Obelink</span>
-</a>
-<a aria-label="Schlanser Camping-Shop öffnen" href="https://www.schlanser.ch/" rel="noopener noreferrer" target="_blank">
-<img alt="" height="48" src="https://www.google.com/s2/favicons?domain=schlanser.ch&amp;sz=128" width="48"/>
-<span>Schlanser</span>
-</a>
-<a aria-label="Camping Wagner Shop öffnen" href="https://www.campingwagner.de/" rel="noopener noreferrer" target="_blank">
-<img alt="" height="48" src="https://www.google.com/s2/favicons?domain=campingwagner.de&amp;sz=128" width="48"/>
-<span>Camping Wagner</span>
-</a>
-<a aria-label="Fritz Berger Camping-Shop öffnen" href="https://www.fritz-berger.de/" rel="noopener noreferrer" target="_blank">
-<img alt="" height="48" src="https://www.google.com/s2/favicons?domain=fritz-berger.de&amp;sz=128" width="48"/>
-<span>Fritz Berger</span>
-</a>
-<a aria-label="Amazon Deutschland öffnen" href="https://www.amazon.de/" rel="noopener noreferrer" target="_blank">
-<img alt="" height="48" src="https://www.google.com/s2/favicons?domain=amazon.de&amp;sz=128" width="48"/>
-<span>Amazon</span>
-</a>
-</div>
-</section><section id="news" style="margin-top: 40px">
-<h2>Aktuelle Camping-News</h2>
-<p>
-    Die neuesten Meldungen aus der Schweiz und Europa.
-    Alle Beiträge verlinken auf ihre Originalquellen.
-  </p>
-<div class="filters">
-<input aria-label="Camping-News suchen" id="news-search" placeholder="News suchen ..." type="search"/>
-<select aria-label="Region filtern" id="news-region">
-<option value="Alle">Alle Regionen</option>
-<option value="Schweiz">Schweiz</option>
-<option value="Europa">Europa</option>
-<option value="Allgemein">Allgemein</option>
-</select>
-</div>
-<p aria-live="polite" id="news-status">
-    Camping-News werden geladen ...
-  </p>
-<div class="grid" id="news-list"></div>
-<button class="btn" hidden="" id="news-more" type="button">
-    Weitere News laden
-  </button>
-</section>
 <!-- Neue SEO-Links: keine Änderungen an Karte, Fragen-API oder News -->
 <section aria-labelledby="seo-guide-heading" class="seo-guide-section" id="camping-ratgeber">
 <h2 id="seo-guide-heading">Campingplätze &amp; Reisetipps – unsere Erfahrungen</h2>
