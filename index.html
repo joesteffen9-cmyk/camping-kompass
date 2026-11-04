@@ -954,7 +954,15 @@ main{max-width:1380px;padding-top:20px}
   .map-feature .filters #country-filter,
   .map-feature .filters #type {flex:1 1 calc(50% - 6px) !important;width:calc(50% - 6px) !important;font-size:11px !important;}
 }
-</style></head>
+</style><style>
+/* Campingkarte über die gesamte Inhaltsbreite; Suchfilter darunter. */
+.map-feature { display:block !important; }
+.map-feature #map { display:block !important; width:100% !important; max-width:none !important; margin:12px 0 0 !important; height:clamp(390px,49vw,660px) !important; }
+.map-feature .filters { position:static !important; display:flex !important; flex-direction:row !important; flex-wrap:wrap !important; justify-content:flex-start !important; align-items:center !important; width:100% !important; margin:12px 0 !important; }
+.map-feature .filters > * { width:auto !important; flex-grow:0 !important; }
+@media(max-width:600px) { .map-feature #map { height:410px !important; } }
+</style>
+</head>
 <body>
 <header>
 <nav aria-label="Hauptnavigation">
