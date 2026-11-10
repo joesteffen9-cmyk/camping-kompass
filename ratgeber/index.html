@@ -1,0 +1,981 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><base href="/"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="index, follow, max-image-preview:large"><meta name="theme-color" content="#173b2d"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"><title>Camping-Ratgeber | Camping-Kompass</title><meta name="description" content="Entdecke unsere vorhandenen Camping- und Regionen-Ratgeber."><link rel="canonical" href="https://camping-kompass.info/ratgeber/"><script async crossorigin="anonymous" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1619462119129871"></script><style>
+    
+.instagram-section {
+  margin-top: 50px;
+}
+
+.reels-intro {
+  max-width: 760px;
+  line-height: 1.6;
+}
+
+.reels-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.reel-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #dfe5df;
+  border-radius: 14px;
+  background: #fff;
+  color: #243127;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.reel-placeholder {
+  aspect-ratio: 9 / 16;
+  min-height: 230px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: #edf3e9;
+  color: #294c31;
+}
+ 
+.reel-placeholder span {
+  font-size: 36px;
+}
+
+.reel-placeholder p {
+  font-weight: 700;
+}
+
+.reel-placeholder small {
+  line-height: 1.5;
+}
+
+.reel-details {
+  padding: 15px;
+}
+
+.reel-details h3 {
+  margin-top: 0;
+  font-size: 1rem;
+}
+
+.product-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.product-links a {
+  display: inline-block;
+  padding: 9px 12px;
+  border-radius: 8px;
+  background: #e8f1e6;
+  color: #244a2b;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.reels-disclaimer {
+  margin: 20px 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 1000px) {
+  .reels-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .reels-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* Drei Affiliate-Gadgets unter den Instagram-Reels */
+.gadgets-section {
+  margin-top: 42px;
+}
+
+.gadgets-intro {
+  max-width: 760px;
+  line-height: 1.6;
+}
+
+.gadgets-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.gadget-card {
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid #dfe5df;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.gadget-image-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 150px;
+  padding: 12px;
+  background: #fff;
+}
+
+.gadget-image-wrap .gadget-fallback {
+  position: absolute;
+  font-size: 42px;
+}
+
+.gadget-image {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 170px;
+  object-fit: contain;
+}
+
+.gadget-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 15px;
+}
+
+.gadget-content h3 {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+  line-height: 1.3;
+}
+
+.gadget-content p {
+  margin: 0 0 14px;
+  font-size: 0.94rem;
+  line-height: 1.5;
+}
+
+.gadget-button {
+  display: block;
+  width: 100%;
+  margin-top: auto;
+  padding: 10px 8px;
+  border-radius: 8px;
+  background: #203d32;
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.gadget-button:hover,
+.gadget-button:focus-visible {
+  background: #365b49;
+}
+
+.gadgets-disclaimer {
+  margin-top: 14px;
+  color: #68736b;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+/* Drei Karten bleiben nebeneinander; auf kleinen Displays kompakter. */
+@media (max-width: 600px) {
+  .gadgets-grid {
+    gap: 8px;
+  }
+
+  .gadget-image-wrap {
+    min-height: 95px;
+    padding: 5px;
+  }
+
+  .gadget-image {
+    height: 100px;
+  }
+
+  .gadget-content {
+    padding: 9px;
+  }
+
+  .gadget-content h3 {
+    font-size: 0.85rem;
+  }
+
+  .gadget-content p {
+    font-size: 0.78rem;
+    line-height: 1.35;
+  }
+
+  .gadget-button {
+    padding: 8px 4px;
+    font-size: 0.75rem;
+  }
+}
+
+    /* Camping-Shops unter dem Titelbild */
+    .shop-logos {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 22px;
+    }
+
+    .shop-logos h2 {
+      margin: 0 0 16px;
+      text-align: center;
+      font-size: 20px;
+      color: #203d32;
+    }
+
+    .shop-logos-list {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      align-items: stretch;
+      gap: 16px;
+    }
+
+    .shop-logos-list a {
+      min-width: 0;
+      min-height: 100px;
+      padding: 14px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: #fff;
+      border: 1px solid #e0e5de;
+      border-radius: 12px;
+      color: #203d32;
+      text-align: center;
+      text-decoration: none;
+      font-weight: 700;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .shop-logos-list a:hover {
+      box-shadow: 0 4px 14px #203d321a;
+      transform: translateY(-2px);
+    }
+
+    .shop-logos-list img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+
+    @media (max-width: 700px) {
+      .shop-logos-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+    }
+
+    :root {
+      --green: #203d32;
+      --sand: #d9c99a;
+      --cream: #f7f5ef;
+      --ink: #24312a;
+      --muted: #68736b;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 20px;
+    }
+
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--ink);
+      font: 16px/1.6 system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    a {
+      overflow-wrap: anywhere;
+    }
+
+    header {
+      background: var(--green);
+      color: var(--white);
+      padding: 18px 6%;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      color: var(--white);
+      font-size: 22px;
+      font-weight: 850;
+      letter-spacing: 1px;
+      text-decoration: none;
+    }
+
+    nav .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+    }
+
+    nav .links a {
+      color: var(--white);
+      text-decoration: none;
+    }
+
+    nav .links a:hover,
+    nav .links a:focus-visible {
+      color: var(--sand);
+    }
+
+    .hero {
+      padding: 0;
+      background: #203d32;
+      color: var(--white);
+    }
+
+    .hero-banner {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .hero-action {
+      padding: 12px 7%;
+      background: #203d32;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .hero-content h1 {
+      font-size: clamp(24px, 3.3vw, 40px);
+      max-width: 1100px;
+    }
+
+    .hero-content p {
+      max-width: 900px;
+    }
+
+    .hero h1 {
+      max-width: 700px;
+      font-size: clamp(36px, 6vw, 64px);
+      line-height: 1.05;
+    }
+
+    .hero p {
+      max-width: 560px;
+      font-size: 19px;
+    }
+
+    .hero .tag {
+      color: #e8d9ad;
+    }
+
+    .btn {
+      display: inline-block;
+      background: var(--sand);
+      color: var(--green);
+      padding: 12px 18px;
+      border-radius: 7px;
+      text-decoration: none;
+      font-weight: 750;
+      transition: background 0.2s ease;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      background: #eadbb0;
+    }
+
+    /* News-Schaltfläche ausblenden, solange keine weiteren Meldungen da sind. */
+    #news-more {
+      margin-top: 18px;
+    }
+
+    #news-more[hidden] {
+      display: none;
+    }
+
+    main {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 38px 22px;
+    }
+
+    section h2 {
+      font-size: 29px;
+      line-height: 1.25;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      min-width: 0;
+      overflow: hidden;
+      background: var(--white);
+      border-radius: 13px;
+      box-shadow: 0 3px 14px #203d3210;
+    }
+
+    .card img {
+      width: 100%;
+      height: 175px;
+      object-fit: cover;
+    }
+
+    .pad {
+      padding: 16px;
+    }
+
+    .tag {
+      color: #607767;
+      font-size: 12px;
+      font-weight: 750;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .card h3 {
+      line-height: 1.35;
+    }
+
+    .card p {
+      overflow-wrap: anywhere;
+    }
+
+    .card .btn {
+      margin-top: 10px;
+    }
+
+    .filters {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 16px 0;
+    }
+
+    input,
+    select {
+      min-width: 0;
+      max-width: 100%;
+      padding: 12px;
+      border: 1px solid #c8cec8;
+      border-radius: 7px;
+      font: inherit;
+      background: var(--white);
+      color: var(--ink);
+    }
+
+    #search {
+      flex: 1 1 240px;
+    }
+
+    #type {
+      flex: 0 1 210px;
+    }
+
+    input:focus-visible,
+    select:focus-visible,
+    a:focus-visible {
+      outline: 3px solid #b59a51;
+      outline-offset: 3px;
+    }
+
+    #map {
+      display: block;
+      position: relative;
+      width: 100%;
+      height: 440px;
+      min-height: 330px;
+      margin-top: 20px;
+      border: 1px solid #dfe5df;
+      border-radius: 12px;
+      overflow: hidden;
+      z-index: 1;
+      background: #e6e8e1;
+    }
+    #map .map-fallback-frame { display:block; width:100%; height:100%; min-height:330px; border:0; }
+    .place-card-image { display:block; width:100%; height:150px; object-fit:cover; border-radius:7px; margin-bottom:7px; background:#e8eee7; }
+    .image-fallback-note { display:block; margin:-2px 0 7px; color:#68736b; font-size:.72rem; }
+
+    .place-link {
+      display: inline-block;
+      margin-top: 10px;
+      color: var(--green);
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .place-link:hover {
+      color: #55745f;
+    }
+
+    .empty-state {
+      padding: 18px;
+      background: var(--white);
+      border-radius: 10px;
+      grid-column: 1 / -1;
+    }
+
+    .note {
+      display: block;
+      margin-top: 12px;
+      color: var(--muted);
+    }
+
+    .instagram-section {
+      margin-top: 50px;
+    }
+
+    footer {
+      margin-top: 35px;
+      padding: 32px 7%;
+      background: var(--green);
+      color: var(--white);
+    }
+
+    footer small {
+      color: #e0e5df;
+    }
+
+    footer a {
+      color: var(--white);
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 16px 5%;
+      }
+
+      nav {
+        align-items: flex-start;
+      }
+
+      nav .links {
+        gap: 8px 12px;
+      }
+
+      .hero {
+        padding: 0;
+      }
+
+      .hero-action {
+        padding: 12px 6%;
+      }
+
+      main {
+        padding: 28px 16px;
+      }
+
+      section h2 {
+        font-size: 25px;
+      }
+
+      #map {
+        height: 360px;
+        min-height: 330px;
+      }
+
+      #type {
+        flex: 1 1 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        transition-duration: 0.01ms !important;
+      }
+    }
+  
+/* Camping-Kompass: Länderübersicht, persönliche Empfehlungen und Campingkarte */
+.camping-trust {
+  margin: 0 0 24px;
+  padding: 22px;
+  border: 1px solid #dce7dc;
+  border-left: 5px solid #3f7651;
+  border-radius: 12px;
+  background: #edf4eb;
+}
+.camping-trust strong { color: #203d32; }
+.camping-top-picks, .country-grid, .country-places {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+.country-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.camping-pick, .country-tile, .country-panel {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #dfe5df;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 3px 14px #203d3210;
+}
+.camping-pick img, .country-tile img {
+  display: block; width: 100%; height: 175px; object-fit: cover; background:#e8eee7;
+}
+.country-tile .image-fallback-note { padding:0 12px; }
+.camping-pick-content, .country-tile-content { padding: 14px; }
+.photo-credit { display:block; margin-top:7px; color:#68736b; font-size:.75rem; line-height:1.35; }
+.photo-credit a { color:#526b5b; }
+.country-tile:not(:has(img)) { background:linear-gradient(135deg,#e7efe7,#f6f3e9); }
+.country-tile:not(:has(img)) .country-tile-content { min-height:145px; display:flex; flex-direction:column; justify-content:center; }
+.camping-pick h3, .country-tile h3 { margin: 5px 0; line-height: 1.3; }
+.camping-pick p, .country-tile p { margin: 5px 0; }
+.country-tile { color: inherit; text-decoration: none; transition: transform .18s, box-shadow .18s; }
+.country-tile:hover { transform: translateY(-2px); box-shadow: 0 7px 18px #203d3220; }
+.country-tile .country-flag { font-size: 1.7rem; }
+.country-panel { margin: 20px 0; padding: 18px; }
+.country-panel > h3 { margin: 0 0 4px; color: #203d32; }
+.country-panel > p { margin: 0 0 12px; color: #68736b; }
+.country-places { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.country-place {
+  padding: 14px; border: 1px solid #e4e9e3; border-radius: 10px; background: #fbfcfa;
+}
+.place-card-image { width:100%; height:135px; object-fit:cover; border-radius:7px; margin-bottom:7px; }
+.country-place h4 { margin: 4px 0 6px; line-height: 1.3; }
+.country-place p { margin: 5px 0; font-size: .92rem; }
+.visited-label { display: inline-block; color: #28613a; background: #e7f3e8; border-radius: 20px; padding: 3px 8px; font-size: .76rem; font-weight: 750; }
+.not-tested-label { display: inline-block; color: #725b23; background: #f7f0d9; border-radius: 20px; padding: 3px 8px; font-size: .76rem; font-weight: 750; }
+.top-label { display: inline-block; color: #6b4c10; background: #f8edc9; border-radius: 20px; padding: 3px 8px; font-size: .76rem; font-weight: 750; }
+.more-button {
+  margin-top: 14px; padding: 10px 15px; border: 0; border-radius: 8px;
+  background: #203d32; color: #fff; font: inherit; font-weight: 700; cursor: pointer;
+}
+.more-button:hover { background: #365b49; }
+.country-place a { color: #203d32; font-weight: 700; }
+.camping-map-note { display:block; margin-top:10px; color:#68736b; font-size:.88rem; }
+@media (max-width: 850px) {
+  .country-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .camping-top-picks, .country-places { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .camping-top-picks, .country-places { grid-template-columns: 1fr; }
+  .country-panel { padding: 13px; }
+  .camping-pick img, .country-tile img { height: 165px; }
+}
+
+  
+/* Fragen und Antworten zu Campingplätzen */
+.qa-section{margin:38px 0 48px;padding:24px;background:#fff;border:1px solid #dfe5df;border-radius:14px}
+.qa-section h2{margin-top:0;color:#203d32}
+.qa-form{display:grid;gap:12px;max-width:720px}
+.qa-form label{display:grid;gap:5px;font-weight:650}
+.qa-form input,.qa-form textarea,.qa-admin input,.qa-admin textarea{width:100%;max-width:100%;padding:11px;border:1px solid #bbc9bd;border-radius:8px;font:inherit}
+.qa-form textarea,.qa-admin textarea{min-height:95px;resize:vertical}
+.qa-section button{background:#203d32;color:white;border:0;border-radius:8px;padding:10px 15px;font:inherit;font-weight:700;cursor:pointer}
+.qa-section button:hover{background:#365b49}.qa-section button:disabled{opacity:.55;cursor:wait}
+.qa-status{min-height:1.5em;color:#365b49}.qa-list{display:grid;gap:12px;margin:18px 0}
+.qa-item{border:1px solid #e0e9df;background:#f9fbf8;border-radius:10px;padding:16px;overflow-wrap:anywhere}
+.qa-item h3{font-size:1rem;margin:0 0 6px}.qa-item p{margin:5px 0}.qa-answer{border-left:3px solid #5e866a;padding-left:12px;margin-top:12px!important}
+.qa-admin{margin-top:24px;border-top:1px solid #e1e8e0;padding-top:16px}.qa-admin summary{cursor:pointer;font-weight:700;color:#203d32}
+.qa-admin-login{display:flex;flex-wrap:wrap;align-items:end;gap:10px;margin:12px 0}.qa-admin-login label{display:grid;gap:5px}
+.qa-admin-item{margin-top:12px}.qa-admin-item textarea{margin:8px 0}.qa-admin-item button{display:block}
+[hidden]{display:none!important}
+
+
+/* SEO-Ratgeberverzeichnis – unabhängig von bestehenden Skripten */
+.seo-guide-section{margin:42px 0;padding:26px 22px;background:#edf4eb;border:1px solid #dce7dc;border-radius:14px}
+.seo-guide-section h2{margin:0 0 10px;color:#203d32}
+.seo-guide-section>p{max-width:850px;margin:0 0 20px}
+.seo-guide-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.seo-guide-card{display:block;padding:17px;background:#fff;border:1px solid #dfe5df;border-radius:11px;color:#24312a;text-decoration:none;box-shadow:0 3px 12px #203d3210}
+.seo-guide-card:hover,.seo-guide-card:focus-visible{border-color:#3f7651;box-shadow:0 5px 18px #203d3220}
+.seo-guide-card strong{display:block;color:#203d32;font-size:1.04rem;line-height:1.4}
+.seo-guide-card span{display:block;margin-top:7px;font-size:.91rem;line-height:1.5}
+.seo-guide-all{display:inline-block;margin-top:20px;font-weight:750;color:#203d32}
+
+
+/* Persönlich genutzte Campingausrüstung – unabhängig von den bestehenden Gadgets */
+.tested-gear { margin: 38px 0 48px; padding: clamp(20px, 4vw, 38px); background: #f2f7f2; border: 1px solid #dce8df; border-radius: 20px; color: #18382e; }
+.tested-gear h2 { margin: 0 0 12px; font-size: clamp(1.5rem, 3vw, 2rem); }
+.tested-gear .gear-lead { max-width: 780px; line-height: 1.7; }
+.gear-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 24px 0; }
+.gear-card { padding: 22px; border: 1px solid #dbe6dc; border-radius: 16px; background: white; }
+.gear-symbol { display: inline-block; font-size: 2rem; margin-bottom: 10px; }
+.gear-card h3 { margin: 0 0 10px; font-size: 1.2rem; }
+.gear-card p, .gear-review p, .gear-review li { line-height: 1.7; }
+.gear-buy { display:inline-block; margin-top:10px; padding:11px 16px; border-radius:10px; background:#206547; color:#fff !important; text-decoration:none; font-weight:700; }
+.gear-buy:hover,.gear-buy:focus-visible {background:#174b35;}
+.gear-affiliate {font-size:.82rem;color:#496458;margin:8px 0 0;}
+.gear-extra {margin-top:16px;}
+.gear-review { padding: 22px; border-radius: 16px; background: #fff; }
+.gear-review h3 { margin-top: 0; }
+.gear-note { font-size: .9rem; color: #496458; }
+.gear-details { margin-top: 18px; border-top: 1px solid #dce8df; padding-top: 15px; }
+.gear-details summary { cursor: pointer; display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px; background: #206547; color: white; border-radius: 10px; font-weight: 700; list-style: none; }
+.gear-details summary::-webkit-details-marker { display: none; }
+.gear-details summary:hover, .gear-details summary:focus-visible { background: #174b35; }
+.gear-details[open] summary { margin-bottom: 18px; }
+.gear-details[open] summary span { transform: rotate(180deg); }
+.gear-details-content h4 { margin: 22px 0 8px; font-size: 1.08rem; }
+.gear-collapse { margin-top: 14px; padding: 11px 16px; background: white; border: 1px solid #206547; border-radius: 10px; color: #206547; font-weight: 700; cursor: pointer; }
+@media (max-width: 680px) { .gear-cards { grid-template-columns: 1fr; } .gear-card, .gear-review { padding: 18px; } }
+
+
+/* Vier Einhell-Produktkacheln mit echten bereitgestellten Bildern */
+.tested-gear {background:#f7faf8;}
+.tested-gear .gear-cards {grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;}
+.tested-gear .gear-card {display:flex;flex-direction:column;padding:15px;min-width:0;}
+.tested-gear .gear-product-img {display:block;width:100%;aspect-ratio:1/1;object-fit:contain;background:#fff;border-radius:10px;margin-bottom:12px;}
+.tested-gear .gear-card h3 {font-size:1.05rem;line-height:1.3;}
+.tested-gear .gear-card p {font-size:.9rem;line-height:1.5;}
+.tested-gear .gear-status {display:inline-block;align-self:flex-start;border-radius:30px;background:#dff3e2;color:#185d31;padding:5px 9px;font-size:.76rem;font-weight:700;margin-bottom:9px;}
+.tested-gear .gear-status.extra {background:#e3eefb;color:#24517b;}
+.tested-gear .gear-buy {margin-top:auto;text-align:center;background:#c51f22;}
+.tested-gear .gear-buy:hover,.tested-gear .gear-buy:focus-visible {background:#991619;}
+.tested-gear .gear-benefits {background:#e9f2fa;border:1px solid #c8dce9;border-radius:14px;padding:16px 20px;margin:16px 0;}
+.tested-gear .gear-benefits h3 {margin:0 0 8px;}
+.tested-gear .gear-benefits ul {margin:0;padding-left:22px;line-height:1.7;}
+@media(max-width:950px){.tested-gear .gear-cards{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:520px){.tested-gear .gear-cards{grid-template-columns:1fr 1fr;gap:9px}.tested-gear .gear-card{padding:10px}.tested-gear .gear-card h3{font-size:.94rem}.tested-gear .gear-card p{font-size:.82rem}.tested-gear .gear-buy{font-size:.8rem;padding:10px 6px}}
+/* Kompakte Einhell-Produktkarten: kein vertikaler Leerraum um Bilder */
+.tested-gear .gear-cards { align-items:stretch; }
+.tested-gear .gear-card { justify-content:flex-start; gap:0; }
+.tested-gear .gear-product-img {
+  width:100%; height:170px; min-height:0; max-height:170px;
+  aspect-ratio:auto; object-fit:contain; object-position:center;
+  margin:0 0 12px; padding:0; background:transparent;
+}
+.tested-gear .gear-card h3 { margin-top:0; }
+@media (max-width:520px) {
+  .tested-gear .gear-product-img {height:135px;max-height:135px;margin-bottom:9px;}
+}
+
+/* ===== CAMPING-KOMPASS REDESIGN: minimalposter / hero / cleanflyer ===== */
+:root { --green:#183b30; --sand:#e7d8b4; --cream:#faf9f5; --ink:#172a22; --muted:#62736a; }
+body { background:var(--cream); color:var(--ink); letter-spacing:-.01em; }
+header { position:relative; z-index:10; padding:15px max(5%, calc((100vw - 1300px)/2)); background:#15392f; }
+nav { max-width:1300px; margin:auto; }
+.logo { font-size:clamp(17px,2vw,23px); font-weight:850; letter-spacing:.055em; }
+nav .links { gap:clamp(12px,2vw,28px); }
+nav .links a { font-size:14px; font-weight:650; opacity:.93; }
+.hero { background:#15392f; }
+.hero-banner { width:100%; max-height:640px; object-fit:cover; object-position:center; }
+.hero-action { max-width:1450px; margin:auto; padding:clamp(35px,6vw,90px) clamp(22px,6vw,90px) clamp(35px,5vw,65px); display:flex; align-items:flex-end; justify-content:space-between; gap:25px; }
+.hero-editorial { max-width:780px; }
+.hero-eyebrow { color:#d7c79c; font-size:12px; letter-spacing:.22em; font-weight:800; }
+.hero-action h1 { margin:17px 0 22px; font-size:clamp(40px,6.5vw,90px); line-height:1.04; letter-spacing:-.055em; font-weight:800; max-width:900px; }
+.hero-action h1 em { font-style:normal; color:#e7d8b4; }
+.hero-action p { max-width:610px; margin:0 0 28px; font-size:clamp(16px,1.5vw,20px); line-height:1.65; color:#e3ece5; }
+.hero-buttons { display:flex; align-items:center; flex-wrap:wrap; gap:20px; }
+.hero-buttons .btn { padding:15px 23px; border-radius:100px; }
+.hero-secondary { color:white; font-weight:700; text-decoration:none; border-bottom:1px solid #a9bcb0; padding:10px 0; }
+.hero-secondary:hover { color:var(--sand); }
+.hero-aside { display:flex; flex-direction:column; gap:12px; min-width:185px; color:#b6cbbd; font-size:10px; letter-spacing:.14em; font-weight:750; }
+.shop-logos { padding-top:35px; padding-bottom:35px; }
+.shop-logos h2 { text-align:left; font-size:13px; text-transform:uppercase; letter-spacing:.14em; margin-bottom:19px; }
+.shop-logos-list a { border:1px solid #e9e8e0; border-radius:15px; box-shadow:none; background:#fff; }
+main { max-width:1260px; padding:40px 24px 75px; }
+main > section { scroll-margin-top:28px; }
+section h2 { font-size:clamp(28px,3.2vw,43px); line-height:1.15; letter-spacing:-.045em; color:#183b30; margin-bottom:15px; }
+.card,.camping-pick,.country-tile,.country-panel,.gadget-card,.reel-card { border:1px solid #e9e9e3; border-radius:18px; box-shadow:0 7px 28px #183b300b; }
+.camping-top-picks { gap:22px; margin:26px 0; }
+.camping-pick img { height:235px; }
+.camping-pick-content { padding:22px; }
+.camping-pick h3 { font-size:clamp(19px,2vw,25px); letter-spacing:-.035em; }
+.camping-trust { background:#f0f4ed; border:1px solid #dce7dc; border-radius:18px; padding:24px 28px; }
+.camping-trust strong { font-size:18px; }
+.more-button,.qa-section button,.btn { border-radius:999px; }
+#map { height:510px; border-radius:19px; box-shadow:0 12px 30px #183b3014; }
+.filters input,.filters select { border-radius:12px; border-color:#dfe6dd; background:#fff; }
+.seo-guide-section,.qa-section,.tested-gear { border-radius:22px; padding:clamp(22px,4vw,42px); }
+.seo-guide-section { background:#f1f4ec; }
+.seo-guide-card { border-radius:15px; padding:20px; }
+footer { padding:42px 7%; }
+@media(max-width:850px) { .hero-aside { display:none; } .hero-banner { max-height:480px; } .hero-action { padding:38px 24px 46px; } }
+@media(max-width:600px) { header { padding:14px 5%; } nav .links { gap:10px 15px; } nav .links a { font-size:13px; } .hero-banner { height:auto; max-height:none; object-fit:contain; } .hero-action h1 { font-size:clamp(39px,11vw,59px); } .hero-action p { font-size:16px; } .hero-buttons { gap:12px; } .hero-secondary { font-size:14px; } .camping-pick img { height:205px; } #map { height:370px; } main { padding:24px 15px 55px; } }
+
+
+/* Kompakte Camping-Shops: Kachelflaeche auf maximal ca. ein Viertel reduziert */
+.shop-logos { padding: 12px 22px 16px; }
+.shop-logos h2 { margin: 0 0 9px; font-size: 12px; }
+.shop-logos-list { max-width: 750px; margin: 0 auto; gap: 8px; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.shop-logos-list a { min-height: 48px; padding: 5px 4px; gap: 3px; border-radius: 8px; font-size: 11px; line-height: 1.15; }
+.shop-logos-list img { width: 20px; height: 20px; }
+@media (max-width: 700px) {
+  .shop-logos-list { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; }
+  .shop-logos-list a { min-height: 44px; padding: 4px 2px; font-size: 9px; }
+  .shop-logos-list img { width: 18px; height: 18px; }
+}
+</style>
+<style>
+/* Layout nach der freigegebenen Bildvorlage, ursprüngliches Titelbild bleibt erhalten */
+header{background:#fff;color:#183a2a;border-bottom:1px solid #e5eae3;position:relative;z-index:5}
+.logo,nav .links a{color:#173a2a!important}
+nav .links a:hover{color:#2c7850!important}
+.hero{background:#173a2a}
+.hero-banner{display:block;width:100%;height:auto;max-height:none;object-fit:contain;object-position:center}
+.hero-action{padding:24px clamp(20px,5vw,80px) 35px;max-width:1450px}
+.hero-action h1{font-size:clamp(30px,4.2vw,64px)}
+main{max-width:1380px;padding-top:20px}
+.map-feature{margin:0 0 18px;padding:clamp(15px,2vw,26px);border:1px solid #d9e3d9;background:#fff;border-radius:18px;box-shadow:0 10px 30px #1b402014}
+.map-feature>h2{margin:0;color:#173a2a;font-size:clamp(24px,3vw,34px)}
+.map-feature>p{margin:6px 0 12px}
+.map-feature .filters{margin:12px 0}
+.map-feature #map{height:clamp(350px,43vw,550px);margin-top:12px;border-radius:13px}
+.map-feature #results{margin-top:14px}
+.qa-section{margin:18px 0 24px;border-radius:18px;box-shadow:0 6px 24px #173a2a0b}
+#plaetze{margin-top:24px!important}
+#plaetze>h2:first-child{font-size:clamp(28px,3.6vw,42px);letter-spacing:-.035em}
+.camping-top-picks{gap:18px}
+.camping-pick{border-radius:15px;box-shadow:0 6px 20px #173a2a14}
+.camping-pick img{height:205px}
+.shop-logos{max-width:1380px;margin:18px auto}
+@media(min-width:900px){.map-feature{display:grid;grid-template-columns:minmax(0,2fr) minmax(260px,1fr);column-gap:20px}.map-feature>h2,.map-feature>p,.map-feature>#results,.map-feature>small{grid-column:1/-1}.map-feature .filters{grid-column:2;grid-row:3;align-content:start;display:flex;flex-direction:column}.map-feature #map{grid-column:1;grid-row:3;margin-top:0}.map-feature #map-status{grid-column:1/-1}.map-feature .filters>*{width:100%;flex:auto!important}}
+@media(max-width:600px){.hero-banner{height:auto;max-height:none;object-fit:contain}.map-feature{padding:14px}.map-feature #map{height:370px}.camping-top-picks{grid-template-columns:1fr}}
+</style>
+<style>
+/* Such- und Filterfunktionen unterhalb der Karte, bewusst kompakt */
+.map-feature .filters {
+  display:flex !important;
+  flex-direction:row !important;
+  flex-wrap:wrap !important;
+  align-items:center !important;
+  gap:8px !important;
+  width:100% !important;
+  margin:12px 0 8px !important;
+  padding:0 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  grid-template-columns:none !important;
+}
+.map-feature .filters > input,
+.map-feature .filters > select,
+.map-feature .filters #search,
+.map-feature .filters #country-filter,
+.map-feature .filters #type {
+  display:block !important;
+  flex:0 1 auto !important;
+  width:auto !important;
+  min-width:0 !important;
+  max-width:100% !important;
+  min-height:34px !important;
+  height:34px !important;
+  padding:5px 9px !important;
+  margin:0 !important;
+  border:1px solid #d6dfd6 !important;
+  border-radius:7px !important;
+  background:#fff !important;
+  font-size:12px !important;
+  line-height:1.2 !important;
+  box-shadow:none !important;
+}
+.map-feature .filters #search { flex:1 1 180px !important; max-width:270px !important; }
+.map-feature .filters #country-filter { flex:0 1 145px !important; }
+.map-feature .filters #type { flex:0 1 175px !important; }
+@media(max-width:600px){
+  .map-feature .filters {gap:6px !important;}
+  .map-feature .filters #search {flex:1 1 100% !important;max-width:100% !important;}
+  .map-feature .filters #country-filter,
+  .map-feature .filters #type {flex:1 1 calc(50% - 6px) !important;width:calc(50% - 6px) !important;font-size:11px !important;}
+}
+</style>
+<style>
+/* Campingkarte über die gesamte Inhaltsbreite; Suchfilter darunter. */
+.map-feature { display:block !important; }
+.map-feature #map { display:block !important; width:100% !important; max-width:none !important; margin:12px 0 0 !important; height:clamp(390px,49vw,660px) !important; }
+.map-feature .filters { position:static !important; display:flex !important; flex-direction:row !important; flex-wrap:wrap !important; justify-content:flex-start !important; align-items:center !important; width:100% !important; margin:12px 0 !important; }
+.map-feature .filters > * { width:auto !important; flex-grow:0 !important; }
+@media(max-width:600px) { .map-feature #map { height:410px !important; } }
+</style>
+<style>
+/* Reisebericht Playa Montroig – eingebettet, unabhängig von bestehenden Funktionen */
+.reise-teaser{display:grid;grid-template-columns: minmax(180px,30%) 1fr;gap:24px;align-items:center;background:#fff;border:1px solid #dfe8df;border-radius:20px;padding:16px;margin:22px 0 34px;box-shadow:0 10px 28px rgba(22,54,38,.055)}
+.reise-teaser-photo img{width:100%;height:200px;object-fit:cover;border-radius:13px;display:block}
+.reise-teaser-content h3,.reise-voll h3{color:#193f31;letter-spacing:-.035em;line-height:1.14}
+.reise-teaser-content h3{font-size:clamp(22px,2.4vw,32px);margin:8px 0}
+.reise-teaser-content p{font-size:15px;line-height:1.65;margin:0 0 14px;color:#344b3d}
+.reise-eyebrow{font-size:11px;letter-spacing:.13em;font-weight:800;color:#6a7e66}
+.reise-action{display:inline-flex;align-items:center;gap:13px;border:0;border-radius:999px;padding:12px 19px;background:#1d4b39;color:#fff;font:700 14px inherit;cursor:pointer;font-size:14px;font-weight:700}
+.reise-action:hover,.reise-action:focus-visible{background:#2b6549}
+.reise-voll{background:#fff;border:1px solid #dce5dc;border-radius:20px;padding:clamp(20px,4vw,48px);margin:-12px 0 36px}
+.reise-voll[hidden]{display:none!important}
+.reise-voll-head{max-width:760px;margin:0 auto 24px}
+.reise-voll h3{font-size:clamp(27px,4vw,44px);margin:10px 0 14px}
+.reise-intro{font-size:19px;line-height:1.6;font-weight:600;color:#385744}
+.reise-story{max-width:760px;margin:auto;columns:1}
+.reise-story h4{font-size:21px;color:#204d38;margin:24px 0 8px}
+.reise-story p{line-height:1.8;font-size:16px;color:#334a3f;margin:0 0 15px}
+.reise-photo-small{max-width:380px;margin:22px auto 27px}
+.reise-photo-small img{width:100%;max-height:235px;object-fit:cover;border-radius:12px}
+.reise-photo-small span{display:block;font-size:12px;color:#6a7b70;margin-top:6px}
+.reise-fazit{background:#eff5ed;border-left:4px solid #528568;padding:22px;border-radius:10px;margin:26px 0}
+.reise-fazit strong{color:#204d38;font-size:18px}
+.reise-fazit p{margin:9px 0 0}
+.reise-close{display:flex;margin:20px auto 0}
+@media(max-width:680px){.reise-teaser{grid-template-columns:1fr;gap:14px}.reise-teaser-photo img{height:190px}.reise-teaser-content{padding:0 4px 8px}}
+
+.wishlist-label{display:inline-block;color:#166337;background:#e1f4e7;border-radius:20px;padding:3px 8px;font-size:.76rem;font-weight:750}
+</style><style>
+.ck-header{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;padding:18px max(4%,calc((100vw - 1240px)/2));background:#fff!important;border-bottom:1px solid #e5e9e3}.ck-brand{font-weight:850;letter-spacing:.04em;color:#173b2d;text-decoration:none;font-size:20px}.ck-header nav{display:flex;flex-wrap:wrap;gap:10px 23px;margin:0;max-width:none}.ck-header nav a{color:#173b2d!important;font-size:14px;font-weight:650;text-decoration:none}.ck-header nav a:hover{color:#4c8a65!important}main{max-width:1240px;margin:auto;padding:38px 20px 65px}.ck-intro{margin-bottom:30px;max-width:790px}.ck-intro h1{font-size:clamp(35px,5vw,60px);line-height:1.07;letter-spacing:-.045em;margin:8px 0 15px;color:#173b2d}.ck-intro p{font-size:18px;color:#52635a;line-height:1.7}.ck-kicker{color:#52745d;font-size:12px;letter-spacing:.16em;font-weight:800;text-transform:uppercase}.ck-footer{padding:35px max(4%,calc((100vw - 1240px)/2));background:#173b2d;color:white}.ck-footer a{color:white;margin-right:18px}.ck-featuregrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:25px 0 42px}.ck-feature{padding:24px;background:white;border:1px solid #e4e9e2;border-radius:17px;text-decoration:none;color:#173b2d;box-shadow:0 5px 20px #173b2d0b}.ck-feature strong{display:block;font-size:22px}.ck-feature p{color:#617268}.ck-feature:hover{border-color:#7aab8b;transform:translateY(-2px)}.ck-hero{background:#173b2d;color:#fff}.ck-hero img{width:100%;max-height:550px;object-fit:contain;background:#173b2d}.ck-hero-inner{max-width:1240px;margin:auto;padding:38px 20px 52px}.ck-hero-inner h1{font-size:clamp(36px,5.5vw,72px);line-height:1.04;letter-spacing:-.05em;margin:8px 0 16px;color:#fff}.ck-hero-inner p{font-size:18px;max-width:660px;color:#dce9df}.ck-cta{display:inline-block;margin-top:14px;padding:13px 23px;border-radius:99px;background:#e7d8b4;color:#173b2d;text-decoration:none;font-weight:800}.ck-topgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.ck-topgrid a{display:block;background:white;border:1px solid #e7ebe6;border-radius:15px;overflow:hidden;color:#173b2d;text-decoration:none}.ck-topgrid img{height:190px;width:100%;object-fit:cover}.ck-topgrid span{display:block;padding:15px;font-weight:750}.ck-note{font-size:14px;color:#637368}.ck-simple{padding:25px;background:white;border:1px solid #e5e9e3;border-radius:15px}.ck-simple a{color:#176047}.ck-hero-inner .ck-kicker{color:#c7d8c8}@media(max-width:700px){.ck-header{padding:15px}.ck-header nav{gap:9px 14px}.ck-header nav a{font-size:12px}.ck-featuregrid{grid-template-columns:1fr}.ck-topgrid{grid-template-columns:1fr}.ck-hero-inner{padding:28px 17px 36px}}
+</style></head><body><header class="ck-header"><a class="ck-brand" href="/">◉ CAMPING-KOMPASS</a><nav aria-label="Hauptnavigation"><a href="/campingplaetze/">Campingplätze</a><a href="/reiseberichte/">Reiseberichte</a><a href="/camping-tipps/">Tipps & Zubehör</a><a href="/camping-news/">News</a><a href="/fragen/">Fragen</a></nav></header><main><div class="ck-intro"><span class="ck-kicker">Camping-Kompass · Persönlich & unabhängig</span><h1>Camping-Ratgeber</h1><p>Entdecke unsere vorhandenen Camping- und Regionen-Ratgeber.</p></div><section aria-labelledby="seo-guide-heading" class="seo-guide-section" id="camping-ratgeber">
+<h2 id="seo-guide-heading">Campingplätze &amp; Reisetipps – unsere Erfahrungen</h2>
+<p>Entdecke unsere Campingplatzberichte, regionale Campingziele und Tipps für deine nächste Reise mit dem Wohnwagen. Hier findest du die passenden Ratgeber zu den vorgestellten Plätzen.</p>
+<div class="seo-guide-grid">
+<a class="seo-guide-card" href="/campingplaetze/camping-muenstertal-erfahrungen/"><strong>Camping Münstertal – Erfahrungen</strong><span>Persönlicher Campingplatzbericht aus dem Schwarzwald.</span></a>
+<a class="seo-guide-card" href="/campingplaetze/playa-montroig-erfahrungen/"><strong>Playa Montroig – Erfahrungen</strong><span>Camping an der spanischen Mittelmeerküste.</span></a>
+<a class="seo-guide-card" href="/campingplaetze/camping-capalonga-erfahrungen/"><strong>Camping Capalonga – Erfahrungen</strong><span>Campingurlaub an der italienischen Adriaküste.</span></a>
+<a class="seo-guide-card" href="/regionen/camping-schwarzwald/"><strong>Camping im Schwarzwald</strong><span>Ideen für Campingreisen in Süddeutschland.</span></a>
+<a class="seo-guide-card" href="/regionen/camping-gardasee/"><strong>Camping am Gardasee</strong><span>Campingplätze und Reiseplanung rund um den Gardasee.</span></a>
+<a class="seo-guide-card" href="/regionen/camping-tessin/"><strong>Camping im Tessin</strong><span>Camping-Inspiration für die Südschweiz.</span></a>
+<a class="seo-guide-card" href="/regionen/camping-spanien/"><strong>Camping in Spanien</strong><span>Campingziele und Tipps für Spanien.</span></a>
+<a class="seo-guide-card" href="/regionen/camping-italien/"><strong>Camping in Italien</strong><span>Campingziele und Tipps für Italien.</span></a>
+<a class="seo-guide-card" href="/regionen/camping-schweiz/"><strong>Camping in der Schweiz</strong><span>Campingplätze und Regionen in der Schweiz.</span></a>
+<a class="seo-guide-card" href="/ratgeber/camping-mit-wohnwagen/"><strong>Camping mit Wohnwagen</strong><span>Praktische Hinweise für Reisen mit dem Wohnwagen.</span></a>
+</div>
+<a class="seo-guide-all" href="/seo-camping/">Alle Camping-Ratgeber im Überblick →</a>
+</section></main><footer class="ck-footer"><p>© 2026 Camping-Kompass.info · Persönlich erlebt. Mit Leidenschaft geteilt.</p><a href="/">Startseite</a><a href="/ueber-uns/">Über uns</a><a href="/impressum.html">Impressum</a><a href="/datenschutz.html">Datenschutz</a></footer></body></html>
