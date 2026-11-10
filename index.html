@@ -1938,7 +1938,39 @@ main{max-width:1380px;padding-top:20px}
 .ck-home-qa{margin-top:25px}
 .ck-topsection{margin:35px 0}
 @media(max-width:750px){.ck-hero-links{grid-template-columns:repeat(2,minmax(0,1fr))}.ck-hero-link{padding:13px 11px;font-size:13px}.ck-hero-inner{padding:24px 16px 24px}.ck-hero{min-height:440px}.ck-hero-inner{min-height:440px}}
-</style></head><body><header class="ck-header"><a class="ck-brand" href="/">◉ CAMPING-KOMPASS</a><nav aria-label="Hauptnavigation"><a href="/campingplaetze/">Campingplätze</a><a href="/reiseberichte/">Reiseberichte</a><a href="/camping-tipps/">Tipps &amp; Zubehör</a><a href="/camping-news/">News</a><a href="/fragen/">Fragen</a></nav></header><section class="ck-hero"><img alt="Camping am Mittelmeer mit Wohnwagen und weißem Dodge Durango" fetchpriority="high" src="/camping-kompass-titelbild.webp"/><div class="ck-hero-inner"><span class="ck-kicker">Camping-Kompass · persönlich erlebt</span><h1>Raus ins Freie.<br/>Rein ins Abenteuer.</h1><p>Echte Camping-Erfahrungen, besondere Reiseziele und Inspiration für deine nächste Tour durch Europa.</p><a class="ck-cta" href="/campingplaetze/">Campingplätze entdecken ↗</a><nav aria-label="Unsere Themen" class="ck-hero-links"><a class="ck-hero-link" href="#campingkarte">🗺️ Campingplätze <span aria-hidden="true">↗</span></a><a class="ck-hero-link" href="/reiseberichte/">📖 Reiseberichte <span aria-hidden="true">↗</span></a><a class="ck-hero-link" href="/camping-tipps/">🧰 Camping-Tipps <span aria-hidden="true">↗</span></a><a class="ck-hero-link" href="/camping-news/">📰 Camping-News <span aria-hidden="true">↗</span></a></nav></div></section><main><section class="map-feature ck-home-map" id="campingkarte"><h2>Campingplätze auf der Karte</h2><p>Entdecke alle Campingplätze auf einen Blick. Filtere nach Land oder Platztyp und öffne die Markierungen für weitere Informationen.</p><p>Rote Markierungen zeigen bisherige Empfehlungen, grüne Markierungen zeigen unsere Wunschplätze. Alle Plätze bleiben auf der Karte sichtbar, auch wenn die Liste eingeklappt ist.</p><div aria-label="Suchergebnisse der Campingplätze" aria-live="polite" class="grid" id="results"></div><p aria-live="polite" class="camping-map-note" id="map-status" role="status">Karte wird geladen …</p><div aria-label="Interaktive Karte aller Campingplätze" id="map" role="region"></div><div class="filters">
+</style><style> .ck-topgrid a img{display:block;width:100%;height:210px;object-fit:cover;background:#e4ebe6} .ck-topgrid a:hover{box-shadow:0 10px 28px rgba(20,55,39,.14);transform:translateY(-2px)} </style><style id="ck-hero-aligned-layout">
+/* Titelbild und Kartenbereich erhalten dieselbe Inhaltsbreite. */
+.ck-hero {
+  position: relative;
+  isolation: auto;
+  width: calc(100% - 40px);
+  max-width: 1200px;
+  min-height: 0;
+  height: auto;
+  margin: 24px auto 0;
+  overflow: hidden;
+  border-radius: 18px;
+  background: #f6f7f3;
+  box-shadow: 0 10px 30px rgba(27,64,32,.08);
+}
+.ck-hero > img {
+  position: static;
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
+  object-position: center;
+  z-index: auto;
+}
+.ck-hero::before, .ck-hero::after { content: none !important; display: none !important; }
+.ck-hero-inner { display: none !important; }
+body > main { box-sizing: border-box; width: 100%; max-width: 1240px; margin: 0 auto; padding: 28px 20px 65px; }
+@media (max-width: 750px) {
+  .ck-hero { width: calc(100% - 28px); margin-top: 14px; border-radius: 12px; min-height: 0; }
+  body > main { padding: 20px 14px 50px; }
+}
+</style></head><body><header class="ck-header"><a class="ck-brand" href="/">◉ CAMPING-KOMPASS</a><nav aria-label="Hauptnavigation"><a href="/campingplaetze/">Campingplätze</a><a href="/reiseberichte/">Reiseberichte</a><a href="/camping-tipps/">Tipps &amp; Zubehör</a><a href="/camping-news/">News</a><a href="/fragen/">Fragen</a></nav></header><section class="ck-hero"><img alt="Camping am Mittelmeer mit Wohnwagen und weißem Dodge Durango" fetchpriority="high" src="/camping-kompass-titelbild.webp"/><div class="ck-hero-inner"><span class="ck-kicker">Camping-Kompass · persönlich erlebt</span><h1>Raus ins Freie.<br/>Rein ins Abenteuer.</h1><p>Echte Camping-Erfahrungen, besondere Reiseziele und Inspiration für deine nächste Tour durch Europa.</p><a class="ck-cta" href="/campingplaetze/">Campingplätze entdecken ↗</a></div></section><main><section class="map-feature ck-home-map" id="campingkarte"><h2>Campingplätze auf der Karte</h2><p>Entdecke alle Campingplätze auf einen Blick. Filtere nach Land oder Platztyp und öffne die Markierungen für weitere Informationen.</p><p>Rote Markierungen zeigen bisherige Empfehlungen, grüne Markierungen zeigen unsere Wunschplätze. Alle Plätze bleiben auf der Karte sichtbar, auch wenn die Liste eingeklappt ist.</p><div aria-label="Suchergebnisse der Campingplätze" aria-live="polite" class="grid" id="results"></div><p aria-live="polite" class="camping-map-note" id="map-status" role="status">Karte wird geladen …</p><div aria-label="Interaktive Karte aller Campingplätze" id="map" role="region"></div><div class="filters">
 <input aria-label="Stellplatz nach Ort oder Name suchen" id="search" placeholder="Ort oder Name suchen …" type="search"/>
 <select aria-label="Nach Land filtern" id="country-filter">
 <option value="alle">Alle Länder</option>
@@ -2054,7 +2086,7 @@ open.addEventListener('click',()=>setExpanded(true));close.addEventListener('cli
 <div class="country-grid" id="country-grid"></div>
 <div id="country-lists"></div>
 </div>
-</section><span class="ck-kicker">Unsere Highlights</span><h2>Drei Campingplätze, die wir empfehlen</h2><div class="ck-topgrid"><a href="/campingplaetze/"><span>🇩🇪 Camping Münstertal · Schwarzwald</span></a><a href="/campingplaetze/"><span>🇪🇸 Playa Montroig · Spanien</span></a><a href="/campingplaetze/"><span>🇮🇹 Camping Village Capalonga · Italien</span></a></div><p class="ck-note">Die drei Empfehlungen sind persönlich besucht und getestet. Wunschplätze sind gesondert gekennzeichnet.</p></main><footer class="ck-footer"><p>© 2026 Camping-Kompass.info · Persönlich erlebt. Mit Leidenschaft geteilt.</p><a href="/">Startseite</a><a href="/ueber-uns/">Über uns</a><a href="/impressum.html">Impressum</a><a href="/datenschutz.html">Datenschutz</a></footer><script>
+</section><span class="ck-kicker">Unsere Highlights</span><h2>Drei Campingplätze, die wir empfehlen</h2><div class="ck-topgrid"><a href="/campingplaetze/"><img src="https://mein.toubiz.de/api/v1/media/58748a97-98e6-4081-b504-f567e56d8839/view" alt="Camping Münstertal – Campingplatz" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='/camping-kompass-titelbild.webp'"><span>🇩🇪 Camping Münstertal · Schwarzwald</span></a><a href="/campingplaetze/"><img src="https://content.breakfreeholidays.co.uk/images/parks/1/1281/gallery/1281-02.jpg" alt="Playa Montroig Camping Resort – Campingplatz" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='/camping-kompass-titelbild.webp'"><span>🇪🇸 Playa Montroig · Spanien</span></a><a href="/campingplaetze/"><img src="https://www.capalonga.com/inc/scripts/source/www.capalonga.com/crp1920x1080-slide-homepage-1.jpg?v=1786111891.jpg" alt="Camping Village Capalonga – Campingplatz" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='/camping-kompass-titelbild.webp'"><span>🇮🇹 Camping Village Capalonga · Italien</span></a></div><p class="ck-note">Die drei Empfehlungen sind persönlich besucht und getestet. Wunschplätze sind gesondert gekennzeichnet.</p></main><footer class="ck-footer"><p>© 2026 Camping-Kompass.info · Persönlich erlebt. Mit Leidenschaft geteilt.</p><a href="/">Startseite</a><a href="/ueber-uns/">Über uns</a><a href="/impressum.html">Impressum</a><a href="/datenschutz.html">Datenschutz</a></footer><script>
 (function(){
 const sec=document.getElementById('camping-nebensaison-preisvergleich-2026');
 if(!sec)return;
