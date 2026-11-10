@@ -1053,8 +1053,7 @@ open.addEventListener('click',()=>setExpanded(true));close.addEventListener('cli
 <button aria-expanded="false" class="more-button" id="all-places-toggle" type="button">Mehr anzeigen – alle Länder und Plätze</button>
 <div hidden="" id="all-places-extra">
 <h2>Alle Campingplätze nach Ländern</h2>
-<p>Wähle ein Land. Innerhalb jedes Landes werden zunächst drei Plätze angezeigt; mit „Mehr anzeigen“ kannst du die restlichen Plätze öffnen.</p>
-<div class="country-grid" id="country-grid"></div>
+<p>Die Campingplätze sind nach Ländern geordnet. Über „Mehr anzeigen“ kannst du weitere Plätze pro Land öffnen.</p>
 <div id="country-lists"></div>
 </div>
 </section></main><footer class="ck-footer"><p>© 2026 Camping-Kompass.info · Persönlich erlebt. Mit Leidenschaft geteilt.</p><a href="/">Startseite</a><a href="/ueber-uns/">Über uns</a><a href="/impressum.html">Impressum</a><a href="/datenschutz.html">Datenschutz</a></footer><script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script><script>
@@ -1064,40 +1063,40 @@ open.addEventListener('click',()=>setExpanded(true));close.addEventListener('cli
     // Alle bisher genannten Plätze gelten als persönlich besucht und getestet.
     // Einzige Ausnahme: Union Lido Mare (tested:false).
     const places = [
-      {name:"TCS Camping Sursee",town:"Sursee, Luzern",country:"Schweiz",code:"CH",type:"Campingplatz",lat:47.172,lon:8.107,description:"Camping am Sempachersee."},
+      {name:"TCS Camping Sursee",town:"Sursee, Luzern",country:"Schweiz",code:"CH",type:"Campingplatz",lat:47.172,lon:8.107,url:"https://camping-sursee.ch/",description:"Camping am Sempachersee."},
       {name:"Campofelice Camping Village",town:"Tenero, Tessin",country:"Schweiz",code:"CH",type:"Campingplatz",lat:46.173,lon:8.854,description:"Ferienanlage am Lago Maggiore.",url:"https://www.campofelice.ch/",image:"https://5227660.fs1.hubspotusercontent-na1.net/hub/5227660/hubfs/Social%20media%20-%20photos/Campofelice%20Camping%20Village-panoramica-2020_Web_mini.jpg?name=Campofelice+Camping+Village-panoramica-2020_Web_mini.jpg&width=2500",imageCredit:"Foto: Campofelice Camping Village",imageSource:"https://www.campofelice.ch/it/webcam"},
-      {name:"TCS Camping Flaach am Rhein",town:"Flaach, Zürich",country:"Schweiz",code:"CH",type:"Campingplatz",lat:47.576,lon:8.607,description:"Camping am Rhein.",image:"https://storage.googleapis.com/campingcare-websites/administration/2568/original-1718890216-2406_04-3869-HDR_by.davidbirri.jpg",imageCredit:"Foto: PiNCAMP / Campingplatz Flaach",imageSource:"https://www.pincamp.com/campings/tcs-camping-flaach-am-rhein"},
-      {name:"TCS Camping Genève-Vésenaz / Pointe à la Bise",town:"Vésenaz, Genf",country:"Schweiz",code:"CH",type:"Campingplatz",lat:46.247,lon:6.202,description:"Camping direkt am Genfersee."},
+      {name:"TCS Camping Flaach am Rhein",town:"Flaach, Zürich",country:"Schweiz",code:"CH",type:"Campingplatz",lat:47.576,lon:8.607,url:"https://camping.tcs.ch/de/campingplaetze/tcs-camping-flaach-am-rhein/",description:"Camping am Rhein.",image:"https://storage.googleapis.com/campingcare-websites/administration/2568/original-1718890216-2406_04-3869-HDR_by.davidbirri.jpg",imageCredit:"Foto: PiNCAMP / Campingplatz Flaach",imageSource:"https://www.pincamp.com/campings/tcs-camping-flaach-am-rhein"},
+      {name:"TCS Camping Genève-Vésenaz / Pointe à la Bise",town:"Vésenaz, Genf",country:"Schweiz",code:"CH",type:"Campingplatz",lat:46.247,lon:6.202,url:"https://camping.tcs.ch/de/campingplaetze/tcs-camping-geneve-vesenaz/",description:"Camping direkt am Genfersee."},
       {name:"Frutigresort",town:"Frutigen, Bern",country:"Schweiz",code:"CH",type:"Campingplatz",lat:46.587,lon:7.65,description:"Camping- und Ferienanlage im Berner Oberland.",url:"https://www.frutigresort.ch/",image:"https://images.squarespace-cdn.com/content/v1/5ae2265075f9ee72412e87ad/1704903289842-IVWP9G31PFF1G2SRBANC/Ansicht%2BNord_3.jpg",imageCredit:"Foto: Frutigresort / Betreiber-Website",imageSource:"https://www.frutigresort.ch/camping/unsere-campinganlage"},
       {name:"Alpencamping Nenzing",town:"Nenzing, Vorarlberg",country:"Österreich",code:"AT",type:"Campingplatz",lat:47.184,lon:9.71,description:"Alpencamping mit Wellnessangebot.",url:"https://www.alpencamping.at/",image:"https://www.alpencamping.at/fileadmin/_processed_/5/2/csm_alpencamping-0515-3243_d482e49174.jpg",imageCredit:"Foto: Alpencamping Nenzing / Betreiber-Website",imageSource:"https://www.alpencamping.at/anreise/"},
       {name:"Camping Piani di Clodia",town:"Lazise, Gardasee",country:"Italien",code:"IT",type:"Campingplatz",lat:45.49,lon:10.72,description:"Ferienanlage am Gardasee.",url:"https://www.pianidiclodia.it/",image:"https://clodia.hqcdn.it/media?f=2025%2F12%2F35347%2F1920x1080.jpg",imageCredit:"Foto: Piani di Clodia / Betreiber-Website",imageSource:"https://www.pianidiclodia.it/de/unterkunfte/camping/top/panorama"},
       {name:"Area Sosta Camper Parma",town:"Parma, Emilia-Romagna",country:"Italien",code:"IT",type:"Wohnmobilstellplatz",lat:44.801,lon:10.328,description:"Wohnmobil-Stellplatz in Parma."},
-      {name:"Camping Le Rossane",town:"Italien",country:"Italien",code:"IT",type:"Campingplatz",lat:45.0,lon:10.5,description:"Campingplatz – genaue Ortskoordinate bitte noch verifizieren."},
-      {name:"Camping Mare Monti",town:"Italien",country:"Italien",code:"IT",type:"Campingplatz",lat:44.27,lon:9.43,description:"Campingplatz – Lagepunkt vor Veröffentlichung prüfen."},
-      {name:"Camping Acqua Dolce",town:"Levanto, Ligurien",country:"Italien",code:"IT",type:"Campingplatz",lat:44.17,lon:9.61,description:"Camping in Levanto nahe der ligurischen Küste."},
+      {name:"Camping Le Rossane",town:"Italien",country:"Italien",code:"IT",type:"Campingplatz",lat:45.0,lon:10.5,url:"https://www.campinglerossane.com/",description:"Campingplatz – genaue Ortskoordinate bitte noch verifizieren."},
+      {name:"Camping Mare Monti",town:"Italien",country:"Italien",code:"IT",type:"Campingplatz",lat:44.27,lon:9.43,url:"https://campingmaremonti.com/",description:"Campingplatz – Lagepunkt vor Veröffentlichung prüfen."},
+      {name:"Camping Acqua Dolce",town:"Levanto, Ligurien",country:"Italien",code:"IT",type:"Campingplatz",lat:44.17,lon:9.61,url:"https://www.campingacquadolce.com/",description:"Camping in Levanto nahe der ligurischen Küste."},
       {name:"hu Firenze camping in town",town:"Florenz, Toskana",country:"Italien",code:"IT",type:"Campingplatz",lat:43.79,lon:11.29,description:"Stadtnaher Campingplatz in Florenz.",url:"https://huopenair.com/"},
-      {name:"Alveare del Pinzi",town:"Italien",country:"Italien",code:"IT",type:"Wohnmobilstellplatz",lat:43.0,lon:12.0,description:"Wohnmobil-Stopp – genauer Standort bitte noch verifizieren."},
+      {name:"Alveare del Pinzi",town:"Italien",country:"Italien",code:"IT",type:"Wohnmobilstellplatz",lat:43.0,lon:12.0,url:"https://alvearedelpinzi.com/",description:"Wohnmobil-Stopp – genauer Standort bitte noch verifizieren."},
       {name:"Union Lido Mare",town:"Cavallino-Treporti, Venetien",country:"Italien",code:"IT",type:"Campingplatz",lat:45.474,lon:12.535,description:"Grosse 5-Sterne-Ferienanlage an der Adria.",url:"https://mare.unionlido.com/en/",tested:false},
       {name:"Camping Village Capalonga",town:"Bibione Pineda, Venetien",country:"Italien",code:"IT",type:"Campingplatz",lat:45.638,lon:13.018,description:"Deine Top-Empfehlung in Italien – zwischen Strand und Lagune.",url:"https://www.capalonga.com/de/",top:true,rating:"Top-Empfehlung",image:"https://www.capalonga.com/inc/scripts/source/www.capalonga.com/crp1920x1080-slide-homepage-1.jpg?v=1786111891.jpg",imageCredit:"Foto: Camping Village Capalonga (Betreiber-Website)",imageSource:"https://www.capalonga.com/de/galerie-foto.php"},
       {name:"Camping Village Pino Mare",town:"Lignano Riviera, Friaul-Julisch Venetien",country:"Italien",code:"IT",type:"Campingplatz",lat:45.638,lon:13.105,description:"Camping-Feriendorf an der Adriaküste.",url:"https://www.campingpinomare.it/",image:"https://api.campingpinomare.it/images/images/71485/villaggio_3580431e48aedf97dcedf972d1481942.webp",imageCredit:"Foto: Camping Village Pino Mare / Betreiber-Website",imageSource:"https://www.campingpinomare.it/en/deals/prenota-prima/"},
-      {name:"Hegi Familien Camping",town:"Tengen, Baden-Württemberg",country:"Deutschland",code:"DE",type:"Campingplatz",lat:47.82,lon:8.67,description:"Familiencamping im Hegau."},
+      {name:"Hegi Familien Camping",town:"Tengen, Baden-Württemberg",country:"Deutschland",code:"DE",type:"Campingplatz",lat:47.82,lon:8.67,url:"https://www.ueberland-camping.de/hegi",description:"Familiencamping im Hegau."},
       {name:"Camping Münstertal",town:"Münstertal, Schwarzwald",country:"Deutschland",code:"DE",type:"Campingplatz",lat:47.859584,lon:7.763714,description:"Deine Top-Empfehlung in Deutschland. Persönliche Bewertung: sehr gut.",url:"https://www.camping-muenstertal.de/",top:true,rating:"Sehr gut",image:"https://mein.toubiz.de/api/v1/media/58748a97-98e6-4081-b504-f567e56d8839/view",imageCredit:"Foto: Schwarzwald Tourismus / mein.toubiz",imageSource:"https://www.schwarzwald-tourismus.info/unterkuenfte/camping-muenstertal-4a0d0e7088"},
       {name:"Camping Schwarzwälder Hof",town:"Seelbach, Schwarzwald",country:"Deutschland",code:"DE",type:"Campingplatz",lat:48.300278,lon:7.945,description:"Campingurlaub im Schwarzwald.",url:"https://www.spacamping.de/"},
-      {name:"Camping Hopfensee",town:"Hopfen am See, Füssen, Bayern",country:"Deutschland",code:"DE",type:"Campingplatz",lat:47.603,lon:10.686,description:"Camping am Hopfensee."},
+      {name:"Camping Hopfensee",town:"Hopfen am See, Füssen, Bayern",country:"Deutschland",code:"DE",type:"Campingplatz",lat:47.603,lon:10.686,url:"https://www.camping-hopfensee.de/",description:"Camping am Hopfensee."},
       {name:"Camping Kreuzhof",town:"Lenzkirch, Hochschwarzwald",country:"Deutschland",code:"DE",type:"Campingplatz",lat:47.87,lon:8.18,description:"Camping im Hochschwarzwald.",url:"https://www.camping-kreuzhof.de/"},
       {name:"Camping Aquarius",town:"Sant Pere Pescador, Costa Brava",country:"Spanien",code:"ES",type:"Campingplatz",lat:42.18,lon:3.09,description:"Camping an der Costa Brava.",url:"https://www.campingaquarius.com/"},
       {name:"Playa Montroig Camping Resort",town:"Mont-roig del Camp, Costa Dorada",country:"Spanien",code:"ES",type:"Campingplatz",lat:41.04,lon:0.99,description:"Deine Top-Empfehlung in Spanien. Persönliche Bewertung: sehr gut.",url:"https://www.playamontroig.com/",top:true,rating:"Sehr gut",image:"https://content.breakfreeholidays.co.uk/images/parks/1/1281/gallery/1281-02.jpg",imageCredit:"Foto: BreakFree Holidays – Galerie Playa Montroig",imageSource:"https://www.breakfreeholidays.co.uk/holidays/1281/playa-montroig"},
-      {name:"Camping Eucaliptus",town:"Eucaliptus, Delta de l’Ebre",country:"Spanien",code:"ES",type:"Campingplatz",lat:40.66,lon:0.75,description:"Camping in der Landschaft des Ebro-Deltas."},
+      {name:"Camping Eucaliptus",town:"Eucaliptus, Delta de l’Ebre",country:"Spanien",code:"ES",type:"Campingplatz",lat:40.66,lon:0.75,url:"https://campingeucaliptus.com/",description:"Camping in der Landschaft des Ebro-Deltas."},
       {name:"Little Texas",town:"Tabernas, Almería",country:"Spanien",code:"ES",type:"Wohnmobilstellplatz",lat:37.05,lon:-2.39,description:"Wohnmobilstellplatz mit Campingangebot in der Tabernas-Wüste."},
-      {name:"Camping Reina Isabel",town:"La Zubia, Granada",country:"Spanien",code:"ES",type:"Campingplatz",lat:37.12,lon:-3.59,description:"Camping südlich von Granada."},
-      {name:"Camping SurEuropa",town:"La Línea de la Concepción, Cádiz",country:"Spanien",code:"ES",type:"Campingplatz",lat:36.18,lon:-5.34,description:"Campingangebot bei Gibraltar. Aktuellen Betriebsstatus vor Anreise prüfen."},
+      {name:"Camping Reina Isabel",town:"La Zubia, Granada",country:"Spanien",code:"ES",type:"Campingplatz",lat:37.12,lon:-3.59,url:"https://campingreinaisabel.com/",description:"Camping südlich von Granada."},
+      {name:"Camping SurEuropa",town:"La Línea de la Concepción, Cádiz",country:"Spanien",code:"ES",type:"Campingplatz",lat:36.18,lon:-5.34,url:"https://asansull.org/con-las-personas/camping-sureuropa-la-linea/",description:"Campingangebot bei Gibraltar. Aktuellen Betriebsstatus vor Anreise prüfen."},
       {name:"Área de Servicios Autocaravanas Tarifa-Bolonia",town:"El Lentiscal, Bolonia, Tarifa",country:"Spanien",code:"ES",type:"Wohnmobilstellplatz",lat:36.09,lon:-5.77,description:"Wohnmobilstellplatz nahe der Düne von Bolonia; laut Verzeichnis geschlossen."},
       {name:"Camperstop Alegría",town:"Montánchez, Extremadura",country:"Spanien",code:"ES",type:"Wohnmobilstellplatz",lat:39.23,lon:-6.15,description:"Ruhiger Wohnmobilstellplatz in der Extremadura."},
       {name:"Camping Osuna",town:"Madrid",country:"Spanien",code:"ES",type:"Campingplatz",lat:40.45,lon:-3.59,description:"Campingplatz mit Metroanbindung ins Zentrum von Madrid.",url:"https://www.campingosuna.com/"},
       {name:"Autocaravans Sevilla / Puerto Gelves",town:"Gelves, Sevilla",country:"Spanien",code:"ES",type:"Wohnmobilstellplatz",lat:37.33,lon:-6.02,description:"Wohnmobil-Stellplatz am Yachthafen Puerto Gelves."},
       {name:"Welscamp Matarraña S.L.",town:"Fayón, Aragón",country:"Spanien",code:"ES",type:"Campingplatz",lat:41.2,lon:0.32,description:"Camping- und Angelplatz am Ebro-Stausee."},
       {name:"Costa do Vizir Beach Village",town:"Porto Covo, Alentejo",country:"Portugal",code:"PT",type:"Campingplatz",lat:37.85,lon:-8.79,description:"Camping-Feriendorf nahe dem Strand.",url:"https://www.costadovizir.com/"},
-      {name:"Praguecamp",town:"Prag",country:"Tschechien",code:"CZ",type:"Campingplatz",lat:50.07,lon:14.42,description:"Campingplatz in Prag."},
+      {name:"Praguecamp",town:"Prag",country:"Tschechien",code:"CZ",type:"Campingplatz",lat:50.07,lon:14.42,url:"https://www.praguecamp.cz/",description:"Campingplatz in Prag."},
       // Neue Wunschplätze (Standorte auf der Karte sind Näherungswerte; ein Name benötigt noch Klärung).
       {"name": "Camping Lug ins Land", "town": "Bad Bellingen, Baden-Württemberg", "country": "Deutschland", "code": "DE", "type": "Campingplatz", "description": "Wunschplatz für eine zukünftige Campingreise – noch nicht persönlich besucht oder getestet.", "tested": false, "wishlist": true, "lat": 47.73, "lon": 7.56},
       {"name": "Campingplatz Der Kleine Wolf", "town": "Deutschland – Standort prüfen", "country": "Deutschland", "code": "DE", "type": "Campingplatz", "description": "Wunschplatz für eine zukünftige Campingreise – noch nicht persönlich besucht oder getestet.", "tested": false, "wishlist": true},
@@ -1215,19 +1214,6 @@ open.addEventListener('click',()=>setExpanded(true));close.addEventListener('cli
       option.value = code;
       option.textContent = info.name;
       countryFilter.appendChild(option);
-
-      const tile = document.createElement("a");
-      tile.className = "country-tile";
-      tile.href = "#country-" + code;
-      const featuredImage = featured ? placeImage(featured, 'country-feature-image') : placeImage({name:info.name,country:info.name,town:'Camping in Europa'}, 'country-feature-image');
-      tile.innerHTML = `${featuredImage}
-        <div class="country-tile-content">
-          <span class="country-flag">${info.flag}</span>
-          <h3>${info.name}</h3>
-          <p><strong>${escapeHTML(featured ? featured.name : "Campingplätze entdecken")}</strong></p>
-          <small>${countryPlaces.length} Einträge</small>
-        </div>`;
-      countryGrid.appendChild(tile);
 
       const panel = document.createElement("section");
       panel.className = "country-panel";
