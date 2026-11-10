@@ -962,6 +962,7 @@ main{max-width:1380px;padding-top:20px}
 .wishlist-label{display:inline-block;color:#166337;background:#e1f4e7;border-radius:20px;padding:3px 8px;font-size:.76rem;font-weight:750}
 </style><style>
 .ck-header{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;padding:18px max(4%,calc((100vw - 1240px)/2));background:#fff!important;border-bottom:1px solid #e5e9e3}.ck-brand{font-weight:850;letter-spacing:.04em;color:#173b2d;text-decoration:none;font-size:20px}.ck-header nav{display:flex;flex-wrap:wrap;gap:10px 23px;margin:0;max-width:none}.ck-header nav a{color:#173b2d!important;font-size:14px;font-weight:650;text-decoration:none}.ck-header nav a:hover{color:#4c8a65!important}main{max-width:1240px;margin:auto;padding:38px 20px 65px}.ck-intro{margin-bottom:30px;max-width:790px}.ck-intro h1{font-size:clamp(35px,5vw,60px);line-height:1.07;letter-spacing:-.045em;margin:8px 0 15px;color:#173b2d}.ck-intro p{font-size:18px;color:#52635a;line-height:1.7}.ck-kicker{color:#52745d;font-size:12px;letter-spacing:.16em;font-weight:800;text-transform:uppercase}.ck-footer{padding:35px max(4%,calc((100vw - 1240px)/2));background:#173b2d;color:white}.ck-footer a{color:white;margin-right:18px}.ck-featuregrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:25px 0 42px}.ck-feature{padding:24px;background:white;border:1px solid #e4e9e2;border-radius:17px;text-decoration:none;color:#173b2d;box-shadow:0 5px 20px #173b2d0b}.ck-feature strong{display:block;font-size:22px}.ck-feature p{color:#617268}.ck-feature:hover{border-color:#7aab8b;transform:translateY(-2px)}.ck-hero{background:#173b2d;color:#fff}.ck-hero img{width:100%;max-height:550px;object-fit:contain;background:#173b2d}.ck-hero-inner{max-width:1240px;margin:auto;padding:38px 20px 52px}.ck-hero-inner h1{font-size:clamp(36px,5.5vw,72px);line-height:1.04;letter-spacing:-.05em;margin:8px 0 16px;color:#fff}.ck-hero-inner p{font-size:18px;max-width:660px;color:#dce9df}.ck-cta{display:inline-block;margin-top:14px;padding:13px 23px;border-radius:99px;background:#e7d8b4;color:#173b2d;text-decoration:none;font-weight:800}.ck-topgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.ck-topgrid a{display:block;background:white;border:1px solid #e7ebe6;border-radius:15px;overflow:hidden;color:#173b2d;text-decoration:none}.ck-topgrid img{height:190px;width:100%;object-fit:cover}.ck-topgrid span{display:block;padding:15px;font-weight:750}.ck-note{font-size:14px;color:#637368}.ck-simple{padding:25px;background:white;border:1px solid #e5e9e3;border-radius:15px}.ck-simple a{color:#176047}.ck-hero-inner .ck-kicker{color:#c7d8c8}@media(max-width:700px){.ck-header{padding:15px}.ck-header nav{gap:9px 14px}.ck-header nav a{font-size:12px}.ck-featuregrid{grid-template-columns:1fr}.ck-topgrid{grid-template-columns:1fr}.ck-hero-inner{padding:28px 17px 36px}}
+.reel-fallback-link{display:block;padding:28px 14px;text-align:center;color:#173b2d;font-weight:750;text-decoration:underline;background:#edf3e9;min-height:180px;align-content:center}.reel-open-link,.reel-product-link{display:inline-block;margin:8px 12px 0 0;color:#176047;font-weight:750}.reel-card .instagram-media{min-width:0!important}.reels-grid{align-items:start}@media(max-width:1100px){.reels-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:600px){.reels-grid{grid-template-columns:1fr}}
 </style></head><body><header class="ck-header"><a class="ck-brand" href="/">◉ CAMPING-KOMPASS</a><nav aria-label="Hauptnavigation"><a href="/campingplaetze/">Campingplätze</a><a href="/reiseberichte/">Reiseberichte</a><a href="/camping-tipps/">Tipps & Zubehör</a><a href="/camping-news/">News</a><a href="/fragen/">Fragen</a></nav></header><main><div class="ck-intro"><span class="ck-kicker">Camping-Kompass · Persönlich & unabhängig</span><h1>Camping-Tipps & Zubehör</h1><p>Persönlich genutzte Campingausrüstung, praktische Produkttipps und ausgewählte Gadgets.</p></div><section aria-labelledby="gear-heading" class="tested-gear" id="persoenlich-getestet">
 <h2 id="gear-heading">🔧 Persönlich genutzt &amp; empfohlen: Unsere Camping-Ausrüstung</h2>
 <p class="gear-lead">Unser Einhell Akkuschrauber und Kompressor begleiten uns seit vier Jahren beim Camping. Beide funktionieren weiterhin einwandfrei. Ergänzend zeigen wir zwei weitere passende Geräte des Akkusystems – diese haben wir nicht selbst getestet.</p>
@@ -1111,81 +1112,102 @@ main{max-width:1380px;padding-top:20px}
 </section></main><footer class="ck-footer"><p>© 2026 Camping-Kompass.info · Persönlich erlebt. Mit Leidenschaft geteilt.</p><a href="/">Startseite</a><a href="/ueber-uns/">Über uns</a><a href="/impressum.html">Impressum</a><a href="/datenschutz.html">Datenschutz</a></footer><script>
 (async function () {
   const container = document.getElementById("camping-reels");
-
+  if (!container) return;
+  const instagramProfile = "https://www.instagram.com/campingkompassinfo/";
+  const safeInstagramUrl = (url) => {
+    try {
+      const u = new URL(url);
+      return u.protocol === "https:" && (u.hostname === "www.instagram.com" || u.hostname === "instagram.com") && /^\/(reel|p)\/[A-Za-z0-9_-]+\/?$/.test(u.pathname) ? u.href : null;
+    } catch (_) { return null; }
+  };
   try {
-    const response = await fetch("/instagram-reels.json", {
-      cache: "no-store"
-    });
-
-    if (!response.ok) {
-      throw new Error("Die Reels-Datei konnte nicht geladen werden.");
-    }
-
+    const response = await fetch("/instagram-reels.json", { cache: "no-store" });
+    if (!response.ok) throw new Error("HTTP " + response.status);
     const data = await response.json();
+    if (!Array.isArray(data.reels) || !data.reels.length) throw new Error("Keine Reels vorhanden");
     container.replaceChildren();
-
-    data.reels.forEach(function (reel) {
+    let count = 0;
+    for (const reel of data.reels) {
+      const url = safeInstagramUrl(reel.url);
+      if (!url) continue;
+      count++;
       const article = document.createElement("article");
       article.className = "reel-card";
-
       const embed = document.createElement("blockquote");
       embed.className = "instagram-media";
-      embed.setAttribute("data-instgrm-permalink", reel.url);
-      embed.setAttribute("data-instgrm-version", "14");
-      embed.style.cssText =
-        "background:#fff;border:0;margin:0 auto;max-width:540px;width:100%;";
-
+      embed.dataset.instgrmPermalink = url;
+      embed.dataset.instgrmVersion = "14";
+      embed.style.cssText = "background:#fff;border:0;margin:0 auto;max-width:540px;width:100%;min-width:0";
+      // Sichtbarer Link bleibt auch dann erhalten, wenn Instagram-Einbettungen blockiert werden.
+      const fallback = document.createElement("a");
+      fallback.href = url;
+      fallback.target = "_blank";
+      fallback.rel = "noopener noreferrer";
+      fallback.className = "reel-fallback-link";
+      fallback.textContent = "▶ Reel auf Instagram ansehen";
+      embed.appendChild(fallback);
       const details = document.createElement("div");
       details.className = "reel-details";
-
       const heading = document.createElement("h3");
-      heading.textContent = reel.title;
-
+      heading.textContent = reel.title || "Camping-Kompass Reel";
       const description = document.createElement("p");
-      description.textContent = reel.description;
-
-      details.append(heading, description);
-
+      description.textContent = reel.description || "Camping-Inspiration auf Instagram";
+      const open = document.createElement("a");
+      open.href = url;
+      open.target = "_blank";
+      open.rel = "noopener noreferrer";
+      open.className = "reel-open-link";
+      open.textContent = "Reel direkt öffnen ↗";
+      details.append(heading, description, open);
       if (reel.product_url && reel.product_label) {
-        const links = document.createElement("div");
-        links.className = "product-links";
-
-        const paragraph = document.createElement("p");
-        const link = document.createElement("a");
-
-        link.href = reel.product_url;
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-        link.textContent = reel.product_label;
-
-        paragraph.appendChild(link);
-        links.appendChild(paragraph);
-        details.appendChild(links);
+        try {
+          const product = new URL(reel.product_url);
+          if (product.protocol === "https:") {
+            const link = document.createElement("a");
+            link.href = product.href;
+            link.target = "_blank";
+            link.rel = "sponsored nofollow noopener noreferrer";
+            link.className = "reel-product-link";
+            link.textContent = reel.product_label;
+            details.appendChild(link);
+          }
+        } catch (_) {}
       }
-
       article.append(embed, details);
       container.appendChild(article);
-    });
-
+    }
+    if (!count) throw new Error("Keine gültigen Reel-Links");
+    // Instagram benötigt dieses Skript zum Umwandeln der Blockquotes in Videovorschauen.
+    const processEmbeds = () => {
+      if (window.instgrm && window.instgrm.Embeds) window.instgrm.Embeds.process();
+    };
     if (window.instgrm && window.instgrm.Embeds) {
-      window.instgrm.Embeds.process();
+      processEmbeds();
     } else {
-      const script = document.querySelector(
-        'script[src*="instagram.com/embed.js"]'
-      );
-
-      if (script) {
-        script.addEventListener("load", function () {
-          if (window.instgrm && window.instgrm.Embeds) {
-            window.instgrm.Embeds.process();
-          }
-        }, { once: true });
+      let script = document.querySelector('script[src="https://www.instagram.com/embed.js"]');
+      if (!script) {
+        script = document.createElement("script");
+        script.src = "https://www.instagram.com/embed.js";
+        script.async = true;
+        script.addEventListener("load", processEmbeds, { once: true });
+        script.addEventListener("error", () => console.warn("Instagram-Einbettung blockiert; direkte Reel-Links bleiben sichtbar."), { once: true });
+        document.body.appendChild(script);
+      } else {
+        script.addEventListener("load", processEmbeds, { once: true });
       }
     }
   } catch (error) {
     console.error("Instagram-Reels:", error);
-    container.textContent =
-      "Die Camping-Reels konnten gerade nicht geladen werden.";
+    container.replaceChildren();
+    const p = document.createElement("p");
+    p.textContent = "Die Reel-Vorschauen sind momentan nicht verfügbar. ";
+    const a = document.createElement("a");
+    a.href = instagramProfile;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    a.textContent = "Reels auf Instagram ansehen ↗";
+    p.appendChild(a);
+    container.appendChild(p);
   }
 })();
 </script></body></html>
