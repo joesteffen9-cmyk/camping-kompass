@@ -2030,6 +2030,37 @@ body > main { box-sizing: border-box; width: 100%; max-width: 1240px; margin: 0 
   .ck-new-header { padding: 13px 15px !important; }
   .ck-new-hero { width: calc(100% - 30px) !important; margin: 0 auto 18px !important; }
 }
+</style><style id="ck-unified-content-width-20261110">
+/* Gemeinsame Aussenkanten für Navigation, Titelbild und Kartenbereich. */
+:root { --ck-page-width: 1340px; --ck-page-gutter: 20px; }
+.ck-new-header .ck-new-nav {
+  width: 100% !important;
+  max-width: var(--ck-page-width) !important;
+  margin-inline: auto !important;
+}
+.ck-new-hero {
+  width: calc(100% - 2 * var(--ck-page-gutter)) !important;
+  max-width: var(--ck-page-width) !important;
+  margin: 0 auto 16px !important;
+}
+body > main {
+  width: calc(100% - 2 * var(--ck-page-gutter)) !important;
+  max-width: var(--ck-page-width) !important;
+  padding: 0 0 65px !important;
+  margin: 0 auto !important;
+  box-sizing: border-box !important;
+}
+body > main > .map-feature {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 0 18px !important;
+  box-sizing: border-box !important;
+}
+@media (max-width: 600px) {
+  :root { --ck-page-gutter: 15px; }
+  .ck-new-hero { margin-bottom: 14px !important; }
+  body > main { padding-bottom: 50px !important; }
+}
 </style></head><body><header class="ck-header ck-new-header"><nav class="ck-new-nav" aria-label="Hauptnavigation"><a class="ck-home-link" href="/" aria-label="Startseite">⌂</a><a href="/campingplaetze/">Campingplätze</a><a href="/reiseberichte/">Reiseberichte</a><a href="/camping-tipps/">Tipps &amp; Zubehör</a><a href="/camping-news/">News</a><a href="/fragen/">Fragen</a><div class="ck-global-search"><input id="ck-site-search" type="search" aria-label="Gesamte Website durchsuchen" placeholder="Campingplatz suchen …" autocomplete="off"/><button type="button" id="ck-search-button" aria-label="Suche starten">⌕</button><div id="ck-search-results" class="ck-search-results" hidden></div></div></nav></header><section class="ck-hero ck-new-hero"><img alt="Camping-Kompass am Mittelmeer: Wohnwagen, weisser Dodge Durango und Camping-Kompass-Logo" fetchpriority="high" src="/camping-kompass-neues-titelbild.webp"/></section><main><section class="map-feature ck-home-map" id="campingkarte"><h2>Campingplätze auf der Karte</h2><p>Entdecke alle Campingplätze auf einen Blick. Filtere nach Land oder Platztyp und öffne die Markierungen für weitere Informationen.</p><p>Rote Markierungen zeigen bisherige Empfehlungen, grüne Markierungen zeigen unsere Wunschplätze. Alle Plätze bleiben auf der Karte sichtbar, auch wenn die Liste eingeklappt ist.</p><div aria-label="Suchergebnisse der Campingplätze" aria-live="polite" class="grid" id="results"></div><p aria-live="polite" class="camping-map-note" id="map-status" role="status">Karte wird geladen …</p><div aria-label="Interaktive Karte aller Campingplätze" id="map" role="region"></div><div class="filters">
 <input aria-label="Stellplatz nach Ort oder Name suchen" id="search" placeholder="Ort oder Name suchen …" type="search"/>
 <select aria-label="Nach Land filtern" id="country-filter">
