@@ -1970,6 +1970,19 @@ body > main { box-sizing: border-box; width: 100%; max-width: 1240px; margin: 0 
   .ck-hero { width: calc(100% - 28px); margin-top: 14px; border-radius: 12px; min-height: 0; }
   body > main { padding: 20px 14px 50px; }
 }
+</style><style id="ck-map-list-style">
+.ck-map-list-actions{display:flex;justify-content:flex-end;margin-top:18px}
+#ck-map-list-toggle,.ck-map-list-close{border:0;border-radius:10px;background:#193f30;color:#fff;padding:12px 20px;font:inherit;font-weight:700;cursor:pointer}
+#ck-map-list-toggle:hover,.ck-map-list-close:hover{background:#2b6046}
+.ck-map-list-panel{margin-top:16px;padding:20px;border:1px solid #dce7df;border-radius:14px;background:#f8faf7}
+.ck-map-list-panel[hidden]{display:none!important}
+.ck-map-list-panel h3{margin:0 0 8px;color:#173a2a}
+.ck-map-list-panel>p{margin:0 0 18px;color:#53675c}
+.ck-map-list-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:20px}
+.ck-map-list-grid .country-place{min-width:0;background:white;border:1px solid #e0e8e2;border-radius:12px;padding:14px;overflow:hidden}
+.ck-map-list-grid .place-card-image{max-width:100%;width:100%;height:160px;object-fit:cover;border-radius:8px}
+@media(max-width:850px){.ck-map-list-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:540px){.ck-map-list-grid{grid-template-columns:1fr}.ck-map-list-actions{justify-content:stretch}#ck-map-list-toggle{width:100%}}
 </style></head><body><header class="ck-header"><a class="ck-brand" href="/">◉ CAMPING-KOMPASS</a><nav aria-label="Hauptnavigation"><a href="/campingplaetze/">Campingplätze</a><a href="/reiseberichte/">Reiseberichte</a><a href="/camping-tipps/">Tipps &amp; Zubehör</a><a href="/camping-news/">News</a><a href="/fragen/">Fragen</a></nav></header><section class="ck-hero"><img alt="Camping am Mittelmeer mit Wohnwagen und weißem Dodge Durango" fetchpriority="high" src="/camping-kompass-titelbild.webp"/><div class="ck-hero-inner"><span class="ck-kicker">Camping-Kompass · persönlich erlebt</span><h1>Raus ins Freie.<br/>Rein ins Abenteuer.</h1><p>Echte Camping-Erfahrungen, besondere Reiseziele und Inspiration für deine nächste Tour durch Europa.</p><a class="ck-cta" href="/campingplaetze/">Campingplätze entdecken ↗</a></div></section><main><section class="map-feature ck-home-map" id="campingkarte"><h2>Campingplätze auf der Karte</h2><p>Entdecke alle Campingplätze auf einen Blick. Filtere nach Land oder Platztyp und öffne die Markierungen für weitere Informationen.</p><p>Rote Markierungen zeigen bisherige Empfehlungen, grüne Markierungen zeigen unsere Wunschplätze. Alle Plätze bleiben auf der Karte sichtbar, auch wenn die Liste eingeklappt ist.</p><div aria-label="Suchergebnisse der Campingplätze" aria-live="polite" class="grid" id="results"></div><p aria-live="polite" class="camping-map-note" id="map-status" role="status">Karte wird geladen …</p><div aria-label="Interaktive Karte aller Campingplätze" id="map" role="region"></div><div class="filters">
 <input aria-label="Stellplatz nach Ort oder Name suchen" id="search" placeholder="Ort oder Name suchen …" type="search"/>
 <select aria-label="Nach Land filtern" id="country-filter">
@@ -1980,7 +1993,17 @@ body > main { box-sizing: border-box; width: 100%; max-width: 1240px; margin: 0 
 <option value="Wohnmobilstellplatz">Wohnmobilstellplätze</option>
 <option value="Campingplatz">Campingplätze</option>
 </select>
-</div><small class="camping-map-note">Die Kartenmarkierungen zeigen den jeweiligen Ort bzw. das Campingareal näherungsweise. Vor Veröffentlichung sollten die exakten Zufahrtskoordinaten nochmals geprüft werden. Kartendaten © OpenStreetMap-Mitwirkende.</small></section><section aria-labelledby="qa-heading" class="qa-section ck-home-qa" id="camping-fragen">
+</div><small class="camping-map-note">Die Kartenmarkierungen zeigen den jeweiligen Ort bzw. das Campingareal näherungsweise. Vor Veröffentlichung sollten die exakten Zufahrtskoordinaten nochmals geprüft werden. Kartendaten © OpenStreetMap-Mitwirkende.</small>
+<div class="ck-map-list-actions">
+  <button type="button" id="ck-map-list-toggle" aria-expanded="false" aria-controls="ck-map-list-panel">Mehr anzeigen – Campingplatzliste <span aria-hidden="true">▾</span></button>
+</div>
+<div id="ck-map-list-panel" class="ck-map-list-panel" hidden>
+  <h3>Alle Camping- und Stellplätze</h3>
+  <p>Die Liste berücksichtigt die Such- und Länderfilter oberhalb. Grüne Wunschplätze sind noch nicht persönlich getestet.</p>
+  <div id="ck-map-list-items" class="ck-map-list-grid" aria-live="polite"></div>
+  <button type="button" id="ck-map-list-close" class="ck-map-list-close">Weniger anzeigen ↑</button>
+</div>
+</section><section aria-labelledby="qa-heading" class="qa-section ck-home-qa" id="camping-fragen">
 <h2 id="qa-heading">Fragen zu unseren Campingplätzen</h2>
 <p>Du hast Fragen zu einem Campingplatz oder Stellplatz? Stelle sie hier. Ich beantworte sie persönlich. Fragen werden erst zusammen mit meiner Antwort veröffentlicht.</p>
 <form class="qa-form" id="qa-form">
@@ -2493,6 +2516,30 @@ open.addEventListener('click',()=>setExpanded(true));close.addEventListener('cli
             ? filtered.map(placeCard).join("")
             : '<p class="empty-state">Keine passenden Plätze gefunden. Bitte ändere deine Suche oder Filter.</p>')
         : "";
+      const mapListItems = document.getElementById("ck-map-list-items");
+      if (mapListItems && !document.getElementById("ck-map-list-panel").hidden) {
+        mapListItems.innerHTML = filtered.length
+          ? filtered.map(placeCard).join("")
+          : '<p class="empty-state">Keine passenden Plätze gefunden. Bitte ändere deine Suche oder Filter.</p>';
+      }
+    }
+    const mapListToggle = document.getElementById("ck-map-list-toggle");
+    const mapListPanel = document.getElementById("ck-map-list-panel");
+    const mapListClose = document.getElementById("ck-map-list-close");
+    if (mapListToggle && mapListPanel && mapListClose) {
+      function setMapListOpen(open) {
+        mapListPanel.hidden = !open;
+        mapListToggle.setAttribute("aria-expanded", String(open));
+        mapListToggle.innerHTML = open
+          ? 'Weniger anzeigen – Campingplatzliste <span aria-hidden="true">▴</span>'
+          : 'Mehr anzeigen – Campingplatzliste <span aria-hidden="true">▾</span>';
+        if (open) renderResults();
+      }
+      mapListToggle.addEventListener("click", () => setMapListOpen(mapListPanel.hidden));
+      mapListClose.addEventListener("click", () => {
+        setMapListOpen(false);
+        mapListToggle.focus();
+      });
     }
 
     searchInput.addEventListener("input", renderResults);
