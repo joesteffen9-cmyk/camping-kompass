@@ -2061,7 +2061,18 @@ body > main > .map-feature {
   .ck-new-hero { margin-bottom: 14px !important; }
   body > main { padding-bottom: 50px !important; }
 }
-</style></head><body><header class="ck-header ck-new-header"><nav class="ck-new-nav" aria-label="Hauptnavigation"><a class="ck-home-link" href="/" aria-label="Startseite">⌂</a><a href="/campingplaetze/">Campingplätze</a><a href="/reiseberichte/">Reiseberichte</a><a href="/camping-tipps/">Tipps &amp; Zubehör</a><a href="/camping-news/">News</a><a href="/fragen/">Fragen</a><div class="ck-global-search"><input id="ck-site-search" type="search" aria-label="Gesamte Website durchsuchen" placeholder="Campingplatz suchen …" autocomplete="off"/><button type="button" id="ck-search-button" aria-label="Suche starten">⌕</button><div id="ck-search-results" class="ck-search-results" hidden></div></div></nav></header><section class="ck-hero ck-new-hero"><img alt="Camping-Kompass am Mittelmeer: Wohnwagen, weisser Dodge Durango und Camping-Kompass-Logo" fetchpriority="high" src="/camping-kompass-neues-titelbild.webp"/></section><main><section class="map-feature ck-home-map" id="campingkarte"><h2>Campingplätze auf der Karte</h2><p>Entdecke alle Campingplätze auf einen Blick. Filtere nach Land oder Platztyp und öffne die Markierungen für weitere Informationen.</p><p>Rote Markierungen zeigen bisherige Empfehlungen, grüne Markierungen zeigen unsere Wunschplätze. Alle Plätze bleiben auf der Karte sichtbar, auch wenn die Liste eingeklappt ist.</p><div aria-label="Suchergebnisse der Campingplätze" aria-live="polite" class="grid" id="results"></div><p aria-live="polite" class="camping-map-note" id="map-status" role="status">Karte wird geladen …</p><div aria-label="Interaktive Karte aller Campingplätze" id="map" role="region"></div><div class="filters">
+</style><style id="ck-attractions-style">
+.ck-poi-legend{display:flex;gap:12px;flex-wrap:wrap;align-items:center;padding:10px 14px;background:#fff8df;border:1px solid #ead99b;border-radius:11px;margin:12px 0;font-size:14px}
+.ck-poi-dot{display:inline-block;width:13px;height:13px;border-radius:50%;vertical-align:middle;margin-right:4px}.ck-poi-star{font-size:22px;color:#d69b00;text-shadow:0 1px 2px #725300;vertical-align:middle}
+.ck-poi-section{margin:22px 0 32px;padding:22px;background:#fff;border:1px solid #e5e9e3;border-radius:17px}
+.ck-poi-section h2{margin:0 0 10px}.ck-poi-section>p{margin:6px 0 14px;color:#52635a}
+.ck-poi-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:12px}
+.ck-poi-item{border:1px solid #e4e9df;border-radius:11px;padding:13px;background:#fffdf5}
+.ck-poi-item strong{display:block}.ck-poi-item small{display:block;color:#59675e;margin:5px 0}
+.ck-poi-item a{color:#20563e;font-weight:700}
+.ck-poi-marker{background:transparent;border:0}.ck-poi-marker span{display:block;font-size:25px;line-height:29px;text-align:center;color:#efb600;-webkit-text-stroke:1.2px #704e00;text-shadow:0 1px 2px #fff,0 2px 4px #543b00}
+@media(max-width:600px){.ck-poi-section{padding:15px}}
+</style><style id="ck-poi-image-styles">.ck-poi-item{display:flex;gap:12px;align-items:flex-start}.ck-poi-preview{width:94px;height:83px;flex:0 0 94px;border-radius:9px;background:#fff2bd;display:flex;align-items:center;justify-content:center;color:#b68b09;font-size:28px;overflow:hidden;position:relative;text-align:center;line-height:1.2}.ck-poi-preview img{display:block;width:100%;height:100%;object-fit:cover}.ck-poi-credit{position:absolute;bottom:0;left:0;right:0;font-size:8px;background:#ffffffdd;color:#333;padding:2px}.ck-poi-info{min-width:0;flex:1}.ck-poi-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}.ck-poi-actions a,.ck-poi-show{font-size:12px}.ck-poi-show{cursor:pointer;border:1px solid #b9c9b8;background:#fff;border-radius:6px;padding:5px 7px;color:#20563e}.ck-poi-popup{min-width:200px;max-width:260px;line-height:1.55}.ck-poi-popup .ck-poi-preview{width:100%;height:125px;margin-bottom:8px;flex-basis:auto}.ck-poi-popup a{color:#20563e;font-weight:700}@media(max-width:500px){.ck-poi-item{gap:9px}.ck-poi-preview{width:78px;flex-basis:78px;height:75px}}</style><style id="ck-poi-nearby-css">.ck-poi-nearby{margin-top:12px;padding:11px;border:1px solid #e5dfbd;border-radius:10px;background:#fffdf3;font-size:.88rem}.ck-poi-nearby>strong{display:block;color:#66500e;margin-bottom:7px}.ck-poi-nearby-entry{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}.ck-poi-nearby-entry a{color:#20563e;font-weight:700}</style></head><body><header class="ck-header ck-new-header"><nav class="ck-new-nav" aria-label="Hauptnavigation"><a class="ck-home-link" href="/" aria-label="Startseite">⌂</a><a href="/campingplaetze/">Campingplätze</a><a href="/reiseberichte/">Reiseberichte</a><a href="/camping-tipps/">Tipps &amp; Zubehör</a><a href="/camping-news/">News</a><a href="/fragen/">Fragen</a><div class="ck-global-search"><input id="ck-site-search" type="search" aria-label="Gesamte Website durchsuchen" placeholder="Campingplatz suchen …" autocomplete="off"/><button type="button" id="ck-search-button" aria-label="Suche starten">⌕</button><div id="ck-search-results" class="ck-search-results" hidden></div></div></nav></header><section class="ck-hero ck-new-hero"><img alt="Camping-Kompass am Mittelmeer: Wohnwagen, weisser Dodge Durango und Camping-Kompass-Logo" fetchpriority="high" src="/camping-kompass-neues-titelbild.webp"/></section><main><section class="map-feature ck-home-map" id="campingkarte"><h2>Campingplätze auf der Karte</h2><p>Entdecke alle Campingplätze auf einen Blick. Filtere nach Land oder Platztyp und öffne die Markierungen für weitere Informationen.</p><p>Rote Markierungen zeigen bisherige Empfehlungen, grüne Markierungen zeigen unsere Wunschplätze. Alle Plätze bleiben auf der Karte sichtbar, auch wenn die Liste eingeklappt ist.</p><div aria-label="Suchergebnisse der Campingplätze" aria-live="polite" class="grid" id="results"></div><p aria-live="polite" class="camping-map-note" id="map-status" role="status">Karte wird geladen …</p><div aria-label="Interaktive Karte aller Campingplätze" id="map" role="region"></div><div class="filters">
 <input aria-label="Stellplatz nach Ort oder Name suchen" id="search" placeholder="Ort oder Name suchen …" type="search"/>
 <select aria-label="Nach Land filtern" id="country-filter">
 <option value="alle">Alle Länder</option>
@@ -2102,6 +2113,11 @@ body > main > .map-feature {
 <p aria-live="polite" class="qa-status" id="qa-admin-status" role="status"></p>
 <div id="qa-admin-list"></div>
 </details>
+</section><section class="ck-poi-section" id="sehenswuerdigkeiten" aria-labelledby="ck-poi-heading">
+<h2 id="ck-poi-heading">⭐ Sehenswürdigkeiten und teilweise Geheimtipps in der Region</h2>
+<p>Ausgewählte Sehenswürdigkeiten und teilweise Geheimtipps in der Region – bis zu 20 km Luftlinie vom jeweiligen Campingplatz. Die Entfernungen werden aus den hinterlegten Koordinaten berechnet; die Zielpositionen sind redaktionelle Näherungswerte und sollten vor einer Reise geprüft werden.</p>
+<div class="ck-poi-legend" aria-label="Kartenlegende"><span><span class="ck-poi-dot" style="background:#d9482b"></span> Besuchte Plätze</span><span><span class="ck-poi-dot" style="background:#239447"></span> Wunschplätze</span><span><span class="ck-poi-star">★</span> Sehenswürdigkeiten</span><label><input id="ck-poi-toggle" type="checkbox" checked> Gelbe Sterne auf Karte anzeigen</label></div>
+<div id="ck-poi-list" class="ck-poi-list" aria-live="polite"></div>
 </section><section class="ck-hidden-place-list" id="plaetze" style="margin-top: 55px">
 <h2>Campingplätze entdecken – persönlich erlebt</h2>
 <div class="camping-trust">
@@ -2238,7 +2254,7 @@ open.addEventListener('click',()=>setExpanded(true));close.addEventListener('cli
       {name:"Praguecamp",town:"Prag",country:"Tschechien",code:"CZ",type:"Campingplatz",lat:50.07,lon:14.42,description:"Campingplatz in Prag.",url:"https://www.praguecamp.cz/"},
       // Neue Wunschplätze (Standorte auf der Karte sind Näherungswerte; ein Name benötigt noch Klärung).
       {"name": "Camping Lug ins Land", "town": "Bad Bellingen, Baden-Württemberg", "country": "Deutschland", "code": "DE", "type": "Campingplatz", "description": "Wunschplatz für eine zukünftige Campingreise – noch nicht persönlich besucht oder getestet.", "tested": false, "wishlist": true, "lat": 47.73, "lon": 7.56,"url": "https://www.camping-luginsland.de/"},
-      {"name": "Campingplatz Der Kleine Wolf", "town": "Deutschland – Standort prüfen", "country": "Niederlande", "code": "NL", "type": "Campingplatz", "description": "Wunschplatz für eine zukünftige Campingreise – noch nicht persönlich besucht oder getestet.", "tested": false, "wishlist": true, "url": "https://www.kleinewolf.nl/de/"},
+      {"name": "Campingplatz Der Kleine Wolf", "town": "Stegeren (Ommen), Overijssel", "country": "Niederlande", "code": "NL", "type": "Campingplatz", "description": "Wunschplatz für eine zukünftige Campingreise – noch nicht persönlich besucht oder getestet.", "tested": false, "wishlist": true, "lat": 52.54435, "lon": 6.49545, "url": "https://www.kleinewolf.nl/de/"},
       {"name": "Vakantiepark Capfun Fruithof", "town": "Klijndijk, Drenthe", "country": "Niederlande", "code": "NL", "type": "Campingplatz", "description": "Wunschplatz für eine zukünftige Campingreise – noch nicht persönlich besucht oder getestet.", "tested": false, "wishlist": true, "lat": 52.82, "lon": 6.87,"url":"https://www.capfun.de/camping-fruithof-DE.html"},
       {"name": "Camping Les Tournels", "town": "Ramatuelle, Var", "country": "Frankreich", "code": "FR", "type": "Campingplatz", "description": "Wunschplatz für eine zukünftige Campingreise – noch nicht persönlich besucht oder getestet.", "tested": false, "wishlist": true, "lat": 43.2, "lon": 6.65,"url":"https://www.tournels.com/de/"},
       {"name": "Camping El Delfín Verde", "town": "Torroella de Montgrí, Girona", "country": "Spanien", "code": "ES", "type": "Campingplatz", "description": "Wunschplatz für eine zukünftige Campingreise – noch nicht persönlich besucht oder getestet.", "tested": false, "wishlist": true, "lat": 42.02, "lon": 3.19,"url":"https://www.eldelfinverde.com/de/"},
@@ -2250,6 +2266,86 @@ open.addEventListener('click',()=>setExpanded(true));close.addEventListener('cli
       {"name": "Camping Aritzaleku", "town": "Lerate, Navarra", "country": "Spanien", "code": "ES", "type": "Campingplatz", "description": "Wunschplatz für eine zukünftige Campingreise – noch nicht persönlich besucht oder getestet.", "tested": false, "wishlist": true, "lat": 42.72, "lon": -1.96,"url":"https://www.aritzaleku.com/en"}
     ];
 
+
+    // Camping-Kompass: kuratierte Ausflugsziele; redaktionell angenäherte Zielkoordinaten.
+    const ckAttractions = [{"camp":"TCS Camping Sursee","name":"Altstadt Sursee","category":"Stadt & Kultur","lat":47.171,"lon":8.109},{"camp":"Campofelice Camping Village","name":"Verzasca-Staudamm","category":"Natur & Erlebnis","lat":46.197,"lon":8.848},{"camp":"TCS Camping Flaach am Rhein","name":"Rheinfall Schaffhausen","category":"Natur","lat":47.677,"lon":8.615},{"camp":"TCS Camping Genève-Vésenaz / Pointe à la Bise","name":"Genfersee – Jet d’eau","category":"Stadt & Architektur","lat":46.207,"lon":6.156},{"camp":"Frutigresort","name":"Blausee","category":"Natur","lat":46.533,"lon":7.664},{"camp":"Alpencamping Nenzing","name":"Schattenburg Feldkirch","category":"Burg & Geschichte","lat":47.236,"lon":9.599},{"camp":"Camping Piani di Clodia","name":"Gardaland","category":"Erlebnispark","lat":45.454,"lon":10.715},{"camp":"Area Sosta Camper Parma","name":"Dom von Parma","category":"Architektur & Kultur","lat":44.804,"lon":10.33},{"camp":"Camping Le Rossane","name":"Altstadt Sabbioneta","category":"UNESCO & Architektur","lat":44.998,"lon":10.49},{"camp":"Camping Mare Monti","name":"Baia del Silenzio, Sestri Levante","category":"Natur & Küste","lat":44.27,"lon":9.396},{"camp":"Camping Acqua Dolce","name":"Altstadt Levanto","category":"Stadt & Kultur","lat":44.17,"lon":9.613},{"camp":"hu Firenze camping in town","name":"Piazzale Michelangelo","category":"Stadt & Aussicht","lat":43.762,"lon":11.265},{"camp":"Alveare del Pinzi","name":"Altstadt Città della Pieve","category":"Stadt & Geschichte","lat":42.953,"lon":12.004},{"camp":"Union Lido Mare","name":"Venedig (Altstadt)","category":"Stadt & Architektur","lat":45.4375,"lon":12.3358,"url":"https://de.wikipedia.org/wiki/Venedig"},{"camp":"Camping Village Capalonga","name":"Leuchtturm Bibione","category":"Küste & Architektur","lat":45.635,"lon":13.096},{"camp":"Hegi Familien Camping","name":"Rheinfall Schaffhausen","category":"Natur","lat":47.677,"lon":8.615},{"camp":"Camping Münstertal","name":"Burgruine Staufen","category":"Geschichte & Architektur","lat":47.8845,"lon":7.7292,"url":"https://www.staufen.de/"},{"camp":"Camping Schwarzwälder Hof","name":"Europa-Park Rust","category":"Erlebnispark","lat":48.267,"lon":7.721},{"camp":"Camping Hopfensee","name":"Schloss Neuschwanstein","category":"Schloss & Architektur","lat":47.557,"lon":10.75},{"camp":"Camping Kreuzhof","name":"Titisee","category":"Natur","lat":47.902,"lon":8.156},{"camp":"Camping Aquarius","name":"Ruinen von Empúries","category":"Archäologie","lat":42.134,"lon":3.119},{"camp":"Playa Montroig Camping Resort","name":"Ermita de la Mare de Déu de la Roca","category":"Kultur & Aussicht","lat":41.087,"lon":0.964},{"camp":"Camping Eucaliptus","name":"Naturpark Delta de l’Ebre","category":"Natur","lat":40.67,"lon":0.78},{"camp":"Little Texas","name":"Westernstadt Oasys MiniHollywood","category":"Erlebnis & Film","lat":37.02,"lon":-2.43},{"camp":"Camping Reina Isabel","name":"Alhambra Granada","category":"Geschichte & Architektur","lat":37.177,"lon":-3.59},{"camp":"Camping SurEuropa","name":"Felsen von Gibraltar","category":"Natur & Aussicht","lat":36.126,"lon":-5.343},{"camp":"Área de Servicios Autocaravanas Tarifa-Bolonia","name":"Dünen von Bolonia","category":"Natur & Archäologie","lat":36.086,"lon":-5.774},{"camp":"Camperstop Alegría","name":"Castillo de Montánchez","category":"Burg & Geschichte","lat":39.226,"lon":-6.149},{"camp":"Camping Osuna","name":"Parque El Capricho Madrid","category":"Garten & Kultur","lat":40.454,"lon":-3.599},{"camp":"Autocaravans Sevilla / Puerto Gelves","name":"Plaza de España Sevilla","category":"Stadt & Architektur","lat":37.377,"lon":-5.987},{"camp":"Welscamp Matarraña S.L.","name":"Altstadt Riba-roja d’Ebre","category":"Stadt & Geschichte","lat":41.251,"lon":0.489},{"camp":"Costa do Vizir Beach Village","name":"Praia da Ilha do Pessegueiro","category":"Natur & Küste","lat":37.834,"lon":-8.793},{"camp":"Praguecamp","name":"Prager Burg","category":"Geschichte & Architektur","lat":50.092,"lon":14.401},{"camp":"Camping Lug ins Land","name":"Kurpark Bad Bellingen","category":"Natur & Erholung","lat":47.73,"lon":7.56},{"camp":"Campingplatz Der Kleine Wolf","name":"Schloss Eerde","category":"Schloss & Kultur","lat":52.51,"lon":6.45},{"camp":"Vakantiepark Capfun Fruithof","name":"Hunebed D30 Exloo","category":"Archäologie","lat":52.88,"lon":6.88},{"camp":"Camping Les Tournels","name":"Strand Pampelonne","category":"Natur & Küste","lat":43.22,"lon":6.663},{"camp":"Camping El Delfín Verde","name":"Mittelalterliches Pals","category":"Stadt & Geschichte","lat":41.97,"lon":3.148},{"camp":"Camping Globo Barcelona","name":"Leuchtturm Calella","category":"Küste & Aussicht","lat":41.61,"lon":2.65},{"camp":"Camping Cañones de Guara Formiga","name":"Salto de Roldán","category":"Natur & Aussicht","lat":42.3,"lon":-0.37},{"camp":"Camping La Bella Vista","name":"Castillo de la Duquesa","category":"Geschichte & Architektur","lat":36.345,"lon":-5.232},{"camp":"Camping Pinar San José","name":"Faro de Trafalgar","category":"Küste & Geschichte","lat":36.182,"lon":-6.034},{"camp":"Camping Playa La Arena","name":"Playa de Noja","category":"Natur & Küste","lat":43.48,"lon":-3.52},{"camp":"Camping Aritzaleku","name":"Monasterio de Iranzu","category":"Geschichte & Architektur","lat":42.745,"lon":-2.08}];
+    function ckAirDistance(lat1,lon1,lat2,lon2){
+      const rad=Math.PI/180,dLat=(lat2-lat1)*rad,dLon=(lon2-lon1)*rad;
+      const a=Math.sin(dLat/2)**2+Math.cos(lat1*rad)*Math.cos(lat2*rad)*Math.sin(dLon/2)**2;
+      return 6371*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+    }
+    const ckValidAttractions=ckAttractions.map(function(p){
+      const camp=places.find(function(c){return c.name===p.camp;});
+      if(!camp)return null;
+      const distance=ckAirDistance(Number(camp.lat),Number(camp.lon),p.lat,p.lon);
+      return distance<=20?Object.assign({},p,{distance:distance}):null;
+    }).filter(Boolean);
+    // Vorschau: Wikipedia liefert nach einem Klick einen frei lizenzierten Artikel-Thumbnail,
+    // sofern der Suchtreffer eindeutig passt. Bei unklaren Treffern bleibt ein neutrales Symbol.
+    const ckPoiList=document.getElementById('ck-poi-list');
+    function ckPoiFallback(p){return p.url || 'https://de.wikipedia.org/w/index.php?search='+encodeURIComponent(p.name+' '+p.camp);}
+    function ckPoiMapLink(p){return 'https://www.openstreetmap.org/?mlat='+encodeURIComponent(p.lat)+'&mlon='+encodeURIComponent(p.lon)+'#map=14/'+encodeURIComponent(p.lat)+'/'+encodeURIComponent(p.lon);}
+    function ckPoiCard(p,i){
+      return '<article class="ck-poi-item"><div class="ck-poi-preview" id="ck-poi-img-'+i+'" aria-label="Bildvorschau">★</div><div class="ck-poi-info"><strong>★ '+escapeHTML(p.name)+'</strong><small>'+escapeHTML(p.category)+' · ca. '+p.distance.toFixed(1).replace('.',',')+' km Luftlinie</small><div>Ab <b>'+escapeHTML(p.camp)+'</b></div><div class="ck-poi-actions"><a id="ck-poi-web-'+i+'" href="'+ckPoiFallback(p)+'" target="_blank" rel="noopener noreferrer">Website / Informationen öffnen</a><a href="'+ckPoiMapLink(p)+'" target="_blank" rel="noopener noreferrer">Karte</a><button type="button" class="ck-poi-show" data-poi="'+i+'">Bildvorschau anzeigen</button></div></div></article>';
+    }
+    if(ckPoiList){ckPoiList.innerHTML=ckValidAttractions.map(ckPoiCard).join('');}
+    const ckPoiImageCache=new Map();
+    function ckPoiNormalize(x){return String(x||'').toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim();}
+    async function ckPoiFindPreview(p){
+      const key=p.name+'|'+p.camp;
+      if(ckPoiImageCache.has(key))return ckPoiImageCache.get(key);
+      const task=(async function(){
+        const query=p.name;
+        const url='https://de.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(query)+'&gsrlimit=5&prop=pageimages|info&piprop=thumbnail&pithumbsize=280&pilimit=5&inprop=url&format=json&formatversion=2&origin=*';
+        try{
+          const response=await fetch(url,{mode:'cors'});
+          if(!response.ok)throw new Error('Wikipedia unavailable');
+          const data=await response.json();
+          const pages=(data.query&&data.query.pages)||[];
+          const name=ckPoiNormalize(p.name);
+          // Do not display an unrelated photo merely because a search result was returned.
+          const good=pages.find(function(pg){const title=ckPoiNormalize(pg.title);return title===name || (name.length>9 && (title.includes(name)||name.includes(title)) && title.length>5);});
+          if(good&&good.thumbnail&&/^https:\/\//.test(good.thumbnail.source))return {image:good.thumbnail.source,link:good.fullurl||'',credit:'Bild: Wikipedia / Wikimedia Commons'};
+          return null;
+        }catch(e){return null;}
+      })();
+      ckPoiImageCache.set(key,task);
+      return task;
+    }
+    async function ckPoiLoadImage(p,el,linkEl){
+      if(!el||el.dataset.loaded)return;
+      el.dataset.loaded='1';
+      el.textContent='Bild wird gesucht …';
+      const result=await ckPoiFindPreview(p);
+      if(!el.isConnected)return;
+      if(result){
+        const img=document.createElement('img');img.src=result.image;img.alt='Vorschaubild: '+p.name;img.loading='lazy';img.referrerPolicy='no-referrer';
+        img.onerror=function(){el.textContent='★';};
+        el.replaceChildren(img);
+        const credit=document.createElement('span');credit.className='ck-poi-credit';credit.textContent=result.credit;el.appendChild(credit);
+        if(linkEl&&result.link){linkEl.href=result.link;linkEl.textContent='Informationen zur Sehenswürdigkeit';}
+      }else{el.textContent='★';el.title='Kein eindeutig zugeordnetes, frei nutzbares Vorschaubild gefunden';}
+    }
+    if(ckPoiList){ckPoiList.addEventListener('click',function(ev){
+      const button=ev.target.closest('[data-poi]');if(!button)return;
+      const i=Number(button.dataset.poi),p=ckValidAttractions[i];if(!p)return;
+      ckPoiLoadImage(p,document.getElementById('ck-poi-img-'+i),document.getElementById('ck-poi-web-'+i));
+      button.remove();
+    });}
+    let ckPoiLayer=null;
+    function ckAddPoiMarkers(){
+      if(!map||typeof L==='undefined')return;
+      ckPoiLayer=L.layerGroup();
+      ckValidAttractions.forEach(function(p,i){
+        const icon=L.divIcon({className:'ck-poi-marker',html:'<span aria-hidden="true">★</span>',iconSize:[30,30],iconAnchor:[15,15]});
+        const popup='<div class="ck-poi-popup"><div class="ck-poi-preview" id="ck-poi-popup-img-'+i+'">★</div><strong>★ '+escapeHTML(p.name)+'</strong><div>'+escapeHTML(p.category)+'</div><div>Ab '+escapeHTML(p.camp)+' · ca. '+p.distance.toFixed(1).replace('.',',')+' km Luftlinie</div><a id="ck-poi-popup-web-'+i+'" href="'+ckPoiFallback(p)+'" target="_blank" rel="noopener noreferrer">Website / Informationen öffnen</a><br><a target="_blank" rel="noopener noreferrer" href="'+ckPoiMapLink(p)+'">Auf Karte ansehen</a></div>';
+        const marker=L.marker([p.lat,p.lon],{icon:icon,zIndexOffset:500}).bindPopup(popup,{maxWidth:290}).addTo(ckPoiLayer);
+        marker.on('popupopen',function(){ckPoiLoadImage(p,document.getElementById('ck-poi-popup-img-'+i),document.getElementById('ck-poi-popup-web-'+i));});
+      });
+      const toggle=document.getElementById('ck-poi-toggle');
+      if(!toggle||toggle.checked)ckPoiLayer.addTo(map);
+      if(toggle)toggle.addEventListener('change',function(){if(!map||!ckPoiLayer)return;if(toggle.checked)ckPoiLayer.addTo(map);else map.removeLayer(ckPoiLayer);});
+    }
     const countryInfo = {
       CH:{name:"Schweiz",flag:"🇨🇭",featured:"TCS Camping Sursee"},
       DE:{name:"Deutschland",flag:"🇩🇪",featured:"Camping Münstertal"},
@@ -2315,6 +2411,11 @@ open.addEventListener('click',()=>setExpanded(true));close.addEventListener('cli
         : '<span class="visited-label">✓ Persönlich besucht &amp; getestet</span>';
     }
 
+    function ckPoiForCamp(place) {
+      const attractions=ckValidAttractions.filter(p=>p.camp===place.name);
+      if(!attractions.length)return '';
+      return '<div class="ck-poi-nearby"><strong>⭐ Sehenswürdigkeiten & teilweise Geheimtipps in der Region</strong>'+attractions.map(p=>'<div class="ck-poi-nearby-entry"><span>⭐ '+escapeHTML(p.name)+' · '+p.distance.toFixed(1).replace('.',',')+' km Luftlinie</span><a href="'+escapeHTML(ckPoiFallback(p))+'" target="_blank" rel="noopener noreferrer">Informationen ↗</a></div>').join('')+'</div>';
+    }
     function placeCard(place) {
       return `<article class="country-place">
         ${placeImage(place, 'place-card-image')}
@@ -2325,6 +2426,7 @@ open.addEventListener('click',()=>setExpanded(true));close.addEventListener('cli
         ${visitBadge(place)}
         ${place.rating ? `<p><strong>${escapeHTML(place.rating)}</strong></p>` : ""}
         ${place.url ? `<p><a href="${escapeHTML(place.url)}" target="_blank" rel="noopener noreferrer">Website des Platzes ↗</a></p>` : ""}
+        ${ckPoiForCamp(place)}
       </article>`;
     }
 
@@ -2499,6 +2601,7 @@ open.addEventListener('click',()=>setExpanded(true));close.addEventListener('cli
         }).addTo(markers).bindPopup(popup);
         markerCount++;
       });
+      ckAddPoiMarkers();
       if (markerCount) map.fitBounds(markers.getBounds(), { padding: [28, 28], maxZoom: 6 });
       else map.setView([47, 8], 5);
 
