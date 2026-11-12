@@ -962,7 +962,17 @@ main{max-width:1380px;padding-top:20px}
 .wishlist-label{display:inline-block;color:#166337;background:#e1f4e7;border-radius:20px;padding:3px 8px;font-size:.76rem;font-weight:750}
 </style><style>
 .ck-header{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;padding:18px max(4%,calc((100vw - 1240px)/2));background:#fff!important;border-bottom:1px solid #e5e9e3}.ck-brand{font-weight:850;letter-spacing:.04em;color:#173b2d;text-decoration:none;font-size:20px}.ck-header nav{display:flex;flex-wrap:wrap;gap:10px 23px;margin:0;max-width:none}.ck-header nav a{color:#173b2d!important;font-size:14px;font-weight:650;text-decoration:none}.ck-header nav a:hover{color:#4c8a65!important}main{max-width:1240px;margin:auto;padding:38px 20px 65px}.ck-intro{margin-bottom:30px;max-width:790px}.ck-intro h1{font-size:clamp(35px,5vw,60px);line-height:1.07;letter-spacing:-.045em;margin:8px 0 15px;color:#173b2d}.ck-intro p{font-size:18px;color:#52635a;line-height:1.7}.ck-kicker{color:#52745d;font-size:12px;letter-spacing:.16em;font-weight:800;text-transform:uppercase}.ck-footer{padding:35px max(4%,calc((100vw - 1240px)/2));background:#173b2d;color:white}.ck-footer a{color:white;margin-right:18px}.ck-featuregrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:25px 0 42px}.ck-feature{padding:24px;background:white;border:1px solid #e4e9e2;border-radius:17px;text-decoration:none;color:#173b2d;box-shadow:0 5px 20px #173b2d0b}.ck-feature strong{display:block;font-size:22px}.ck-feature p{color:#617268}.ck-feature:hover{border-color:#7aab8b;transform:translateY(-2px)}.ck-hero{background:#173b2d;color:#fff}.ck-hero img{width:100%;max-height:550px;object-fit:contain;background:#173b2d}.ck-hero-inner{max-width:1240px;margin:auto;padding:38px 20px 52px}.ck-hero-inner h1{font-size:clamp(36px,5.5vw,72px);line-height:1.04;letter-spacing:-.05em;margin:8px 0 16px;color:#fff}.ck-hero-inner p{font-size:18px;max-width:660px;color:#dce9df}.ck-cta{display:inline-block;margin-top:14px;padding:13px 23px;border-radius:99px;background:#e7d8b4;color:#173b2d;text-decoration:none;font-weight:800}.ck-topgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.ck-topgrid a{display:block;background:white;border:1px solid #e7ebe6;border-radius:15px;overflow:hidden;color:#173b2d;text-decoration:none}.ck-topgrid img{height:190px;width:100%;object-fit:cover}.ck-topgrid span{display:block;padding:15px;font-weight:750}.ck-note{font-size:14px;color:#637368}.ck-simple{padding:25px;background:white;border:1px solid #e5e9e3;border-radius:15px}.ck-simple a{color:#176047}.ck-hero-inner .ck-kicker{color:#c7d8c8}@media(max-width:700px){.ck-header{padding:15px}.ck-header nav{gap:9px 14px}.ck-header nav a{font-size:12px}.ck-featuregrid{grid-template-columns:1fr}.ck-topgrid{grid-template-columns:1fr}.ck-hero-inner{padding:28px 17px 36px}}
-</style></head><body><header class="ck-header"><a class="ck-brand" href="/">◉ CAMPING-KOMPASS</a><nav aria-label="Hauptnavigation"><a href="/campingplaetze/">Campingplätze</a><a href="/reiseberichte/">Reiseberichte</a><a href="/camping-tipps/">Tipps & Zubehör</a><a href="/camping-news/">News</a><a href="/fragen/">Fragen</a></nav></header><main><div class="ck-intro"><span class="ck-kicker">Camping-Kompass · Persönlich & unabhängig</span><h1>Fragen & Antworten</h1><p>Stelle deine Fragen zu Campingplätzen. Antworten werden vom Camping-Kompass-Inhaber persönlich veröffentlicht.</p></div><section aria-labelledby="qa-heading" class="qa-section" id="camping-fragen">
+</style><style>
+/* Fragenverwaltung: nur im angemeldeten Adminbereich gerendert */
+.qa-admin-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:15px 0}
+.qa-admin-toolbar label{display:flex;align-items:center;gap:7px;font-weight:650}
+.qa-admin-toolbar select{padding:8px 12px;border-radius:8px}
+.qa-admin-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.qa-section .qa-delete-button{background:#a32626;color:#fff}
+.qa-section .qa-delete-button:hover{background:#801c1c}
+.qa-admin-answer-preview{margin-top:9px;border-left:3px solid #5e866a;padding-left:12px;white-space:pre-wrap}
+</style>
+</head><body><header class="ck-header"><a class="ck-brand" href="/">◉ CAMPING-KOMPASS</a><nav aria-label="Hauptnavigation"><a href="/campingplaetze/">Campingplätze</a><a href="/reiseberichte/">Reiseberichte</a><a href="/camping-tipps/">Tipps & Zubehör</a><a href="/camping-news/">News</a><a href="/fragen/">Fragen</a></nav></header><main><div class="ck-intro"><span class="ck-kicker">Camping-Kompass · Persönlich & unabhängig</span><h1>Fragen & Antworten</h1><p>Stelle deine Fragen zu Campingplätzen. Antworten werden vom Camping-Kompass-Inhaber persönlich veröffentlicht.</p></div><section aria-labelledby="qa-heading" class="qa-section" id="camping-fragen">
 <h2 id="qa-heading">Fragen zu unseren Campingplätzen</h2>
 <p>Du hast Fragen zu einem Campingplatz oder Stellplatz? Stelle sie hier. Ich beantworte sie persönlich. Fragen werden erst zusammen mit meiner Antwort veröffentlicht.</p>
 <form class="qa-form" id="qa-form">
@@ -975,7 +985,7 @@ main{max-width:1380px;padding-top:20px}
 <div aria-live="polite" class="qa-list" id="qa-list"><p>Fragen werden geladen …</p></div>
 <button hidden="" id="qa-more" type="button">Mehr anzeigen</button>
 <details class="qa-admin" id="qa-admin">
-<summary>Administrator – Fragen beantworten</summary>
+<summary>Administrator – Fragen verwalten</summary>
 <form class="qa-admin-login" id="qa-admin-login">
 <label>Administrator-Zahlencode <input autocomplete="off" id="qa-code" required="" type="password"/></label>
 <button type="submit">Fragen laden</button>
@@ -1059,43 +1069,116 @@ main{max-width:1380px;padding-top:20px}
     } finally { button.disabled = false; }
   });
 
-  async function loadAdmin() {
-    const result = await request("admin_list");
-    const pending = Array.isArray(result.questions) ? result.questions : [];
+  let csrfToken = "";
+  let adminQuestions = [];
+  let adminFilter = "all";
+  let adminBusy = false;
+
+  function renderAdmin() {
     adminList.replaceChildren();
-    if (!pending.length) adminList.append(node("p", "Keine unbeantworteten Fragen vorhanden."));
-    pending.forEach(q => {
+    const toolbar = node("div", undefined, "qa-admin-toolbar");
+    const filterLabel = node("label", "Fragen anzeigen: ");
+    const filter = node("select");
+    filter.setAttribute("aria-label", "Fragen nach Status filtern");
+    [["all", "Alle Fragen"], ["offen", "Unbeantwortete Fragen"], ["beantwortet", "Beantwortete Fragen"]].forEach(([value, label]) => {
+      const option = node("option", label);
+      option.value = value;
+      filter.append(option);
+    });
+    filter.value = adminFilter;
+    filter.addEventListener("change", () => {
+      adminFilter = filter.value;
+      renderAdmin();
+    });
+    filterLabel.append(filter);
+    toolbar.append(filterLabel);
+    adminList.append(toolbar);
+
+    const shown = adminQuestions.filter(q => adminFilter === "all" || q.status === adminFilter);
+    if (!shown.length) {
+      adminList.append(node("p", "Keine Fragen in dieser Ansicht vorhanden."));
+      return;
+    }
+    shown.forEach(q => {
       const item = node("article", undefined, "qa-item qa-admin-item");
-      item.append(node("h3", q.question), node("small", "Von " + (q.author || "Gast")));
-      const answer = node("textarea");
-      answer.setAttribute("aria-label", "Antwort auf die Frage von " + (q.author || "Gast"));
-      answer.maxLength = 3000;
-      const save = node("button", "Antwort veröffentlichen");
-      save.type = "button";
-      save.addEventListener("click", async () => {
-        save.disabled = true;
+      item.append(node("h3", q.question), node("small", "Von " + (q.author || "Gast") + " · " + (q.status === "beantwortet" ? "Beantwortet" : "Offen")));
+      const actions = node("div", undefined, "qa-admin-actions");
+      if (q.status === "offen") {
+        const answer = node("textarea");
+        answer.setAttribute("aria-label", "Antwort auf die Frage von " + (q.author || "Gast"));
+        answer.maxLength = 3000;
+        answer.placeholder = "Deine Antwort ...";
+        const save = node("button", "Antwort veröffentlichen");
+        save.type = "button";
+        save.addEventListener("click", async () => {
+          if (adminBusy) return;
+          adminBusy = true;
+          save.disabled = true;
+          adminStatus.textContent = "Antwort wird veröffentlicht …";
+          try {
+            await request("answer", {id: q.id, answer: answer.value});
+            await loadAdmin();
+            await loadPublic();
+            adminStatus.textContent = "Antwort veröffentlicht.";
+          } catch (err) {
+            adminStatus.textContent = "Fehler: " + err.message;
+          } finally {
+            adminBusy = false;
+            save.disabled = false;
+          }
+        });
+        item.append(answer);
+        actions.append(save);
+      } else {
+        item.append(node("p", "Antwort: " + (q.answer || ""), "qa-admin-answer-preview"));
+      }
+      const del = node("button", "Frage löschen", "qa-delete-button");
+      del.type = "button";
+      del.setAttribute("aria-label", "Frage löschen: " + q.question);
+      del.addEventListener("click", async () => {
+        if (adminBusy) return;
+        if (!window.confirm("Diese Frage und ihre Antwort dauerhaft löschen?\n\n" + q.question)) return;
+        adminBusy = true;
+        del.disabled = true;
+        adminStatus.textContent = "Frage wird gelöscht …";
         try {
-          await request("answer", {id: q.id, answer: answer.value});
-          adminStatus.textContent = "Antwort veröffentlicht.";
-          await loadPublic();
+          if (!csrfToken) throw new Error("Sicherheitstoken fehlt. Bitte erneut anmelden.");
+          await request("delete", {id: q.id, csrf_token: csrfToken});
           await loadAdmin();
+          await loadPublic();
+          adminStatus.textContent = "Frage und Antwort wurden gelöscht.";
         } catch (err) {
-          adminStatus.textContent = "Fehler: " + err.message;
-        } finally { save.disabled = false; }
+          adminStatus.textContent = "Löschen fehlgeschlagen: " + err.message;
+        } finally {
+          adminBusy = false;
+          del.disabled = false;
+        }
       });
-      item.append(answer, save);
+      actions.append(del);
+      item.append(actions);
       adminList.append(item);
     });
   }
+
+  async function loadAdmin() {
+    const result = await request("admin_all");
+    adminQuestions = Array.isArray(result.questions) ? result.questions : [];
+    if (result.csrf_token) csrfToken = result.csrf_token;
+    renderAdmin();
+  }
+
   adminForm.addEventListener("submit", async e => {
     e.preventDefault();
     adminStatus.textContent = "Anmeldung läuft …";
     try {
-      await request("login", {password: codeField.value});
+      const result = await request("login", {password: codeField.value});
       codeField.value = "";
+      csrfToken = result.csrf_token || "";
+      adminFilter = "all";
       await loadAdmin();
-      adminStatus.textContent = "Angemeldet. Unbeantwortete Fragen geladen.";
+      adminStatus.textContent = "Angemeldet. Alle Fragen geladen. Du kannst Fragen beantworten oder löschen.";
     } catch (err) {
+      csrfToken = "";
       adminList.replaceChildren();
       adminStatus.textContent = "Anmeldung fehlgeschlagen: " + err.message;
     }
