@@ -2081,6 +2081,10 @@ body > main > .map-feature {
 .ck-wish-dot { background:#239447; }
 .ck-poi-marker { background:transparent!important; border:0!important; }
 .ck-poi-marker span { font-size:21px!important; line-height:22px!important; }
+</style><style id="ck-poi-static-visible-css">
+/* Sterne mit fester Pixelverschiebung und grosser Klickflaeche, ohne Laufzeit-Neuberechnung. */
+.ck-poi-marker { background:transparent!important; border:0!important; cursor:pointer!important; }
+.ck-poi-marker span { display:flex!important; align-items:center; justify-content:center; width:30px!important; height:30px!important; font-size:27px!important; line-height:30px!important; cursor:pointer!important; pointer-events:auto!important; }
 </style></head><body><header class="ck-header ck-new-header"><nav class="ck-new-nav" aria-label="Hauptnavigation"><a class="ck-home-link" href="/" aria-label="Startseite">⌂</a><a href="/campingplaetze/">Campingplätze</a><a href="/reiseberichte/">Reiseberichte</a><a href="/camping-tipps/">Tipps &amp; Zubehör</a><a href="/camping-news/">News</a><a href="/fragen/">Fragen</a><div class="ck-global-search"><input id="ck-site-search" type="search" aria-label="Gesamte Website durchsuchen" placeholder="Campingplatz suchen …" autocomplete="off"/><button type="button" id="ck-search-button" aria-label="Suche starten">⌕</button><div id="ck-search-results" class="ck-search-results" hidden></div></div></nav></header><section class="ck-hero ck-new-hero"><img alt="Camping-Kompass am Mittelmeer: Wohnwagen, weisser Dodge Durango und Camping-Kompass-Logo" fetchpriority="high" src="/camping-kompass-neues-titelbild.webp"/></section><main><section class="map-feature ck-home-map" id="campingkarte"><h2>Campingplätze auf der Karte</h2><p>Entdecke alle Campingplätze auf einen Blick. Filtere nach Land oder Platztyp und öffne die Markierungen für weitere Informationen.</p><p>Rote Markierungen zeigen bisherige Empfehlungen, grüne Markierungen zeigen unsere Wunschplätze. Alle Plätze bleiben auf der Karte sichtbar, auch wenn die Liste eingeklappt ist.</p><div aria-label="Suchergebnisse der Campingplätze" aria-live="polite" class="grid" id="results"></div><p aria-live="polite" class="camping-map-note" id="map-status" role="status">Karte wird geladen …</p><div class="ck-poi-legend" aria-label="Kartenlegende"><span><span class="ck-poi-dot" style="background:#d9482b"></span> Besuchte Plätze</span><span><span class="ck-poi-dot" style="background:#239447"></span> Wunschplätze</span><span><span class="ck-poi-star">★</span> Sehenswürdigkeiten</span><label class="ck-map-filter"><input id="ck-camp-toggle" type="checkbox" checked> Besuchte Campingplätze</label><label class="ck-map-filter"><input id="ck-wish-toggle" type="checkbox" checked> Wunschplätze</label><label class="ck-map-filter"><input id="ck-poi-toggle" type="checkbox" checked> Sehenswürdigkeiten</label></div>
 <div aria-label="Interaktive Karte aller Campingplätze" id="map" role="region"></div><div class="filters">
 <input aria-label="Stellplatz nach Ort oder Name suchen" id="search" placeholder="Ort oder Name suchen …" type="search"/>
@@ -2352,14 +2356,14 @@ open.addEventListener('click',()=>setExpanded(true));close.addEventListener('cli
     function ckArrangePoiMarkers(){ return; }
     function ckAddPoiMarkers(){
       if(!map||typeof L==='undefined')return;
-      // Separate Ebene: Campingpunkte liegen immer über den gelben Sternen.
+      // Stern-Ebene sichtbar über Campingmarkern; optischer Offset ist konstant und benötigt keine Kartenbewegungsberechnung.
       if(!map.getPane('ckPoiPane'))map.createPane('ckPoiPane');
-      map.getPane('ckPoiPane').style.zIndex='450';
+      map.getPane('ckPoiPane').style.zIndex='675';
       if(!map.getPane('ckCampPane'))map.createPane('ckCampPane');
       map.getPane('ckCampPane').style.zIndex='650';
       ckPoiLayer=L.layerGroup();
       ckValidAttractions.forEach(function(p,i){
-        const icon=L.divIcon({className:'ck-poi-marker',html:'<span aria-hidden="true">★</span>',iconSize:[22,22],iconAnchor:[11,11]});
+        const icon=L.divIcon({className:'ck-poi-marker',html:'<span aria-hidden="true">★</span>',iconSize:[30,30],iconAnchor:[-12,35]});
         const popup='<div class="ck-poi-popup"><div class="ck-poi-preview" id="ck-poi-popup-img-'+i+'">★</div><strong>★ '+escapeHTML(p.name)+'</strong><div>'+escapeHTML(p.category)+'</div><div>Ab '+escapeHTML(p.camp)+' · ca. '+p.distance.toFixed(1).replace('.',',')+' km Luftlinie</div><a id="ck-poi-popup-web-'+i+'" href="'+ckPoiFallback(p)+'" target="_blank" rel="noopener noreferrer">Website / Informationen öffnen</a><br><a target="_blank" rel="noopener noreferrer" href="'+ckPoiMapLink(p)+'">Auf Karte ansehen</a></div>';
         const original=L.latLng(p.lat,p.lon);
         const marker=L.marker(original,{icon:icon,pane:'ckPoiPane',zIndexOffset:0}).bindPopup(popup,{maxWidth:290}).addTo(ckPoiLayer);
@@ -2555,7 +2559,7 @@ open.addEventListener('click',()=>setExpanded(true));close.addEventListener('cli
       if (!mapElement || map) return;
       map = L.map(mapElement, { scrollWheelZoom: false, preferCanvas: true });
       if(!map.getPane('ckPoiPane'))map.createPane('ckPoiPane');
-      map.getPane('ckPoiPane').style.zIndex='450';
+      map.getPane('ckPoiPane').style.zIndex='675';
       if(!map.getPane('ckCampPane'))map.createPane('ckCampPane');
       map.getPane('ckCampPane').style.zIndex='650';
       markers = L.featureGroup(); // Alle Campingkoordinaten fuer die unveraenderte Karten-Ausgangsansicht
