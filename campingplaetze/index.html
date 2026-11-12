@@ -1281,7 +1281,7 @@ open.addEventListener('click',()=>setExpanded(true));close.addEventListener('cli
         });
       });
       map.on('zoomend moveend resize',ckArrangePoiMarkers);
-      ckArrangePoiMarkers();
+      // Anordnung erfolgt erst nach abgeschlossener Karteninitialisierung.
     }
     const countryInfo = {
       CH:{name:"Schweiz",flag:"🇨🇭",featured:"TCS Camping Sursee"},
@@ -1538,8 +1538,8 @@ open.addEventListener('click',()=>setExpanded(true));close.addEventListener('cli
       // Andernfalls wirft latLngToLayerPoint in ckArrangePoiMarkers einen Fehler.
       if (markerCount) map.fitBounds(markers.getBounds(), { padding: [28, 28], maxZoom: 6 });
       else map.setView([47, 8], 5);
-      ckAddPoiMarkers();
-      ckArrangePoiMarkers();
+      // Zuerst die Basiskarte vollständig aufbauen. Fehler in Zusatzebenen
+      // dürfen die Campingkarte niemals durch die statische Ersatzgrafik ersetzen.
 
       const tileSources = [
         { url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", options: { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom: 19, subdomains: "abc" } },
@@ -1574,7 +1574,14 @@ open.addEventListener('click',()=>setExpanded(true));close.addEventListener('cli
         if (tileErrors >= 4 && !gotTile) switchTileSource();
       });
       if (mapStatus) mapStatus.textContent = "Kartenbibliothek geladen – Kartenausschnitte werden angefordert …";
-      requestAnimationFrame(function () { if (map) map.invalidateSize(true); });
+      // Zusatzebenen erst nach der Basiskarte initialisieren und getrennt absichern.
+      try {
+        ckAddPoiMarkers();
+      } catch (poiError) {
+        console.error('Sehenswürdigkeiten-Ebene:', poiError);
+        if (mapStatus) mapStatus.textContent = 'Campingkarte aktiv; Sehenswürdigkeiten konnten nicht vollständig geladen werden.';
+      }
+      requestAnimationFrame(function () { if (map) { map.invalidateSize(true); try { ckArrangePoiMarkers(); } catch(e) { console.error('Markeranordnung:',e); } } });
       window.addEventListener("resize", function () { if (map) map.invalidateSize(); });
       setTimeout(function () {
         if (!gotTile && sourceIndex === 0) switchTileSource();
