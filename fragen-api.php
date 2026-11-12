@@ -5,7 +5,7 @@ header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 
-// Konfiguration liegt ausserhalb von public_html und gehoert NICHT ins GitHub-Repository.
+// Geschuetzte Konfiguration ausserhalb von public_html.
 $configFile = dirname(__DIR__) . '/camping_config/fragen-config.php';
 if (!is_file($configFile) || !is_readable($configFile)) {
     http_response_code(500);
@@ -91,12 +91,19 @@ try {
         }
         session_regenerate_id(true);
         $_SESSION['qa_admin'] = true;
-        respond(['ok' => true]);
+        // CSRF-Schutz fuer administrative Schreibaktionen.
+        $_SESSION['qa_csrf'] = bin2hex(random_bytes(32));
+        respond(['ok' => true, 'csrf_token' => $_SESSION['qa_csrf']]);
     }
     if ($action === 'admin_list') {
         require_admin();
         $stmt = db()->query("SELECT id, '' AS place, name AS author, frage AS question, erstellt_am AS created_at FROM camping_fragen WHERE status = 'offen' ORDER BY id ASC");
-        respond(['ok' => true, 'questions' => $stmt->fetchAll()]);
+        respond(['ok' => true, 'questions' => $stmt->fetchAll(), 'csrf_token' => $_SESSION['qa_csrf'] ?? null]);
+    }
+    if ($action === 'admin_all') {
+        require_admin();
+        $stmt = db()->query("SELECT id, '' AS place, name AS author, frage AS question, antwort AS answer, status, erstellt_am AS created_at FROM camping_fragen ORDER BY id DESC");
+        respond(['ok' => true, 'questions' => $stmt->fetchAll(), 'csrf_token' => $_SESSION['qa_csrf'] ?? null]);
     }
     if ($action === 'answer') {
         require_admin();
@@ -111,6 +118,24 @@ try {
             respond(['ok' => false, 'message' => 'Diese Frage wurde inzwischen bereits bearbeitet.'], 409);
         }
         respond(['ok' => true]);
+    }
+    if ($action === 'delete') {
+        require_admin();
+        $expected = (string) ($_SESSION['qa_csrf'] ?? '');
+        $provided = (string) ($in['csrf_token'] ?? '');
+        if ($expected === '' || $provided === '' || !hash_equals($expected, $provided)) {
+            respond(['ok' => false, 'message' => 'Sicherheitspruefung fehlgeschlagen. Bitte erneut anmelden.'], 403);
+        }
+        $id = filter_var($in['id'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+        if ($id === false || $id === null) {
+            respond(['ok' => false, 'message' => 'Ungueltige Fragen-ID.'], 422);
+        }
+        $stmt = db()->prepare('DELETE FROM camping_fragen WHERE id = ?');
+        $stmt->execute([$id]);
+        if ($stmt->rowCount() === 0) {
+            respond(['ok' => false, 'message' => 'Frage nicht gefunden.'], 404);
+        }
+        respond(['ok' => true, 'message' => 'Frage und zugehoerige Antwort wurden geloescht.']);
     }
     if ($action === 'logout') {
         $_SESSION = [];
