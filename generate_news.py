@@ -26,24 +26,21 @@ REQUEST_TIMEOUT = 12
 # Fehlgeschlagene Bildprüfungen frühestens nach sieben Tagen wiederholen.
 IMAGE_RETRY_DAYS = 3
 # Direkte RSS-Feeds; weitere geprüfte Quellen können hier ergänzt werden.
-# Die drei promobil-Ressorts sind auf der offiziellen RSS-Seite verlinkt.
+# Nur erreichbare Quellen aus dem letzten GitHub-Test beibehalten.
 FEEDS = [
     # Bestehende Quellen bleiben erhalten.
     ("https://www.promobil.de/rss/news", "Europa", "promobil"),
     ("https://www.promobil.de/rss/ratgeber", "Europa", "promobil"),
-    ("https://www.promobil.de/rss/test", "Europa", "promobil"),
     ("https://www.camping-news.de/rss/", "Europa", "Camping-News"),
     ("https://www.camping-news.de/rss/campingplaetze/", "Europa", "Camping-News"),
     ("https://www.camping-news.de/rss/touristik/", "Europa", "Camping-News"),
-    # Weitere europäische Fachmedien: RSS-Adressen sind Kandidaten und
-    # werden bei JEDEM Lauf geprüft. Ein ungültiger Feed wird übersprungen.
+    # Weitere europäische Fachmedien werden bei JEDEM Lauf geprüft.
+    # Ein vorübergehend ungültiger Feed wird übersprungen.
     # Nicht alle Anbieter garantieren dauerhaft öffentliche RSS-Feeds.
-    ("https://www.pincamp.de/feed/", "Europa", "PiNCAMP"),
     ("https://www.camperprofessional.de/feed/", "Europa", "Camper Professional"),
     ("https://www.lemondeducampingcar.fr/feed/", "Frankreich", "Le Monde du Camping-Car"),
     ("https://www.vanlifemag.fr/feed/", "Frankreich", "Van Life Magazine"),
     ("https://www.fourgonlesite.com/feed/", "Frankreich", "Fourgon le Site"),
-    ("https://www.aboutcampbtob.eu/feed/", "Europa", "Aboutcamp BtoB"),
 ]
 
 # Keine alten Beiträge aus längst vergangenen Jahren neu importieren.
@@ -283,6 +280,7 @@ def main():
             response = SESSION.get(feed_url, timeout=25)
             response.raise_for_status()
             feed = feedparser.parse(response.content)
+            logging.info("RSS-Quelle %s: %s Einträge gefunden.", publisher, len(feed.entries))
             if not feed.entries and getattr(feed, "bozo", False):
                 logging.warning("Ungültiger RSS/Atom-Feed: %s (%s)", feed_url,
                                 getattr(feed, "bozo_exception", "unbekannt"))
