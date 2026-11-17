@@ -16,8 +16,8 @@ import requests
 
 BASE = Path(__file__).resolve().parent
 ARCHIVE = BASE / "news.json"
-MAX_NEW = 10
-MAX_ARCHIVE = 500
+MAX_NEW = 50
+MAX_ARCHIVE = 10000
 MAX_VISIBLE = 50
 VISIBLE_AGE_DAYS = 90
 # Bestehende Meldungen schrittweise auf Bilder prüfen, damit der tägliche Lauf schnell bleibt.
@@ -36,7 +36,7 @@ FEEDS = [
     ("https://www.camping-news.de/rss/touristik/", "Europa", "Camping-News"),
 ]
 # Keine alten Beiträge aus längst vergangenen Jahren neu importieren.
-MAX_AGE_DAYS = 45
+MAX_AGE_DAYS = 14
 # Neue Artikel ohne nachweisbar erreichbares Bild werden nicht importiert.
 REQUIRE_IMAGE_FOR_NEW = True
 
@@ -192,6 +192,35 @@ def image_is_reachable(url):
         return False
 
 
+# Konservative Zuordnung: Nur eindeutige Begriffe verwenden.
+# Bei Unsicherheit bleibt die Meldung unter "News" bzw. "Europa" sichtbar.
+TOPIC_RULES = [
+    ("Warnungen & Sicherheit", ("rückruf", "recall", "unwetter", "waldbrand", "hochwasser", "überschwemmung", "warnung", "brandgefahr", "sperrung")),
+    ("Verkehr & Maut", ("maut", "vignette", "verkehrsregel", "tempolimit", "umweltzone", "autobahn", "führerschein", "parkverbot", "einreisebestimmung")),
+    ("Campingplätze", ("campingplatz", "campingplätze", "stellplatz", "campingpark", "camping resort", "camping village")),
+    ("Wohnmobile & Wohnwagen", ("wohnmobil", "wohnwagen", "reisemobil", "campervan", "kastenwagen", "fahrzeugmodell")),
+    ("Campingtechnik & Zubehör", ("solaranlage", "solarstrom", "powerstation", "campingzubehör", "campingausrüstung", "batterie", "wechselrichter")),
+    ("Reiseziele & Tourismus", ("reiseziel", "tourismus", "reiseregion", "sehenswürdigkeit", "urlaubsregion")),
+    ("Campingbranche & Veranstaltungen", ("campingmesse", "caravan salon", "fachmesse", "campingbranche", "campingverband", "campingfestival")),
+]
+COUNTRY_RULES = [
+    ("Schweiz", ("schweiz", "schweizer", "tessin", "graubünden", "wallis")),
+    ("Deutschland", ("deutschland", "deutsch", "bayern", "schwarzwald")),
+    ("Österreich", ("österreich", "tirol", "kärnten", "salzburg")),
+    ("Italien", ("italien", "italienisch", "gardasee", "südtirol", "toskana")),
+    ("Spanien", ("spanien", "spanisch", "katalonien", "andalusien")),
+    ("Frankreich", ("frankreich", "französisch", "provence", "bretagne")),
+    ("Portugal", ("portugal", "portugiesisch", "algarve")),
+]
+
+def classify_article(title, excerpt, default_region="Europa"):
+    text = (title + " " + excerpt).casefold()
+    category = next((name for name, words in TOPIC_RULES if any(w in text for w in words)), "News")
+    countries = [name for name, words in COUNTRY_RULES if any(w in text for w in words)]
+    region = countries[0] if len(countries) == 1 else default_region
+    return category, region
+
+
 def make_article(entry, region, publisher):
     title = clean_text(entry.get("title", ""))
     url = clean_url(entry.get("link", ""))
@@ -207,14 +236,15 @@ def make_article(entry, region, publisher):
     if REQUIRE_IMAGE_FOR_NEW and (not image_url or not image_is_reachable(image_url)):
         logging.info("Meldung ohne abrufbares Hauptbild übersprungen: %s", title[:90])
         return None
+    category, detected_region = classify_article(title, excerpt, region)
     article = {
         "id": article_id,
         "title": title,
         "excerpt": excerpt or "Lies die vollständige Meldung bei der Originalquelle.",
         "content": [],
-        "category": "News",
-        "region": region,
-        "tags": ["Camping", region],
+        "category": category,
+        "region": detected_region,
+        "tags": ["Camping", detected_region],
         "source_url": url,
         "source_title": publisher,
         "source_published": get_date(entry),
@@ -307,8 +337,10 @@ def main():
             logging.info("Originalbild gefunden: %s", article.get("title", "")[:75])
 
     # Das bestehende news.json bleibt das einzige Nachrichtenarchiv.
+    # Achtung: Bei mehreren tausend Einträgen sollte das Frontend später
+    # auf getrennte, paginierte Archivdateien umgestellt werden.
     # Ohne neue Nachrichten werden alte Einträge NICHT wegen ihres Alters gelöscht.
-    # Sobald neue Nachrichten hinzukommen, begrenzen wir das Archiv auf 500.
+    # Sobald neue Nachrichten hinzukommen, begrenzen wir das Archiv auf 10.000.
     combined = new_articles + existing
     deduplicated = []
     for article in combined:
