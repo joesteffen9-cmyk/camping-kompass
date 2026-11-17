@@ -1,4 +1,3 @@
-
 import hashlib
 import html
 import json
@@ -6,8 +5,10 @@ import logging
 import re
 from datetime import datetime, timezone
 from difflib import SequenceMatcher
+from html.parser import HTMLParser
 from pathlib import Path
-from urllib.parse import urlsplit, urlunsplit, parse_qsl, urlencode
+from urllib.parse import urljoin, urlsplit, urlunsplit, parse_qsl, urlencode
+from email.utils import parsedate_to_datetime
 
 import feedparser
 import requests
@@ -16,31 +17,19 @@ BASE = Path(__file__).resolve().parent
 ARCHIVE = BASE / "news.json"
 MAX_NEW = 10
 MAX_ARCHIVE = 1000
+# Bestehende Meldungen schrittweise auf Bilder prüfen, damit der tägliche Lauf schnell bleibt.
+MAX_IMAGE_BACKFILL = 12
+REQUEST_TIMEOUT = 12
 
 FEEDS = [
-    (
-        "https://news.google.com/rss/search?q=Camping+Schweiz"
-        "&hl=de&gl=CH&ceid=CH:de",
-        "Schweiz",
-    ),
-    (
-        "https://news.google.com/rss/search?q=Camping+Europa"
-        "&hl=de&gl=DE&ceid=DE:de",
-        "Europa",
-    ),
-    (
-        "https://news.google.com/rss/search?q=Wohnmobil+Camping+News"
-        "&hl=de&gl=CH&ceid=CH:de",
-        "Allgemein",
-    ),
-    (
-        "https://news.google.com/rss/search?q=Campingplatz+Nachrichten"
-        "&hl=de&gl=CH&ceid=CH:de",
-        "Allgemein",
-    ),
+    ("https://news.google.com/rss/search?q=Camping+Schweiz&hl=de&gl=CH&ceid=CH:de", "Schweiz"),
+    ("https://news.google.com/rss/search?q=Camping+Europa&hl=de&gl=DE&ceid=DE:de", "Europa"),
+    ("https://news.google.com/rss/search?q=Wohnmobil+Camping+News&hl=de&gl=CH&ceid=CH:de", "Allgemein"),
+    ("https://news.google.com/rss/search?q=Campingplatz+Nachrichten&hl=de&gl=CH&ceid=CH:de", "Allgemein"),
 ]
-
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+SESSION = requests.Session()
+SESSION.headers.update({"User-Agent": "Mozilla/5.0 (compatible; CampingKompassNews/1.1)"})
 
 
 def clean_text(value):
@@ -52,44 +41,30 @@ def clean_url(url):
     p = urlsplit((url or "").strip())
     if p.scheme not in ("http", "https") or not p.netloc:
         return ""
-
-    query = [
-        (k, v) for k, v in parse_qsl(p.query)
-        if not k.lower().startswith("utm_")
-        and k.lower() not in ("gclid", "fbclid")
-    ]
-    return urlunsplit((
-        p.scheme.lower(), p.netloc.lower(),
-        p.path.rstrip("/"), urlencode(query), ""
-    ))
+    query = [(k, v) for k, v in parse_qsl(p.query)
+             if not k.lower().startswith("utm_") and k.lower() not in ("gclid", "fbclid")]
+    return urlunsplit((p.scheme.lower(), p.netloc.lower(), p.path.rstrip("/"), urlencode(query), ""))
 
 
 def normalize_title(title):
-    return re.sub(r"\s+", " ", re.sub(
-        r"[^\w\s]", " ", title.casefold()
-    )).strip()
+    return re.sub(r"\s+", " ", re.sub(r"[^\w\s]", " ", title.casefold())).strip()
 
 
 def is_duplicate(item, existing):
     url = item["source_url"]
     title = normalize_title(item["title"])
-
     for old in existing:
         if clean_url(old.get("source_url")) == url:
             return True
-
         old_title = normalize_title(old.get("title", ""))
-        if title and old_title:
-            if SequenceMatcher(None, title, old_title).ratio() >= 0.88:
-                return True
-
+        if title and old_title and SequenceMatcher(None, title, old_title).ratio() >= 0.88:
+            return True
     return False
 
 
 def load_archive():
     if not ARCHIVE.exists():
         return []
-
     data = json.loads(ARCHIVE.read_text(encoding="utf-8"))
     if not isinstance(data, list):
         raise ValueError("news.json muss eine JSON-Liste enthalten.")
@@ -97,27 +72,106 @@ def load_archive():
 
 
 def get_date(entry):
-    value = entry.get("published") or entry.get("updated") or ""
-    return value.strip()
+    return (entry.get("published") or entry.get("updated") or "").strip()
+
+
+def date_key(article):
+    # Niemals published_at als primären Sortierschlüssel benutzen: das ist nur der Importzeitpunkt.
+    value = article.get("source_published") or ""
+    try:
+        dt = parsedate_to_datetime(value)
+    except (TypeError, ValueError, IndexError):
+        try:
+            dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        except (TypeError, ValueError, AttributeError):
+            return datetime.min.replace(tzinfo=timezone.utc)
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc)
+
+
+def valid_image_url(value, base=""):
+    if not isinstance(value, str) or not value.strip():
+        return ""
+    candidate = urljoin(base, html.unescape(value.strip()))
+    parsed = urlsplit(candidate)
+    if parsed.scheme not in ("http", "https") or not parsed.netloc:
+        return ""
+    # Logos, Pixel und Social-Icons sind keine Artikelbilder.
+    if re.search(r"(?:favicon|sprite|tracking|pixel|logo|avatar|icon)[./_?-]", parsed.path, re.I):
+        return ""
+    return candidate
+
+
+class ImageMetaParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.images = []
+        self.canonical = ""
+
+    def handle_starttag(self, tag, attrs):
+        a = dict(attrs)
+        if tag == "meta":
+            key = (a.get("property") or a.get("name") or "").lower()
+            if key in ("og:image:secure_url", "og:image", "twitter:image", "twitter:image:src"):
+                self.images.append(a.get("content", ""))
+        elif tag == "link":
+            if "canonical" in (a.get("rel") or "").lower().split():
+                self.canonical = a.get("href", "")
+
+
+def rss_image(entry):
+    # Nur tatsächlich zur RSS-Meldung gehörende Medienfelder auslesen.
+    for media in entry.get("media_content", []) + entry.get("media_thumbnail", []):
+        if isinstance(media, dict):
+            url = valid_image_url(media.get("url", ""))
+            if url and (not media.get("type") or str(media["type"]).startswith("image/")):
+                return url
+    for enclosure in entry.get("enclosures", []):
+        if isinstance(enclosure, dict) and str(enclosure.get("type", "")).startswith("image/"):
+            url = valid_image_url(enclosure.get("href") or enclosure.get("url"))
+            if url:
+                return url
+    # RSS-Auszüge können ein eingebettetes Originalbild enthalten.
+    summary = entry.get("summary", "") or entry.get("description", "")
+    match = re.search(r"<img\b[^>]*\bsrc\s*=\s*['\"]([^'\"]+)", summary, re.I)
+    return valid_image_url(match.group(1)) if match else ""
+
+
+def page_image(article_url):
+    """Liest nur öffentliche Artikelmetadaten. Keine Umgehung von Paywalls/Blockaden."""
+    if not clean_url(article_url):
+        return ""
+    try:
+        response = SESSION.get(article_url, timeout=REQUEST_TIMEOUT, allow_redirects=True,
+                               headers={"Accept": "text/html,application/xhtml+xml"})
+        response.raise_for_status()
+        if "text/html" not in response.headers.get("Content-Type", "").lower():
+            return ""
+        # Google-News-Zwischenseiten enthalten nicht zwingend das Originalartikelbild.
+        final_host = (urlsplit(response.url).hostname or "").lower()
+        if final_host == "news.google.com":
+            return ""
+        parser = ImageMetaParser()
+        parser.feed(response.text[:350000])
+        for image in parser.images:
+            url = valid_image_url(image, response.url)
+            if url:
+                return url
+    except (requests.RequestException, UnicodeError, ValueError) as exc:
+        logging.info("Bildmetadaten nicht erreichbar: %s (%s)", article_url, exc)
+    return ""
 
 
 def make_article(entry, region):
     title = clean_text(entry.get("title", ""))
     url = clean_url(entry.get("link", ""))
-
     if not title or not url:
         return None
-
-    # Nur den RSS-Auszug verwenden, keinen ganzen Fremdartikel kopieren.
-    excerpt = clean_text(
-        entry.get("summary", "") or entry.get("description", "")
-    )[:320]
-
-    article_id = hashlib.sha256(
-        url.encode("utf-8")
-    ).hexdigest()[:20]
-
-    return {
+    excerpt = clean_text(entry.get("summary", "") or entry.get("description", ""))[:320]
+    article_id = hashlib.sha256(url.encode("utf-8")).hexdigest()[:20]
+    image_url = rss_image(entry) or page_image(url)
+    article = {
         "id": article_id,
         "title": title,
         "excerpt": excerpt or "Lies die vollständige Meldung bei der Originalquelle.",
@@ -130,6 +184,10 @@ def make_article(entry, region):
         "source_published": get_date(entry),
         "published_at": datetime.now(timezone.utc).isoformat(),
     }
+    if image_url:
+        article["image_url"] = image_url
+        # Dies ist keine urheberrechtliche Nutzungsfreigabe.
+    return article
 
 
 def main():
@@ -139,39 +197,42 @@ def main():
 
     for feed_url, region in FEEDS:
         try:
-            response = requests.get(
-                feed_url,
-                timeout=25,
-                headers={"User-Agent": "CampingKompass/1.0"}
-            )
+            response = SESSION.get(feed_url, timeout=25)
             response.raise_for_status()
             feed = feedparser.parse(response.content)
-
             for entry in feed.entries:
-                article = make_article(entry, region)
-                if not article or is_duplicate(article, known):
+                # Duplikate vor dem Abrufen der Bildmetadaten prüfen.
+                title = clean_text(entry.get("title", ""))
+                url = clean_url(entry.get("link", ""))
+                if not title or not url or is_duplicate({"title": title, "source_url": url}, known):
                     continue
-
-                new_articles.append(article)
-                known.append(article)
-
+                article = make_article(entry, region)
+                if article:
+                    new_articles.append(article)
+                    known.append(article)
                 if len(new_articles) >= MAX_NEW:
                     break
-
         except Exception:
             logging.exception("Feed konnte nicht geladen werden: %s", feed_url)
-
         if len(new_articles) >= MAX_NEW:
             break
 
-    if not new_articles:
-        logging.info("Keine neuen Artikel gefunden; Archiv bleibt unverändert.")
-        return
+    # Fehlende Bilder alter Meldungen schrittweise nachtragen.
+    checked = 0
+    for article in existing:
+        if checked >= MAX_IMAGE_BACKFILL:
+            break
+        if article.get("image_url") or article.get("image_checked"):
+            continue
+        article["image_checked"] = True
+        checked += 1
+        image_url = page_image(article.get("source_url", ""))
+        if image_url:
+            article["image_url"] = image_url
 
     combined = new_articles + existing
     unique = []
     seen = set()
-
     for article in combined:
         url = clean_url(article.get("source_url"))
         if not url or url in seen:
@@ -179,14 +240,17 @@ def main():
         seen.add(url)
         unique.append(article)
 
+    unique.sort(key=date_key, reverse=True)
+    unique = unique[:MAX_ARCHIVE]
+    # Auch ohne neue Meldungen speichern: Reihenfolge und Bildnachträge aktualisieren.
+    if unique == load_archive():
+        logging.info("Keine Änderungen; Archiv bleibt unverändert.")
+        return
     temp = ARCHIVE.with_suffix(".tmp")
-    temp.write_text(
-        json.dumps(unique[:MAX_ARCHIVE], ensure_ascii=False, indent=2),
-        encoding="utf-8"
-    )
+    temp.write_text(json.dumps(unique, ensure_ascii=False, indent=2), encoding="utf-8")
     temp.replace(ARCHIVE)
-
-    logging.info("%s neue Links gespeichert.", len(new_articles))
+    logging.info("%s neue Meldungen; %s ältere Meldungen auf Bilder geprüft; Archiv chronologisch sortiert.",
+                 len(new_articles), checked)
 
 
 if __name__ == "__main__":
