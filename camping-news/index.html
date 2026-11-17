@@ -1043,6 +1043,7 @@ main{max-width:1380px;padding-top:20px}
   const region = document.getElementById("news-region");
   const more = document.getElementById("news-more");
   let articles = [], expanded = false;
+  const MAX_VISIBLE = 50, RECENT_DAYS = 90;
 
   function parsedDate(a) {
     const raw = a.source_published || a.published_at || a.published || a.date || "";
@@ -1128,16 +1129,48 @@ main{max-width:1380px;padding-top:20px}
     return Math.log1p(Math.max(0, Number.isFinite(views) ? views : 0)) * .6 +
            Math.log1p(Math.max(0, Number.isFinite(shares) ? shares : 0)) * .4;
   }
+  function normalizedLink(a) {
+    try {
+      const u = new URL(a.original_url || a.source_url);
+      u.hash = "";
+      for (const key of [...u.searchParams.keys()]) {
+        if (/^(utm_|fbclid$|gclid$|oc$)/i.test(key)) u.searchParams.delete(key);
+      }
+      return u.hostname.toLowerCase().replace(/^www\./, "") + u.pathname.replace(/\/$/, "").toLowerCase() + u.search;
+    } catch { return ""; }
+  }
+  function normalizedTitle(a) {
+    return String(a.title || "").toLocaleLowerCase("de")
+      .replace(/\s+[-–|]\s+[^-–|]+$/, "")
+      .normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9äöüß]+/g, " ").trim();
+  }
+  function chooseVisible(items) {
+    const now = Date.now(), cutoff = now - RECENT_DAYS * 86400000;
+    const seenLinks = new Set(), seenTitles = new Set();
+    const unique = [];
+    for (const a of items.slice().sort((x,y) => parsedDate(y)-parsedDate(x))) {
+      if (!imageURL(a)) continue;
+      const link = normalizedLink(a), title = normalizedTitle(a);
+      if ((link && seenLinks.has(link)) || (title && seenTitles.has(title))) continue;
+      if (link) seenLinks.add(link);
+      if (title) seenTitles.add(title);
+      unique.push(a);
+    }
+    const recent = unique.filter(a => parsedDate(a) >= cutoff);
+    const older = unique.filter(a => parsedDate(a) < cutoff);
+    return recent.concat(older).slice(0, MAX_VISIBLE);
+  }
   function render() {
     const query = search.value.trim().toLocaleLowerCase("de");
     const filtered = articles.filter(a =>
       [a.title, a.excerpt, a.region, a.source_title, a.category].join(" ").toLocaleLowerCase("de").includes(query) &&
       (region.value === "Alle" || a.region === region.value)
     );
-    const dated = filtered.slice().sort((a,b) => parsedDate(b)-parsedDate(a));
+    const dated = chooseVisible(filtered);
     feature.replaceChildren(); list.replaceChildren();
     if (!dated.length) {
-      status.textContent = "Keine passenden News gefunden. Bitte Filter ändern oder später erneut versuchen.";
+      status.textContent = "Keine passenden Nachrichten mit Bild gefunden. Bitte Filter ändern oder später erneut versuchen.";
       more.hidden = true; return;
     }
     // Popularity is considered only for articles published on the latest calendar day
@@ -1149,9 +1182,9 @@ main{max-width:1380px;padding-top:20px}
     const lead = ranked.length ? ranked[0] : latest;
     feature.append(featureCard(lead, ranked.length > 0));
     const rest = dated.filter(a => a !== lead);
-    const visible = expanded ? rest.length : 6;
+    const visible = expanded ? Math.min(rest.length, MAX_VISIBLE - 1) : 6;
     rest.slice(0, visible).forEach((a,i) => list.append(smallCard(a,i)));
-    status.textContent = dated.length + " Camping-News gefunden.";
+    status.textContent = dated.length + " Camping-News mit Bild verfügbar (maximal 50).";
     more.hidden = rest.length <= 6;
     more.textContent = expanded ? "Weniger anzeigen" : "Mehr News anzeigen";
   }
