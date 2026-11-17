@@ -10,6 +10,11 @@ from pathlib import Path
 from urllib.parse import urljoin, urlsplit, urlunsplit, parse_qsl, urlencode
 from email.utils import parsedate_to_datetime
 
+try:
+    from googlenewsdecoder import gnewsdecoder
+except ImportError:
+    gnewsdecoder = None
+
 import feedparser
 import requests
 
@@ -20,6 +25,8 @@ MAX_ARCHIVE = 1000
 # Bestehende Meldungen schrittweise auf Bilder prüfen, damit der tägliche Lauf schnell bleibt.
 MAX_IMAGE_BACKFILL = 12
 REQUEST_TIMEOUT = 12
+# Fehlgeschlagene Bildprüfungen frühestens nach sieben Tagen wiederholen.
+IMAGE_RETRY_DAYS = 7
 
 FEEDS = [
     ("https://news.google.com/rss/search?q=Camping+Schweiz&hl=de&gl=CH&ceid=CH:de", "Schweiz"),
@@ -138,29 +145,59 @@ def rss_image(entry):
     return valid_image_url(match.group(1)) if match else ""
 
 
-def page_image(article_url):
-    """Liest nur öffentliche Artikelmetadaten. Keine Umgehung von Paywalls/Blockaden."""
-    if not clean_url(article_url):
-        return ""
+def resolve_original_url(url):
+    """Google-News-RSS-Link zur Verlagsseite auflösen (falls möglich)."""
+    host = (urlsplit(url).hostname or "").lower()
+    if host not in ("news.google.com", "www.news.google.com"):
+        return url
+
+    if gnewsdecoder is not None:
+        try:
+            result = gnewsdecoder(url, interval=0)
+            decoded = result.get("decoded_url", "") if isinstance(result, dict) else ""
+            if clean_url(decoded) and "news.google.com" not in (urlsplit(decoded).hostname or ""):
+                return decoded
+        except Exception as exc:
+            logging.info("Google-News-Link konnte nicht dekodiert werden: %s", exc)
+    else:
+        logging.warning("Paket googlenewsdecoder fehlt; Google-News-Links können nicht sicher dekodiert werden.")
+
+    # Normale HTTP-Weiterleitung als zweite Möglichkeit.
     try:
-        response = SESSION.get(article_url, timeout=REQUEST_TIMEOUT, allow_redirects=True,
+        response = SESSION.get(url, timeout=REQUEST_TIMEOUT, allow_redirects=True)
+        final_url = response.url
+        if clean_url(final_url) and (urlsplit(final_url).hostname or "").lower() not in (
+            "news.google.com", "www.news.google.com"
+        ):
+            return final_url
+    except requests.RequestException:
+        pass
+    return ""
+
+
+def page_image(article_url):
+    """Liest das tatsächliche Artikel-Hauptbild aus Open-Graph-Metadaten."""
+    original_url = resolve_original_url(article_url)
+    if not original_url:
+        return "", ""
+    try:
+        response = SESSION.get(original_url, timeout=REQUEST_TIMEOUT, allow_redirects=True,
                                headers={"Accept": "text/html,application/xhtml+xml"})
         response.raise_for_status()
         if "text/html" not in response.headers.get("Content-Type", "").lower():
-            return ""
-        # Google-News-Zwischenseiten enthalten nicht zwingend das Originalartikelbild.
+            return "", original_url
         final_host = (urlsplit(response.url).hostname or "").lower()
-        if final_host == "news.google.com":
-            return ""
+        if final_host in ("news.google.com", "www.news.google.com"):
+            return "", ""
         parser = ImageMetaParser()
-        parser.feed(response.text[:350000])
-        for image in parser.images:
-            url = valid_image_url(image, response.url)
-            if url:
-                return url
+        parser.feed(response.text[:500000])
+        for candidate in parser.images:
+            image_url = valid_image_url(candidate, response.url)
+            if image_url:
+                return image_url, response.url
     except (requests.RequestException, UnicodeError, ValueError) as exc:
-        logging.info("Bildmetadaten nicht erreichbar: %s (%s)", article_url, exc)
-    return ""
+        logging.info("Artikelbild nicht erreichbar: %s (%s)", original_url, exc)
+    return "", original_url
 
 
 def make_article(entry, region):
@@ -170,7 +207,10 @@ def make_article(entry, region):
         return None
     excerpt = clean_text(entry.get("summary", "") or entry.get("description", ""))[:320]
     article_id = hashlib.sha256(url.encode("utf-8")).hexdigest()[:20]
-    image_url = rss_image(entry) or page_image(url)
+    image_url = rss_image(entry)
+    original_url = ""
+    if not image_url:
+        image_url, original_url = page_image(url)
     article = {
         "id": article_id,
         "title": title,
@@ -186,7 +226,9 @@ def make_article(entry, region):
     }
     if image_url:
         article["image_url"] = image_url
-        # Dies ist keine urheberrechtliche Nutzungsfreigabe.
+    if original_url:
+        article["original_url"] = original_url
+    # Eine Bildadresse ist keine urheberrechtliche Nutzungsfreigabe.
     return article
 
 
@@ -217,18 +259,32 @@ def main():
         if len(new_articles) >= MAX_NEW:
             break
 
-    # Fehlende Bilder alter Meldungen schrittweise nachtragen.
+    # Alte Nachrichten schrittweise nachtragen; Fehlschläge später erneut versuchen.
     checked = 0
+    now = datetime.now(timezone.utc)
     for article in existing:
         if checked >= MAX_IMAGE_BACKFILL:
             break
-        if article.get("image_url") or article.get("image_checked"):
+        if article.get("image_url"):
             continue
-        article["image_checked"] = True
+        last_check = article.get("image_last_checked")
+        if last_check:
+            try:
+                dt = datetime.fromisoformat(last_check.replace("Z", "+00:00"))
+                if dt.tzinfo is None:
+                    dt = dt.replace(tzinfo=timezone.utc)
+                if (now - dt).total_seconds() < IMAGE_RETRY_DAYS * 86400:
+                    continue
+            except (ValueError, TypeError):
+                pass
         checked += 1
-        image_url = page_image(article.get("source_url", ""))
+        image_url, original_url = page_image(article.get("source_url", ""))
+        article["image_last_checked"] = now.isoformat()
+        if original_url:
+            article["original_url"] = original_url
         if image_url:
             article["image_url"] = image_url
+            logging.info("Originalbild gefunden: %s", article.get("title", "")[:75])
 
     combined = new_articles + existing
     unique = []
