@@ -1078,19 +1078,46 @@ main{max-width:1380px;padding-top:20px}
     const date = parsedDate(a);
     return date ? new Intl.DateTimeFormat("de-CH", {day:"2-digit",month:"long",year:"numeric"}).format(date) : "Datum nicht angegeben";
   }
+  function originalIllustration(a) {
+    // Self-contained, original vector artwork: no external image dependencies or rights uncertainty.
+    const title = String(a.title || "Camping");
+    const hash = Array.from(title).reduce((n,ch)=>((n*31+ch.charCodeAt(0))>>>0),7);
+    const palettes = [
+      ["#a7c7c0","#d9d7ae","#2d624e","#173d32"],
+      ["#d7b99c","#e8d7b6","#557b61","#274d43"],
+      ["#8cb4bf","#e7d4a6","#376f68","#224b46"],
+      ["#b3c6a1","#f0dfbc","#678064","#2e5140"],
+      ["#c6b5a0","#efdbb0","#54785b","#244f42"]
+    ];
+    const c = palettes[hash % palettes.length];
+    const sunX = 170 + (hash % 540), sunY = 115 + (hash % 80);
+    const tent = /zelt|trekking|wander|natur|outdoor/i.test(title);
+    const vehicle = tent
+      ? `<path d="M380 445 L500 285 L650 445 Z" fill="#e6c9a0" stroke="#f9e8c9" stroke-width="7"/><path d="M500 285 L500 445 L650 445 Z" fill="#a26e50"/><path d="M500 445 L555 355 L605 445" fill="#314d3d"/>`
+      : `<g transform="translate(${hash%2?30:-15},0)"><rect x="332" y="310" width="340" height="155" rx="24" fill="#f5f1e4" stroke="#d8d4c6" stroke-width="7"/><rect x="380" y="334" width="102" height="68" rx="9" fill="#6d9da0"/><rect x="515" y="335" width="98" height="115" rx="7" fill="#e2dfd4" stroke="#9ba69c" stroke-width="5"/><rect x="344" y="412" width="315" height="16" fill="#d2ad75"/><circle cx="430" cy="468" r="31" fill="#273c36"/><circle cx="430" cy="468" r="15" fill="#bdc6b9"/><path d="M672 420 h90" stroke="#e8dfc9" stroke-width="9" stroke-linecap="round"/></g>`;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="${c[0]}"/><stop offset="1" stop-color="${c[1]}"/></linearGradient></defs><rect width="1000" height="600" fill="url(#sky)"/><circle cx="${sunX}" cy="${sunY}" r="72" fill="#fff4d6" opacity=".75"/><path d="M0 340 Q160 160 320 335 T650 275 T1000 340 V600 H0Z" fill="${c[2]}" opacity=".66"/><path d="M0 395 Q250 295 480 385 T1000 360 V600 H0Z" fill="${c[3]}"/><path d="M0 500 Q350 430 630 510 T1000 475 V600 H0Z" fill="#6e8662"/><g fill="#203d32"><path d="M95 470 l55 -190 55 190Z"/><path d="M160 480 l60 -235 60 235Z"/><path d="M795 475 l55 -205 55 205Z"/><path d="M870 485 l58 -235 58 235Z"/></g><path d="M0 550 Q500 485 1000 560 V600 H0Z" fill="#b8a47c"/>${vehicle}<text x="35" y="570" font-size="20" font-family="Arial,sans-serif" font-weight="700" letter-spacing="5" fill="#fff" opacity=".86">CAMPING-KOMPASS JOURNAL</text></svg>`;
+    return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+  }
   function art(a) {
     const box = document.createElement("div"); box.className = "ck-news-art";
-    // Images are displayed only if explicitly marked as permitted in the feed.
+    const img = document.createElement("img");
+    img.alt = "Illustration: Campinglandschaft – kein Originalfoto des Nachrichtenartikels";
+    img.loading = "lazy";
+    img.src = originalIllustration(a);
+    // Replace the illustration with a real image only when the feed explicitly permits its use.
     if (a.image_license_ok === true || a.image_usage_allowed === true) {
       const url = imageURL(a);
       if (url) {
-        const img = document.createElement("img");
-        img.src = url; img.alt = a.image_alt || ""; img.loading = "lazy";
+        img.src = url;
+        img.alt = a.image_alt || "Artikelbild";
         img.referrerPolicy = "no-referrer";
-        img.addEventListener("error", () => img.remove(), {once:true});
-        box.append(img);
+        img.addEventListener("error", () => {
+          img.src = originalIllustration(a);
+          img.alt = "Illustration: Campinglandschaft – kein Originalfoto des Nachrichtenartikels";
+        }, {once:true});
       }
     }
+    box.append(img);
     return box;
   }
   function readLink(a) {
