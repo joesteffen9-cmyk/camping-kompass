@@ -3,6 +3,7 @@ import html
 import json
 import logging
 import re
+import time
 from datetime import datetime, timezone
 from difflib import SequenceMatcher
 from html.parser import HTMLParser
@@ -23,10 +24,14 @@ ARCHIVE = BASE / "news.json"
 MAX_NEW = 10
 MAX_ARCHIVE = 1000
 # Bestehende Meldungen schrittweise auf Bilder prüfen, damit der tägliche Lauf schnell bleibt.
-MAX_IMAGE_BACKFILL = 12
+MAX_IMAGE_BACKFILL = 4
 REQUEST_TIMEOUT = 12
 # Fehlgeschlagene Bildprüfungen frühestens nach sieben Tagen wiederholen.
-IMAGE_RETRY_DAYS = 7
+IMAGE_RETRY_DAYS = 3
+# Google News nicht mit vielen Dekodierungsanfragen belasten.
+GOOGLE_REQUEST_PAUSE = 3
+GOOGLE_COOLDOWN_SECONDS = 24 * 3600
+GOOGLE_COOLDOWN_FILE = BASE / '.google_news_cooldown.json'
 
 FEEDS = [
     ("https://news.google.com/rss/search?q=Camping+Schweiz&hl=de&gl=CH&ceid=CH:de", "Schweiz"),
@@ -37,6 +42,47 @@ FEEDS = [
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 SESSION = requests.Session()
 SESSION.headers.update({"User-Agent": "Mozilla/5.0 (compatible; CampingKompassNews/1.1)"})
+# Externe HTTP-Bibliotheken sollen das Actions-Protokoll nicht mit Einzelanfragen füllen.
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("httpcore").setLevel(logging.WARNING)
+
+google_blocked = False
+last_google_request = 0.0
+
+
+def google_cooldown_active():
+    """Ein 429 pausiert weitere Google-News-Anfragen auch über Workflow-Läufe hinweg,
+    sofern die kleine Statusdatei durch den bestehenden Git-Commit mitgespeichert wird."""
+    try:
+        data = json.loads(GOOGLE_COOLDOWN_FILE.read_text(encoding="utf-8"))
+        until = datetime.fromisoformat(data["until"])
+        return datetime.now(timezone.utc) < until
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
+
+
+def note_google_rate_limit():
+    global google_blocked
+    google_blocked = True
+    until = datetime.fromtimestamp(time.time() + GOOGLE_COOLDOWN_SECONDS, timezone.utc)
+    GOOGLE_COOLDOWN_FILE.write_text(
+        json.dumps({"until": until.isoformat()}, indent=2), encoding="utf-8"
+    )
+    logging.warning("Google News antwortet mit HTTP 429: weitere Google-Anfragen "
+                    "für diesen Lauf gestoppt; frühestens nach 24 Stunden erneut.")
+
+
+def google_request_gate():
+    """Gibt False zurück, sobald ein Google-News-Limit bekannt ist."""
+    global last_google_request
+    if google_blocked or google_cooldown_active():
+        return False
+    delay = GOOGLE_REQUEST_PAUSE - (time.monotonic() - last_google_request)
+    if delay > 0:
+        time.sleep(delay)
+    last_google_request = time.monotonic()
+    return True
+
 
 
 def clean_text(value):
@@ -146,38 +192,39 @@ def rss_image(entry):
 
 
 def resolve_original_url(url):
-    """Google-News-RSS-Link zur Verlagsseite auflösen (falls möglich)."""
+    """Google-News-RSS-Link sparsam zur Verlagsseite auflösen."""
     host = (urlsplit(url).hostname or "").lower()
     if host not in ("news.google.com", "www.news.google.com"):
         return url
+    if not google_request_gate():
+        return ""
 
     if gnewsdecoder is not None:
         try:
             result = gnewsdecoder(url, interval=0)
             decoded = result.get("decoded_url", "") if isinstance(result, dict) else ""
-            if clean_url(decoded) and "news.google.com" not in (urlsplit(decoded).hostname or ""):
+            if clean_url(decoded) and (urlsplit(decoded).hostname or "").lower() not in (
+                "news.google.com", "www.news.google.com"
+            ):
                 return decoded
+            # Einige Bibliotheksversionen melden HTTP-Fehler im Rückgabewert.
+            if "429" in str(result):
+                note_google_rate_limit()
         except Exception as exc:
-            logging.info("Google-News-Link konnte nicht dekodiert werden: %s", exc)
+            if "429" in str(exc):
+                note_google_rate_limit()
+            else:
+                logging.info("Google-News-Link nicht dekodiert: %s", str(exc)[:160])
     else:
-        logging.warning("Paket googlenewsdecoder fehlt; Google-News-Links können nicht sicher dekodiert werden.")
+        logging.warning("googlenewsdecoder fehlt: bitte requirements.txt prüfen.")
 
-    # Normale HTTP-Weiterleitung als zweite Möglichkeit.
-    try:
-        response = SESSION.get(url, timeout=REQUEST_TIMEOUT, allow_redirects=True)
-        final_url = response.url
-        if clean_url(final_url) and (urlsplit(final_url).hostname or "").lower() not in (
-            "news.google.com", "www.news.google.com"
-        ):
-            return final_url
-    except requests.RequestException:
-        pass
+    # Keine zweite Google-Anfrage als Fallback: diese hat vorher die Limits verstärkt.
     return ""
 
 
-def page_image(article_url):
+def page_image(article_url, known_original_url=""):
     """Liest das tatsächliche Artikel-Hauptbild aus Open-Graph-Metadaten."""
-    original_url = resolve_original_url(article_url)
+    original_url = known_original_url or resolve_original_url(article_url)
     if not original_url:
         return "", ""
     try:
@@ -235,11 +282,18 @@ def make_article(entry, region):
 def main():
     existing = load_archive()
     known = list(existing)
+    if google_cooldown_active():
+        logging.warning("Google-News-Pause aktiv. Bestehendes Archiv bleibt erhalten.")
     new_articles = []
 
     for feed_url, region in FEEDS:
+        if not google_request_gate():
+            break
         try:
             response = SESSION.get(feed_url, timeout=25)
+            if response.status_code == 429:
+                note_google_rate_limit()
+                break
             response.raise_for_status()
             feed = feedparser.parse(response.content)
             for entry in feed.entries:
@@ -263,7 +317,7 @@ def main():
     checked = 0
     now = datetime.now(timezone.utc)
     for article in existing:
-        if checked >= MAX_IMAGE_BACKFILL:
+        if checked >= MAX_IMAGE_BACKFILL or google_blocked:
             break
         if article.get("image_url"):
             continue
@@ -277,8 +331,15 @@ def main():
                     continue
             except (ValueError, TypeError):
                 pass
+        # Ohne bereits bekannte Verlagsadresse keine erneute Anfrage während der Pause.
+        if google_cooldown_active() and not article.get("original_url"):
+            break
+        image_url, original_url = page_image(
+            article.get("source_url", ""), article.get("original_url", "")
+        )
+        if google_blocked and not original_url:
+            break
         checked += 1
-        image_url, original_url = page_image(article.get("source_url", ""))
         article["image_last_checked"] = now.isoformat()
         if original_url:
             article["original_url"] = original_url
