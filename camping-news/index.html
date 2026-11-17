@@ -1023,7 +1023,17 @@ main{max-width:1380px;padding-top:20px}
 .ck-journal .ck-news-reset{font:inherit;font-size:.84rem;font-weight:600;background:transparent;border:0;color:#345e4c;cursor:pointer;padding:10px 6px;text-decoration:underline;text-underline-offset:3px}
 .ck-journal .ck-news-reset:focus-visible{outline:2px solid #254c3c;outline-offset:2px}
 </style>
-</head><body><header class="ck-header"><a class="ck-brand" href="/">◉ CAMPING-KOMPASS</a><nav aria-label="Hauptnavigation"><a href="/campingplaetze/">Campingplätze</a><a href="/reiseberichte/">Reiseberichte</a><a href="/camping-tipps/">Tipps & Zubehör</a><a href="/camping-news/">News</a><a href="/fragen/">Fragen</a></nav></header><main><div class="ck-intro"><span class="ck-kicker">Camping-Kompass · Persönlich & unabhängig</span><h1>Aktuelle Camping-News</h1><p>Die neuesten Camping-Meldungen aus dem bestehenden News-Archiv.</p></div><section id="news" class="ck-journal">
+<style id="ck-news-archive-style">
+.ck-archive{margin:44px 0 10px;padding:clamp(18px,3vw,32px);background:#fff;border:1px solid #e1e9e1;border-radius:20px;box-shadow:0 8px 25px #173b2e0a}
+.ck-archive h2{margin:0 0 8px;color:#173b2d;font-size:clamp(24px,3vw,34px)}
+.ck-archive p{color:#5b7061;margin:0 0 16px}
+.ck-archive summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:750;color:#173b2d;font-size:clamp(19px,2.5vw,25px)}
+.ck-archive summary::-webkit-details-marker{display:none}.ck-archive summary::after{content:'+';font-size:26px}.ck-archive[open] summary::after{content:'−'}
+.ck-archive-body{margin-top:22px}.ck-archive-filters{display:grid;grid-template-columns:minmax(170px,2fr) repeat(3,minmax(125px,1fr));gap:10px;margin-bottom:15px}
+.ck-archive-filters input,.ck-archive-filters select{width:100%;min-width:0;border:1px solid #dce6dc;border-radius:10px;padding:11px;background:#fff;color:#173b2d}
+.ck-archive-list{display:grid;gap:11px}.ck-archive-item{padding:16px;border:1px solid #e2eae2;border-radius:12px;background:#fcfdfb}.ck-archive-item h3{font-size:17px;line-height:1.35;margin:5px 0 8px}.ck-archive-item p{margin:0 0 8px;font-size:14px;line-height:1.5}.ck-archive-meta{font-size:12px;color:#66776b}.ck-archive-item a{color:#205b40;font-weight:750}.ck-archive-nav{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:14px;margin-top:18px}.ck-archive-nav button{border:0;border-radius:999px;padding:10px 16px;background:#173b2d;color:#fff;cursor:pointer}.ck-archive-nav button:disabled{opacity:.35;cursor:not-allowed}
+@media(max-width:850px){.ck-archive-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.ck-archive-filters input{grid-column:1/-1}}@media(max-width:520px){.ck-archive-filters{grid-template-columns:1fr}.ck-archive-filters input{grid-column:auto}}
+</style></head><body><header class="ck-header"><a class="ck-brand" href="/">◉ CAMPING-KOMPASS</a><nav aria-label="Hauptnavigation"><a href="/campingplaetze/">Campingplätze</a><a href="/reiseberichte/">Reiseberichte</a><a href="/camping-tipps/">Tipps & Zubehör</a><a href="/camping-news/">News</a><a href="/fragen/">Fragen</a></nav></header><main><div class="ck-intro"><span class="ck-kicker">Camping-Kompass · Persönlich & unabhängig</span><h1>Aktuelle Camping-News</h1><p>Die neuesten Camping-Meldungen aus dem bestehenden News-Archiv.</p></div><section id="news" class="ck-journal">
   <div id="news-feature" aria-label="Hauptnachricht"></div>
   <div class="ck-section-line"><h3>Weitere Nachrichten</h3><span class="ck-meta">Neueste zuerst</span></div>
   <div class="ck-news-filter-area" aria-label="Camping-Nachrichten filtern">
@@ -1052,7 +1062,24 @@ main{max-width:1380px;padding-top:20px}
   <p aria-live="polite" id="news-status">Camping-News werden geladen …</p>
   <div class="grid" id="news-list"></div>
   <button class="btn" hidden id="news-more" type="button">Mehr News anzeigen</button>
-</section></main><footer class="ck-footer"><p>© 2026 Camping-Kompass.info · Persönlich erlebt. Mit Leidenschaft geteilt.</p><a href="/">Startseite</a><a href="/ueber-uns/">Über uns</a><a href="/impressum.html">Impressum</a><a href="/datenschutz.html">Datenschutz</a></footer><script id="ck-news-journal-script">
+</section>
+<details class="ck-archive" id="camping-news-archive">
+  <summary>Camping-News Archiv öffnen</summary>
+  <div class="ck-archive-body">
+    <h2>Camping-News Archiv</h2>
+    <p>Ältere Meldungen aus ganz Europa nach Thema, Land und Jahr durchsuchen. Die Nachrichten verlinken auf ihre Originalquellen.</p>
+    <div class="ck-archive-filters">
+      <input type="search" id="ck-archive-search" placeholder="Archiv durchsuchen …" aria-label="Archiv durchsuchen">
+      <select id="ck-archive-year" aria-label="Jahr auswählen"><option value="">Alle Jahre</option></select>
+      <select id="ck-archive-country" aria-label="Land auswählen"><option value="">Ganz Europa</option><option>Schweiz</option><option>Deutschland</option><option>Österreich</option><option>Italien</option><option>Spanien</option><option>Frankreich</option><option>Portugal</option><option>Europa</option></select>
+      <select id="ck-archive-topic" aria-label="Thema auswählen"><option value="">Alle Themen</option><option>Campingplätze &amp; Stellplätze</option><option>Verkehr, Maut &amp; Vorschriften</option><option>Wohnmobile &amp; Wohnwagen</option><option>Campingtechnik &amp; Zubehör</option><option>Reiseziele &amp; Tourismus</option><option>Warnungen &amp; Sicherheit</option><option>Campingbranche &amp; Veranstaltungen</option><option>Weitere Camping-News</option></select>
+    </div>
+    <p id="ck-archive-status" role="status" aria-live="polite">Archiv wird beim Öffnen geladen.</p>
+    <div id="ck-archive-list" class="ck-archive-list"></div>
+    <div class="ck-archive-nav"><button type="button" id="ck-archive-prev">Zurück</button><span id="ck-archive-page"></span><button type="button" id="ck-archive-next">Weiter</button></div>
+  </div>
+</details>
+</main><footer class="ck-footer"><p>© 2026 Camping-Kompass.info · Persönlich erlebt. Mit Leidenschaft geteilt.</p><a href="/">Startseite</a><a href="/ueber-uns/">Über uns</a><a href="/impressum.html">Impressum</a><a href="/datenschutz.html">Datenschutz</a></footer><script id="ck-news-journal-script">
 (() => {
   "use strict";
   const list = document.getElementById("news-list");
@@ -1268,5 +1295,65 @@ main{max-width:1380px;padding-top:20px}
     .then(r => {if(!r.ok) throw new Error("HTTP "+r.status); return r.json();})
     .then(data => {if(!Array.isArray(data)) throw new Error("News-Archiv ist keine JSON-Liste"); articles=data.filter(a=>a && typeof a==="object" && sourceURL(a));render();})
     .catch(error => {console.error("Camping-News konnten nicht geladen werden:",error);status.textContent="Die News konnten nicht geladen werden. Bitte später erneut versuchen.";});
+})();
+</script><script id="ck-news-archive-script">
+(() => {
+  "use strict";
+  const root=document.getElementById('camping-news-archive');
+  const search=document.getElementById('ck-archive-search'), year=document.getElementById('ck-archive-year');
+  const country=document.getElementById('ck-archive-country'), topic=document.getElementById('ck-archive-topic');
+  const list=document.getElementById('ck-archive-list'), status=document.getElementById('ck-archive-status');
+  const prev=document.getElementById('ck-archive-prev'), next=document.getElementById('ck-archive-next'), pageLabel=document.getElementById('ck-archive-page');
+  const PAGE_SIZE=20;let items=[],page=0,loaded=false;
+  const rules=[
+    ['Warnungen & Sicherheit',/rückruf|warnung|unwetter|waldbrand|brandgefahr|hochwasser|überschwemm|sicherheitsmangel|sperrung|gesperrt/i],
+    ['Verkehr, Maut & Vorschriften',/maut|vignette|verkehrsregel|tempolimit|führerschein|umweltzone|fahrverbot|einreise|autobahn|bußgeld|bussgeld/i],
+    ['Campingplätze & Stellplätze',/campingplatz|campingplätze|stellplatz|stellplätze|campingpark|campinganlage|campground|campingsite/i],
+    ['Campingtechnik & Zubehör',/solar|batterie|akku|powerstation|zubehör|ausrüstung|gasprüfung|heizung|markise|stromversorgung/i],
+    ['Wohnmobile & Wohnwagen',/wohnmobil|wohnwagen|campervan|knaus|hymer|dethleffs|caravan|reisemobil|kastenwagen/i],
+    ['Campingbranche & Veranstaltungen',/campingmesse|caravan salon|messe|ausstellung|campingbranche|tourismusverband|campingfestival/i],
+    ['Reiseziele & Tourismus',/reiseziel|reiseregion|tourismus|sehenswürdigkeit|rundreise|ferienregion|naturpark|nationalpark|strand|küste/i]
+  ];
+  const countries=[
+    ['Schweiz',/schweiz|schweizer|switzerland|suisse|svizzera|tessin|graubünden|wallis/i],
+    ['Deutschland',/deutschland|germany|bayern|schwarzwald|nordsee|ostsee/i],
+    ['Österreich',/österreich|austria|tirol|salzburg|kärnten|steiermark/i],
+    ['Italien',/italien|italy|italia|gardasee|toskana|südtirol|sardinien|sizilien/i],
+    ['Spanien',/spanien|spain|españa|katalonien|andalusien|costa brava|mallorca/i],
+    ['Frankreich',/frankreich|france|provence|bretagne|elsass|normandie/i],
+    ['Portugal',/portugal|algarve|lissabon|porto/i]
+  ];
+  function timestamp(a){const d=Date.parse(a.source_published||a.published_at||a.published||a.date||'');return Number.isFinite(d)?d:0}
+  function category(a){if(rules.some(([n])=>n===a.topic))return a.topic;if(rules.some(([n])=>n===a.category))return a.category;const t=[a.title,a.excerpt].join(' ');return rules.find(([,r])=>r.test(t))?.[0]||'Weitere Camping-News'}
+  function locationOf(a){if(countries.some(([n])=>n===a.country))return a.country;if(countries.some(([n])=>n===a.region))return a.region;const m=countries.filter(([,r])=>r.test(String(a.title||'')));return m.length===1?m[0][0]:'Europa'}
+  function url(a){try{const u=new URL(a.source_url,location.origin);return /^https?:$/.test(u.protocol)?u.href:null}catch{return null}}
+  function unique(data){const links=new Set(),titles=new Set();return data.filter(a=>{const u=url(a),t=String(a.title||'').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();if(!u||!t||links.has(u)||titles.has(t))return false;links.add(u);titles.add(t);return true})}
+  function el(tag,value,cls){const n=document.createElement(tag);if(cls)n.className=cls;n.textContent=value||'';return n}
+  function render(){
+    const q=search.value.trim().toLocaleLowerCase('de');
+    const found=items.filter(a=>(!year.value||String(new Date(timestamp(a)).getFullYear())===year.value)&&(!country.value||locationOf(a)===country.value)&&(!topic.value||category(a)===topic.value)&&(!q||[a.title,a.excerpt,a.source_title,category(a),locationOf(a)].join(' ').toLocaleLowerCase('de').includes(q)));
+    const pages=Math.max(1,Math.ceil(found.length/PAGE_SIZE));page=Math.min(page,pages-1);list.replaceChildren();
+    for(const a of found.slice(page*PAGE_SIZE,(page+1)*PAGE_SIZE)){
+      const card=el('article','','ck-archive-item');const date=timestamp(a)?new Intl.DateTimeFormat('de-CH',{day:'2-digit',month:'long',year:'numeric'}).format(timestamp(a)):'Datum unbekannt';
+      card.append(el('div',date+' · '+(a.source_title||'Originalquelle')+' · '+category(a)+' · '+locationOf(a),'ck-archive-meta'));
+      card.append(el('h3',a.title||'Camping-Nachricht'));
+      if(a.excerpt)card.append(el('p',a.excerpt));
+      const link=el('a','Originalartikel lesen →');link.href=url(a);link.target='_blank';link.rel='noopener noreferrer';card.append(link);list.append(card);
+    }
+    status.textContent=found.length+' Archivmeldungen gefunden.';
+    if(!found.length)list.append(el('p','Keine passenden Meldungen gefunden. Bitte Filter anpassen.'));
+    pageLabel.textContent='Seite '+(page+1)+' von '+pages;prev.disabled=page===0;next.disabled=page>=pages-1;
+  }
+  async function load(){if(loaded)return;loaded=true;status.textContent='Archiv wird geladen …';try{
+    const r=await fetch('/news.json',{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);
+    const data=await r.json();if(!Array.isArray(data))throw new Error('Ungültiges Archivformat');
+    items=unique(data.filter(a=>a&&typeof a==='object')).sort((a,b)=>timestamp(b)-timestamp(a));
+    const years=[...new Set(items.map(a=>new Date(timestamp(a)).getFullYear()).filter(y=>y>=2000&&y<=2100))].sort((a,b)=>b-a);
+    for(const y of years){const opt=document.createElement('option');opt.value=String(y);opt.textContent=String(y);year.append(opt)}
+    render();
+  }catch(e){console.error('News-Archiv:',e);status.textContent='Das Archiv konnte nicht geladen werden. Bitte später erneut versuchen.'}}
+  root.addEventListener('toggle',()=>{if(root.open)load()});
+  for(const control of [search,year,country,topic])control.addEventListener(control===search?'input':'change',()=>{page=0;if(loaded)render()});
+  prev.addEventListener('click',()=>{if(page>0){page--;render()}});next.addEventListener('click',()=>{page++;render()});
 })();
 </script></body></html>
