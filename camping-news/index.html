@@ -1012,16 +1012,42 @@ main{max-width:1380px;padding-top:20px}
 @media(max-width:850px){.ck-journal .ck-news-hero{grid-template-columns:1fr}.ck-journal .ck-news-hero .ck-news-art{min-height:240px;max-height:360px}.ck-journal #news-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:580px){.ck-journal #news-list{grid-template-columns:1fr}.ck-journal .ck-news-hero .ck-news-art{min-height:215px}.ck-journal .ck-hero-copy{padding:24px}.ck-journal .ck-news-card-content{padding:18px}.ck-journal .filters>*{width:100%;flex:1 1 100%!important}}
 @media(prefers-reduced-motion:reduce){.ck-journal *, .ck-journal *::before,.ck-journal *::after{animation:none!important;transition:none!important}}
+
+/* Erweiterte Camping-News-Filter, unabhängig von der Campingplatzkarte */
+.ck-journal .ck-news-filter-area{margin:0 0 24px}
+.ck-journal .ck-news-topics{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.ck-journal .ck-topic{font:inherit;font-size:.86rem;font-weight:650;padding:9px 13px;border-radius:999px;border:1px solid #d7e2d8;background:#fff;color:#294437;cursor:pointer;transition:background .15s,border-color .15s}
+.ck-journal .ck-topic:hover,.ck-journal .ck-topic:focus-visible{border-color:#658974;background:#f0f6f0}
+.ck-journal .ck-topic.active{background:#254c3c;color:#fff;border-color:#254c3c}
+.ck-journal .ck-news-filter-area .filters{flex-wrap:wrap;margin:0}
+.ck-journal .ck-news-reset{font:inherit;font-size:.84rem;font-weight:600;background:transparent;border:0;color:#345e4c;cursor:pointer;padding:10px 6px;text-decoration:underline;text-underline-offset:3px}
+.ck-journal .ck-news-reset:focus-visible{outline:2px solid #254c3c;outline-offset:2px}
 </style>
 </head><body><header class="ck-header"><a class="ck-brand" href="/">◉ CAMPING-KOMPASS</a><nav aria-label="Hauptnavigation"><a href="/campingplaetze/">Campingplätze</a><a href="/reiseberichte/">Reiseberichte</a><a href="/camping-tipps/">Tipps & Zubehör</a><a href="/camping-news/">News</a><a href="/fragen/">Fragen</a></nav></header><main><div class="ck-intro"><span class="ck-kicker">Camping-Kompass · Persönlich & unabhängig</span><h1>Aktuelle Camping-News</h1><p>Die neuesten Camping-Meldungen aus dem bestehenden News-Archiv.</p></div><section id="news" class="ck-journal">
   <div id="news-feature" aria-label="Hauptnachricht"></div>
   <div class="ck-section-line"><h3>Weitere Nachrichten</h3><span class="ck-meta">Neueste zuerst</span></div>
-  <div class="filters">
-    <input aria-label="Camping-News suchen" id="news-search" placeholder="Nachrichten durchsuchen …" type="search">
-    <select aria-label="Region filtern" id="news-region">
-      <option value="Alle">Alle Regionen</option><option value="Schweiz">Schweiz</option>
-      <option value="Europa">Europa</option><option value="Allgemein">Allgemein</option>
-    </select>
+  <div class="ck-news-filter-area" aria-label="Camping-Nachrichten filtern">
+    <div class="ck-news-topics" id="news-topics" role="group" aria-label="Nachrichtenthema">
+      <button type="button" class="ck-topic active" data-topic="Alle News" aria-pressed="true">Alle News</button>
+      <button type="button" class="ck-topic" data-topic="Campingplätze & Stellplätze" aria-pressed="false">Campingplätze</button>
+      <button type="button" class="ck-topic" data-topic="Verkehr, Maut & Vorschriften" aria-pressed="false">Verkehr & Maut</button>
+      <button type="button" class="ck-topic" data-topic="Wohnmobile & Wohnwagen" aria-pressed="false">Fahrzeuge</button>
+      <button type="button" class="ck-topic" data-topic="Campingtechnik & Zubehör" aria-pressed="false">Technik</button>
+      <button type="button" class="ck-topic" data-topic="Reiseziele & Tourismus" aria-pressed="false">Reiseziele</button>
+      <button type="button" class="ck-topic" data-topic="Warnungen & Sicherheit" aria-pressed="false">Warnungen</button>
+      <button type="button" class="ck-topic" data-topic="Campingbranche & Veranstaltungen" aria-pressed="false">Branche</button>
+    </div>
+    <div class="filters">
+      <input aria-label="Camping-News suchen" id="news-search" placeholder="Nachrichten durchsuchen …" type="search">
+      <select aria-label="Land filtern" id="news-region">
+        <option value="Alle">Ganz Europa</option>
+        <option value="Schweiz">Schweiz</option><option value="Deutschland">Deutschland</option>
+        <option value="Österreich">Österreich</option><option value="Italien">Italien</option>
+        <option value="Spanien">Spanien</option><option value="Frankreich">Frankreich</option>
+        <option value="Portugal">Portugal</option><option value="Europa">Europa / Länderübergreifend</option>
+      </select>
+      <button class="ck-news-reset" id="news-reset" type="button">Filter zurücksetzen</button>
+    </div>
   </div>
   <p aria-live="polite" id="news-status">Camping-News werden geladen …</p>
   <div class="grid" id="news-list"></div>
@@ -1035,7 +1061,9 @@ main{max-width:1380px;padding-top:20px}
   const search = document.getElementById("news-search");
   const region = document.getElementById("news-region");
   const more = document.getElementById("news-more");
-  let articles = [], expanded = false;
+  const topics = document.getElementById("news-topics");
+  const reset = document.getElementById("news-reset");
+  let articles = [], expanded = false, selectedTopic = "Alle News";
   const MAX_VISIBLE = 50, RECENT_DAYS = 90;
 
   function parsedDate(a) {
@@ -1092,7 +1120,42 @@ main{max-width:1380px;padding-top:20px}
     link.target = "_blank"; link.rel = "noopener noreferrer";
     return link;
   }
-  function label(a) { return [a.category || "Camping-News", a.region || "Allgemein"].join(" · "); }
+  // Kategorien werden auch für bestehende news.json-Einträge ohne Kategorie unterstützt.
+  // Die Regeln sind bewusst konservativ: unsichere Meldungen bleiben bei "Alle News" sichtbar.
+  const TOPIC_RULES = [
+    ["Warnungen & Sicherheit", /rückruf|warnung|unwetter|waldbrand|brandgefahr|hochwasser|überschwemm|sicherheitsmangel|produktrückruf|strassensperr|straßensperr|gesperrt|sperrung/i],
+    ["Verkehr, Maut & Vorschriften", /maut|vignette|verkehrsregel|tempolimit|geschwindigkeit|führerschein|umweltzone|fahrverbot|einreise|grenzkontroll|strafzettel|bußgeld|bussgeld|autobahn|verkehrsvorschrift|parkverbot/i],
+    ["Campingplätze & Stellplätze", /campingplatz|campingplätze|stellplatz|stellplätze|campingpark|camping resort|campinganlage|campingverbot|campingplatzbetreiber|campground|campingsite/i],
+    ["Campingtechnik & Zubehör", /solar|batterie|akku|powerstation|zubehör|ausrüstung|campingtechnik|gasprüfung|heizung|markise|satellit|stromversorgung|ladegerät/i],
+    ["Wohnmobile & Wohnwagen", /wohnmobil|wohnwagen|campervan|knaus|hymer|dethleffs|caravan|reisemobil|fahrzeugmodell|kastenwagen|fahrzeugtest/i],
+    ["Campingbranche & Veranstaltungen", /campingmesse|caravan salon|messe|ausstellung|campingbranche|tourismusverband|branchenverband|campingfestival|umsatz|übernachtungszahlen/i],
+    ["Reiseziele & Tourismus", /reiseziel|reiseregion|tourismus|sehenswürdigkeit|urlaubsregion|reisebericht|rundreise|ferienregion|naturpark|nationalpark|strand|küste/i]
+  ];
+  const COUNTRY_RULES = [
+    ["Schweiz", /\b(schweiz|schweizer|switzerland|suisse|svizzera|tessin|graubünden|wallis)\b/i],
+    ["Deutschland", /\b(deutschland|deutsche[rsn]?|germany|bayern|schwarzwald|nordsee|ostsee)\b/i],
+    ["Österreich", /\b(österreich|austria|tirol|salzburg|kärnten|steiermark)\b/i],
+    ["Italien", /\b(italien|italy|italia|gardasee|toskana|südtirol|sardinien|sizilien)\b/i],
+    ["Spanien", /\b(spanien|spain|españa|katalonien|andalusien|costa brava|mallorca)\b/i],
+    ["Frankreich", /\b(frankreich|france|provence|bretagne|elsass|normandie|côte d.azur)\b/i],
+    ["Portugal", /\b(portugal|algarve|lissabon|porto)\b/i]
+  ];
+  const VALID_TOPICS = new Set(TOPIC_RULES.map(([name]) => name));
+  function topicOf(a) {
+    if (VALID_TOPICS.has(a.topic)) return a.topic;
+    if (VALID_TOPICS.has(a.category)) return a.category;
+    const content = [a.title, a.excerpt].join(" ");
+    for (const [name, pattern] of TOPIC_RULES) if (pattern.test(content)) return name;
+    return "Weitere Camping-News";
+  }
+  function countryOf(a) {
+    if (COUNTRY_RULES.some(([name]) => name === a.country)) return a.country;
+    if (COUNTRY_RULES.some(([name]) => name === a.region)) return a.region;
+    const title = String(a.title || "");
+    const matches = COUNTRY_RULES.filter(([, pattern]) => pattern.test(title));
+    return matches.length === 1 ? matches[0][0] : "Europa";
+  }
+  function label(a) { return [topicOf(a), countryOf(a)].join(" · "); }
   function featureCard(a, isPopular) {
     const wrap = document.createElement("article"); wrap.className = "ck-news-hero ck-fade-in";
     wrap.append(art(a));
@@ -1157,8 +1220,9 @@ main{max-width:1380px;padding-top:20px}
   function render() {
     const query = search.value.trim().toLocaleLowerCase("de");
     const filtered = articles.filter(a =>
-      [a.title, a.excerpt, a.region, a.source_title, a.category].join(" ").toLocaleLowerCase("de").includes(query) &&
-      (region.value === "Alle" || a.region === region.value)
+      [a.title, a.excerpt, a.region, a.source_title, a.category, topicOf(a), countryOf(a)].join(" ").toLocaleLowerCase("de").includes(query) &&
+      (region.value === "Alle" || countryOf(a) === region.value) &&
+      (selectedTopic === "Alle News" || topicOf(a) === selectedTopic)
     );
     const dated = chooseVisible(filtered);
     feature.replaceChildren(); list.replaceChildren();
@@ -1177,10 +1241,26 @@ main{max-width:1380px;padding-top:20px}
     const rest = dated.filter(a => a !== lead);
     const visible = expanded ? Math.min(rest.length, MAX_VISIBLE - 1) : 6;
     rest.slice(0, visible).forEach((a,i) => list.append(smallCard(a,i)));
-    status.textContent = dated.length + " Camping-News mit Bild verfügbar (maximal 50).";
+    status.textContent = dated.length + " passende Camping-News mit Bild (maximal 50).";
     more.hidden = rest.length <= 6;
     more.textContent = expanded ? "Weniger anzeigen" : "Mehr News anzeigen";
   }
+  topics.addEventListener("click", event => {
+    const button = event.target.closest("button[data-topic]");
+    if (!button || !topics.contains(button)) return;
+    selectedTopic = button.dataset.topic;
+    for (const item of topics.querySelectorAll("button[data-topic]")) {
+      const active = item === button;
+      item.classList.toggle("active", active);
+      item.setAttribute("aria-pressed", String(active));
+    }
+    expanded=false;render();
+  });
+  reset.addEventListener("click", () => {
+    search.value="";region.value="Alle";
+    const all = topics.querySelector('[data-topic="Alle News"]');
+    if (all) all.click();
+  });
   search.addEventListener("input", () => {expanded=false;render();});
   region.addEventListener("change", () => {expanded=false;render();});
   more.addEventListener("click", () => {expanded=!expanded;render();});
