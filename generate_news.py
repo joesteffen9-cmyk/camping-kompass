@@ -11,79 +11,41 @@ from pathlib import Path
 from urllib.parse import urljoin, urlsplit, urlunsplit, parse_qsl, urlencode
 from email.utils import parsedate_to_datetime
 
-try:
-    from googlenewsdecoder import gnewsdecoder
-except ImportError:
-    gnewsdecoder = None
-
 import feedparser
 import requests
 
 BASE = Path(__file__).resolve().parent
 ARCHIVE = BASE / "news.json"
 MAX_NEW = 10
-MAX_ARCHIVE = 1000
+MAX_ARCHIVE = 500
+MAX_VISIBLE = 50
+VISIBLE_AGE_DAYS = 90
 # Bestehende Meldungen schrittweise auf Bilder prüfen, damit der tägliche Lauf schnell bleibt.
 MAX_IMAGE_BACKFILL = 4
 REQUEST_TIMEOUT = 12
 # Fehlgeschlagene Bildprüfungen frühestens nach sieben Tagen wiederholen.
 IMAGE_RETRY_DAYS = 3
-# Google News nicht mit vielen Dekodierungsanfragen belasten.
-GOOGLE_REQUEST_PAUSE = 3
-GOOGLE_COOLDOWN_SECONDS = 24 * 3600
-GOOGLE_COOLDOWN_FILE = BASE / '.google_news_cooldown.json'
-
+# Direkte RSS-Feeds; weitere geprüfte Quellen können hier ergänzt werden.
+# Die drei promobil-Ressorts sind auf der offiziellen RSS-Seite verlinkt.
 FEEDS = [
-    ("https://news.google.com/rss/search?q=Camping+Schweiz&hl=de&gl=CH&ceid=CH:de", "Schweiz"),
-    ("https://news.google.com/rss/search?q=Camping+Europa&hl=de&gl=DE&ceid=DE:de", "Europa"),
-    ("https://news.google.com/rss/search?q=Wohnmobil+Camping+News&hl=de&gl=CH&ceid=CH:de", "Allgemein"),
-    ("https://news.google.com/rss/search?q=Campingplatz+Nachrichten&hl=de&gl=CH&ceid=CH:de", "Allgemein"),
+    ("https://www.promobil.de/rss/news", "Europa", "promobil"),
+    ("https://www.promobil.de/rss/ratgeber", "Europa", "promobil"),
+    ("https://www.promobil.de/rss/test", "Europa", "promobil"),
+    ("https://www.camping-news.de/rss/", "Europa", "Camping-News"),
+    ("https://www.camping-news.de/rss/campingplaetze/", "Europa", "Camping-News"),
+    ("https://www.camping-news.de/rss/touristik/", "Europa", "Camping-News"),
 ]
+# Keine alten Beiträge aus längst vergangenen Jahren neu importieren.
+MAX_AGE_DAYS = 45
+# Neue Artikel ohne nachweisbar erreichbares Bild werden nicht importiert.
+REQUIRE_IMAGE_FOR_NEW = True
+
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 SESSION = requests.Session()
 SESSION.headers.update({"User-Agent": "Mozilla/5.0 (compatible; CampingKompassNews/1.1)"})
 # Externe HTTP-Bibliotheken sollen das Actions-Protokoll nicht mit Einzelanfragen füllen.
 logging.getLogger("httpx").setLevel(logging.WARNING)
 logging.getLogger("httpcore").setLevel(logging.WARNING)
-
-google_blocked = False
-last_google_request = 0.0
-
-
-def google_cooldown_active():
-    """Ein 429 pausiert weitere Google-News-Anfragen auch über Workflow-Läufe hinweg,
-    sofern die kleine Statusdatei durch den bestehenden Git-Commit mitgespeichert wird."""
-    try:
-        data = json.loads(GOOGLE_COOLDOWN_FILE.read_text(encoding="utf-8"))
-        until = datetime.fromisoformat(data["until"])
-        return datetime.now(timezone.utc) < until
-    except (OSError, ValueError, KeyError, TypeError):
-        return False
-
-
-def note_google_rate_limit():
-    global google_blocked
-    google_blocked = True
-    until = datetime.fromtimestamp(time.time() + GOOGLE_COOLDOWN_SECONDS, timezone.utc)
-    GOOGLE_COOLDOWN_FILE.write_text(
-        json.dumps({"until": until.isoformat()}, indent=2), encoding="utf-8"
-    )
-    logging.warning("Google News antwortet mit HTTP 429: weitere Google-Anfragen "
-                    "für diesen Lauf gestoppt; frühestens nach 24 Stunden erneut.")
-
-
-def google_request_gate():
-    """Gibt False zurück, sobald ein Google-News-Limit bekannt ist."""
-    global last_google_request
-    if google_blocked or google_cooldown_active():
-        return False
-    delay = GOOGLE_REQUEST_PAUSE - (time.monotonic() - last_google_request)
-    if delay > 0:
-        time.sleep(delay)
-    last_google_request = time.monotonic()
-    return True
-
-
 
 def clean_text(value):
     value = re.sub(r"<[^>]+>", " ", value or "")
@@ -107,7 +69,7 @@ def is_duplicate(item, existing):
     url = item["source_url"]
     title = normalize_title(item["title"])
     for old in existing:
-        if clean_url(old.get("source_url")) == url:
+        if url and clean_url(old.get("source_url")) == url:
             return True
         old_title = normalize_title(old.get("title", ""))
         if title and old_title and SequenceMatcher(None, title, old_title).ratio() >= 0.88:
@@ -191,40 +153,9 @@ def rss_image(entry):
     return valid_image_url(match.group(1)) if match else ""
 
 
-def resolve_original_url(url):
-    """Google-News-RSS-Link sparsam zur Verlagsseite auflösen."""
-    host = (urlsplit(url).hostname or "").lower()
-    if host not in ("news.google.com", "www.news.google.com"):
-        return url
-    if not google_request_gate():
-        return ""
-
-    if gnewsdecoder is not None:
-        try:
-            result = gnewsdecoder(url, interval=0)
-            decoded = result.get("decoded_url", "") if isinstance(result, dict) else ""
-            if clean_url(decoded) and (urlsplit(decoded).hostname or "").lower() not in (
-                "news.google.com", "www.news.google.com"
-            ):
-                return decoded
-            # Einige Bibliotheksversionen melden HTTP-Fehler im Rückgabewert.
-            if "429" in str(result):
-                note_google_rate_limit()
-        except Exception as exc:
-            if "429" in str(exc):
-                note_google_rate_limit()
-            else:
-                logging.info("Google-News-Link nicht dekodiert: %s", str(exc)[:160])
-    else:
-        logging.warning("googlenewsdecoder fehlt: bitte requirements.txt prüfen.")
-
-    # Keine zweite Google-Anfrage als Fallback: diese hat vorher die Limits verstärkt.
-    return ""
-
-
 def page_image(article_url, known_original_url=""):
     """Liest das tatsächliche Artikel-Hauptbild aus Open-Graph-Metadaten."""
-    original_url = known_original_url or resolve_original_url(article_url)
+    original_url = known_original_url or article_url
     if not original_url:
         return "", ""
     try:
@@ -247,7 +178,21 @@ def page_image(article_url, known_original_url=""):
     return "", original_url
 
 
-def make_article(entry, region):
+def image_is_reachable(url):
+    """Prüft, ob eine echte Bildressource statt HTML/Fehlerseite geliefert wird."""
+    if not valid_image_url(url):
+        return False
+    try:
+        with SESSION.get(url, timeout=REQUEST_TIMEOUT, stream=True,
+                         headers={"Accept": "image/avif,image/webp,image/*"}) as response:
+            response.raise_for_status()
+            content_type = response.headers.get("Content-Type", "").split(";", 1)[0].lower().strip()
+            return content_type.startswith("image/") and content_type != "image/svg+xml"
+    except requests.RequestException:
+        return False
+
+
+def make_article(entry, region, publisher):
     title = clean_text(entry.get("title", ""))
     url = clean_url(entry.get("link", ""))
     if not title or not url:
@@ -257,7 +202,11 @@ def make_article(entry, region):
     image_url = rss_image(entry)
     original_url = ""
     if not image_url:
+        # Ein einzelner Abruf der Originalseite für das Open-Graph-Bild.
         image_url, original_url = page_image(url)
+    if REQUIRE_IMAGE_FOR_NEW and (not image_url or not image_is_reachable(image_url)):
+        logging.info("Meldung ohne abrufbares Hauptbild übersprungen: %s", title[:90])
+        return None
     article = {
         "id": article_id,
         "title": title,
@@ -267,7 +216,7 @@ def make_article(entry, region):
         "region": region,
         "tags": ["Camping", region],
         "source_url": url,
-        "source_title": "Originalmeldung bei Google News",
+        "source_title": publisher,
         "source_published": get_date(entry),
         "published_at": datetime.now(timezone.utc).isoformat(),
     }
@@ -275,41 +224,52 @@ def make_article(entry, region):
         article["image_url"] = image_url
     if original_url:
         article["original_url"] = original_url
-    # Eine Bildadresse ist keine urheberrechtliche Nutzungsfreigabe.
+    # Bildrechte werden bewusst NICHT automatisch behauptet.
+    # Die Website zeigt ohne Freigabe weiterhin ihre eigene Illustration.
     return article
 
 
 def main():
     existing = load_archive()
     known = list(existing)
-    if google_cooldown_active():
-        logging.warning("Google-News-Pause aktiv. Bestehendes Archiv bleibt erhalten.")
     new_articles = []
 
-    for feed_url, region in FEEDS:
-        if not google_request_gate():
-            break
+    # Alle Quellen zuerst einsammeln; erst DANACH die neuesten Artikel auswählen.
+    # So verdrängt die erste Quelle nicht alle übrigen Quellen.
+    candidates = []
+    for feed_url, region, publisher in FEEDS:
         try:
             response = SESSION.get(feed_url, timeout=25)
-            if response.status_code == 429:
-                note_google_rate_limit()
-                break
             response.raise_for_status()
             feed = feedparser.parse(response.content)
+            if not feed.entries:
+                logging.warning("RSS-Feed liefert keine Einträge: %s", feed_url)
             for entry in feed.entries:
-                # Duplikate vor dem Abrufen der Bildmetadaten prüfen.
                 title = clean_text(entry.get("title", ""))
                 url = clean_url(entry.get("link", ""))
                 if not title or not url or is_duplicate({"title": title, "source_url": url}, known):
                     continue
-                article = make_article(entry, region)
-                if article:
-                    new_articles.append(article)
-                    known.append(article)
-                if len(new_articles) >= MAX_NEW:
-                    break
-        except Exception:
-            logging.exception("Feed konnte nicht geladen werden: %s", feed_url)
+                published = get_date(entry)
+                if not published:
+                    continue
+                published_date = date_key({"source_published": published})
+                age = datetime.now(timezone.utc) - published_date
+                if published_date.year < 2000 or age.total_seconds() < -86400 or age.days > MAX_AGE_DAYS:
+                    continue
+                candidates.append((published_date, entry, region, publisher))
+        except (requests.RequestException, ValueError) as exc:
+            logging.warning("RSS-Feed nicht erreichbar: %s (%s)", feed_url, exc)
+
+    candidates.sort(key=lambda item: item[0], reverse=True)
+    for _, entry, region, publisher in candidates:
+        title = clean_text(entry.get("title", ""))
+        url = clean_url(entry.get("link", ""))
+        if is_duplicate({"title": title, "source_url": url}, known):
+            continue
+        article = make_article(entry, region, publisher)
+        if article:
+            new_articles.append(article)
+            known.append(article)
         if len(new_articles) >= MAX_NEW:
             break
 
@@ -317,7 +277,7 @@ def main():
     checked = 0
     now = datetime.now(timezone.utc)
     for article in existing:
-        if checked >= MAX_IMAGE_BACKFILL or google_blocked:
+        if checked >= MAX_IMAGE_BACKFILL:
             break
         if article.get("image_url"):
             continue
@@ -331,14 +291,13 @@ def main():
                     continue
             except (ValueError, TypeError):
                 pass
-        # Ohne bereits bekannte Verlagsadresse keine erneute Anfrage während der Pause.
-        if google_cooldown_active() and not article.get("original_url"):
-            break
+        # Historische Google-News-Links nicht erneut dekodieren oder abfragen.
+        host = (urlsplit(article.get("original_url") or article.get("source_url", "")).hostname or "").lower()
+        if host in ("news.google.com", "www.news.google.com"):
+            continue
         image_url, original_url = page_image(
             article.get("source_url", ""), article.get("original_url", "")
         )
-        if google_blocked and not original_url:
-            break
         checked += 1
         article["image_last_checked"] = now.isoformat()
         if original_url:
@@ -347,26 +306,28 @@ def main():
             article["image_url"] = image_url
             logging.info("Originalbild gefunden: %s", article.get("title", "")[:75])
 
+    # Das bestehende news.json bleibt das einzige Nachrichtenarchiv.
+    # Ohne neue Nachrichten werden alte Einträge NICHT wegen ihres Alters gelöscht.
+    # Sobald neue Nachrichten hinzukommen, begrenzen wir das Archiv auf 500.
     combined = new_articles + existing
-    unique = []
-    seen = set()
+    deduplicated = []
     for article in combined:
-        url = clean_url(article.get("source_url"))
-        if not url or url in seen:
+        if not article.get("source_url"):
             continue
-        seen.add(url)
-        unique.append(article)
-
-    unique.sort(key=date_key, reverse=True)
-    unique = unique[:MAX_ARCHIVE]
-    # Auch ohne neue Meldungen speichern: Reihenfolge und Bildnachträge aktualisieren.
-    if unique == load_archive():
+        if is_duplicate(article, deduplicated):
+            continue
+        deduplicated.append(article)
+    deduplicated.sort(key=date_key, reverse=True)
+    combined = deduplicated[:MAX_ARCHIVE] if new_articles else deduplicated
+    # Die Website sollte höchstens 50 Artikel anzeigen, vorrangig <=90 Tage.
+    # Diese Anzeigefilterung erfolgt im Frontend; das Archiv bleibt vollständig.
+    if combined == load_archive():
         logging.info("Keine Änderungen; Archiv bleibt unverändert.")
         return
     temp = ARCHIVE.with_suffix(".tmp")
-    temp.write_text(json.dumps(unique, ensure_ascii=False, indent=2), encoding="utf-8")
+    temp.write_text(json.dumps(combined, ensure_ascii=False, indent=2), encoding="utf-8")
     temp.replace(ARCHIVE)
-    logging.info("%s neue Meldungen; %s ältere Meldungen auf Bilder geprüft; Archiv chronologisch sortiert.",
+    logging.info("%s neue Meldungen mit Bild; %s ältere Meldungen auf Bilder geprüft; nach Quellendatum sortiert.",
                  len(new_articles), checked)
 
 
