@@ -41,7 +41,25 @@ FEEDS = [
     ("https://www.lemondeducampingcar.fr/feed/", "Frankreich", "Le Monde du Camping-Car"),
     ("https://www.vanlifemag.fr/feed/", "Frankreich", "Van Life Magazine"),
     ("https://www.fourgonlesite.com/feed/", "Frankreich", "Fourgon le Site"),
+    # Neue RSS-Kandidaten: Erreichbarkeit und Eintraege im GitHub-Protokoll kontrollieren.
+    ("https://www.camperonline.it/feed/", "Italien", "CamperOnLine"),
+    ("https://www.camperlife.it/feed/", "Italien", "CamperLife"),
+    ("https://www.autocaravanas.es/feed/", "Spanien", "Autocaravanas"),
+    ("https://www.furgosfera.com/feed/", "Spanien", "Furgosfera"),
+    ("https://www.practicalmotorhome.com/feed", "Europa", "Practical Motorhome"),
+    ("https://www.motorhomefun.co.uk/blog/feed/", "Europa", "MotorhomeFun"),
+    ("https://www.autocaravanismo.pt/feed/", "Portugal", "Autocaravanismo"),
+    ("https://www.campismo.pt/feed/", "Portugal", "Campismo"),
 ]
+
+SOURCE_LANGUAGES = {
+    "promobil": "de", "Camping-News": "de", "Camper Professional": "de",
+    "Le Monde du Camping-Car": "fr", "Van Life Magazine": "fr", "Fourgon le Site": "fr",
+    "CamperOnLine": "it", "CamperLife": "it",
+    "Autocaravanas": "es", "Furgosfera": "es",
+    "Practical Motorhome": "en", "MotorhomeFun": "en",
+    "Autocaravanismo": "pt", "Campismo": "pt",
+}
 
 # Keine alten Beiträge aus längst vergangenen Jahren neu importieren.
 MAX_AGE_DAYS = 14
@@ -255,6 +273,7 @@ def make_article(entry, region, publisher):
         "tags": ["Camping", detected_region],
         "source_url": url,
         "source_title": publisher,
+        "language": SOURCE_LANGUAGES.get(publisher, "und"),
         "source_published": get_date(entry),
         "published_at": datetime.now(timezone.utc).isoformat(),
     }
@@ -280,7 +299,7 @@ def main():
             response = SESSION.get(feed_url, timeout=25)
             response.raise_for_status()
             feed = feedparser.parse(response.content)
-            logging.info("RSS-Quelle %s: %s Einträge gefunden.", publisher, len(feed.entries))
+            logging.info("RSS-Quelle %s [%s]: %s Einträge gefunden (%s).", publisher, SOURCE_LANGUAGES.get(publisher, "und"), len(feed.entries), feed_url)
             if not feed.entries and getattr(feed, "bozo", False):
                 logging.warning("Ungültiger RSS/Atom-Feed: %s (%s)", feed_url,
                                 getattr(feed, "bozo_exception", "unbekannt"))
@@ -305,7 +324,19 @@ def main():
     logging.info("RSS-Prüfung abgeschlossen: %s Quellen, %s neue Kandidaten.",
                  len(FEEDS), len(candidates))
     candidates.sort(key=lambda item: item[0], reverse=True)
-    for _, entry, region, publisher in candidates:
+    # Fairer Sprachmix bei max. 50 Meldungen; je Sprache neueste zuerst.
+    from collections import deque
+    buckets = {}
+    for candidate in candidates:
+        lang = SOURCE_LANGUAGES.get(candidate[3], "und")
+        buckets.setdefault(lang, deque()).append(candidate)
+    language_order = ("de", "fr", "it", "es", "en", "pt", "und")
+    balanced_candidates = []
+    while any(buckets.values()):
+        for lang in language_order:
+            if buckets.get(lang):
+                balanced_candidates.append(buckets[lang].popleft())
+    for _, entry, region, publisher in balanced_candidates:
         title = clean_text(entry.get("title", ""))
         url = clean_url(entry.get("link", ""))
         if is_duplicate({"title": title, "source_url": url}, known):
