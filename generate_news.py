@@ -12,6 +12,11 @@ from pathlib import Path
 from urllib.parse import urljoin, urlsplit, urlunsplit, parse_qsl, urlencode
 from email.utils import parsedate_to_datetime
 
+try:
+    from gnews_decoder import decode as decode_google_news
+except ImportError:
+    decode_google_news = None
+
 import feedparser
 import requests
 
@@ -23,6 +28,7 @@ MAX_VISIBLE = 50
 VISIBLE_AGE_DAYS = 90
 # Bestehende Meldungen schrittweise auf Bilder prüfen, damit der tägliche Lauf schnell bleibt.
 MAX_IMAGE_BACKFILL = 4
+MAX_GOOGLE_CANDIDATES_PER_LANGUAGE = 12
 REQUEST_TIMEOUT = 8
 FEED_TIMEOUT = 10
 FEED_WORKERS = 6
@@ -54,8 +60,8 @@ FEEDS = [
     # Neue Quellen: Guía Turista ist ein RSS-Kandidat; Google News dient
     # als sprach- und themenspezifischer Fallback für aktuelle Meldungen.
     ("https://www.guiaturista.es/feed/ultimas-noticias", "Spanien", "Guía Turista"),
-    ("https://news.google.com/rss/search?q=autocaravanas+OR+camping+OR+caravanas+when%3A14d&hl=es&gl=ES&ceid=ES%3Aes", "Spanien", "Google News Camping ES"),
-    ("https://news.google.com/rss/search?q=autocaravanas+OR+campismo+OR+parques+de+campismo+when%3A14d&hl=pt-PT&gl=PT&ceid=PT%3Apt", "Portugal", "Google News Camping PT"),
+    ("https://news.google.com/rss/search?q=%22autocaravanas%22+OR+%22camping%22+OR+%22camper%22+when%3A14d+-migrantes+-coca-cola&hl=es&gl=ES&ceid=ES%3Aes", "Spanien", "Google News Camping ES"),
+    ("https://news.google.com/rss/search?q=%22autocaravanas%22+OR+%22parques+de+campismo%22+OR+%22campismo%22+when%3A14d+-migrantes+-coca-cola&hl=pt-PT&gl=PT&ceid=PT%3Apt", "Portugal", "Google News Camping PT"),
 ]
 
 SOURCE_LANGUAGES = {
@@ -283,6 +289,55 @@ def classify_article(title, excerpt, default_region="Europa"):
     return category, region
 
 
+# Bei allgemeinen Suchergebnissen nur eindeutig passende Campinginhalte zulassen.
+CAMPING_TERMS = re.compile(
+    r"\b(?:camping|campings|campismo|campista|campistas|campground|"
+    r"autocaravana|autocaravanas|autocaravanismo|caravana\s+de\s+camping|"
+    r"caravanas\s+de\s+camping|camper|campers|campervan|campervans|"
+    r"furgoneta\s+camper|furgonetas\s+camper|"
+    r"parque\s+de\s+campismo|parques\s+de\s+campismo|"
+    r"área\s+de\s+autocaravanas|áreas\s+de\s+autocaravanas|"
+    r"área\s+de\s+serviço\s+para\s+autocaravanas|"
+    r"parque\s+de\s+caravanas|parques\s+de\s+caravanas)\b", re.I)
+UNRELATED_TERMS = re.compile(
+    r"\b(?:migrantes?|migratorias?|migratórias?|inmigraci[oó]n|imigra[cç][aã]o|"
+    r"frontera|fronteira|trump|sheinbaum|coca[ -]?cola|navide[nñ]as?|"
+    r"caravanas?\s+de\s+coches|caravanas?\s+de\s+veh[ií]culos|"
+    r"caravanas?\s+de\s+protesta|caravanas?\s+de\s+manifestantes|"
+    r"caravanas?\s+de\s+ayuda|caravanas?\s+de\s+alimentos)\b", re.I)
+
+def relevant_google_news(entry):
+    # Bei Google News sind Zusammenfassungen oft nur andere Schlagzeilen.
+    # Darum ausschliesslich anhand des Titels entscheiden.
+    title = clean_text(entry.get("title", ""))
+    # Den Quellenzusatz am Ende entfernen, damit ein Medienname nicht als
+    # vermeintliches Camping-Schlagwort zaehlt.
+    title = title.rsplit(" - ", 1)[0]
+    return bool(CAMPING_TERMS.search(title) and not UNRELATED_TERMS.search(title))
+
+
+def resolve_original_news_url(url):
+    """Google-News-Link zum Originalartikel aufloesen; kein Fake-Bild verwenden."""
+    host = (urlsplit(url).hostname or "").lower()
+    if host not in ("news.google.com", "www.news.google.com"):
+        return url
+    if decode_google_news is None:
+        logging.warning("gnews-decoder fehlt: Google-News-Originalartikel kann nicht aufgeloest werden.")
+        return ""
+    try:
+        resolved = decode_google_news(url, timeout=12)
+        # Versionen liefern entweder URL oder None.
+        if isinstance(resolved, dict):
+            resolved = resolved.get("decoded_url") or resolved.get("url")
+        resolved = clean_url(resolved) if isinstance(resolved, str) else ""
+        resolved_host = (urlsplit(resolved).hostname or "").lower()
+        if resolved_host and resolved_host not in ("news.google.com", "www.news.google.com"):
+            return resolved
+    except Exception as exc:
+        logging.info("Google-News-Originalartikel nicht aufloesbar: %s", str(exc)[:160])
+    return ""
+
+
 def make_article(entry, region, publisher):
     title = clean_text(entry.get("title", ""))
     url = clean_url(entry.get("link", ""))
@@ -290,11 +345,19 @@ def make_article(entry, region, publisher):
         return None
     excerpt = clean_text(entry.get("summary", "") or entry.get("description", ""))[:320]
     article_id = hashlib.sha256(url.encode("utf-8")).hexdigest()[:20]
-    image_url = rss_image(entry)
-    original_url = ""
+    google_news = publisher.startswith("Google News Camping")
+    if google_news and not relevant_google_news(entry):
+        return None
+    original_url = resolve_original_news_url(url) if google_news else ""
+    if google_news and not original_url:
+        logging.info("Google-News-Link nicht aufloesbar, übersprungen: %s", title[:90])
+        return None
+    image_url = "" if google_news else rss_image(entry)
     if not image_url:
-        # Ein einzelner Abruf der Originalseite für das Open-Graph-Bild.
-        image_url, original_url = page_image(url)
+        # Google News liefert normalerweise keine Originalbilder im RSS.
+        image_url, resolved_page = page_image(original_url or url)
+        if resolved_page and not google_news:
+            original_url = resolved_page
     if REQUIRE_IMAGE_FOR_NEW and (not image_url or not image_is_reachable(image_url)):
         logging.info("Meldung ohne abrufbares Hauptbild übersprungen: %s", title[:90])
         return None
@@ -307,7 +370,7 @@ def make_article(entry, region, publisher):
         "category": category,
         "region": detected_region,
         "tags": ["Camping", detected_region],
-        "source_url": url,
+        "source_url": original_url if google_news else url,
         "source_title": publisher,
         "language": SOURCE_LANGUAGES.get(publisher, "und"),
         "source_published": get_date(entry),
@@ -315,7 +378,7 @@ def make_article(entry, region, publisher):
     }
     if image_url:
         article["image_url"] = image_url
-    if original_url:
+    if original_url and not google_news:
         article["original_url"] = original_url
     # Bildrechte werden bewusst NICHT automatisch behauptet.
     # Die Website zeigt ohne Freigabe weiterhin ihre eigene Illustration.
@@ -336,6 +399,7 @@ def main():
     # Alle Quellen zuerst einsammeln; erst DANACH die neuesten Artikel auswählen.
     # So verdrängt die erste Quelle nicht alle übrigen Quellen.
     candidates = []
+    google_counts = {"es": 0, "pt": 0}
     diagnostics = {"duplicates": 0, "missing_date": 0, "too_old_or_invalid": 0, "eligible": 0}
     # Die meisten Quellen parallel abrufen. Die beiden zuvor erfolgreichen
     # Feeds mit der bewährten Session-Methode separat und sequenziell abrufen.
@@ -374,6 +438,8 @@ def main():
             url = clean_url(entry.get("link", ""))
             if not title or not url:
                 continue
+            if publisher.startswith("Google News Camping") and not relevant_google_news(entry):
+                continue
             if publisher == "Guía Turista":
                 summary = clean_text(entry.get("summary", ""))
                 if not re.search(r"\b(?:camping|campings|campamento|autocaravana|autocaravanas|caravana|caravanas|camper|campers|furgoneta|furgonetas)\b", (title + " " + summary).casefold()):
@@ -393,6 +459,11 @@ def main():
                 diagnostics["too_old_or_invalid"] += 1
                 source_stats["old"] += 1
                 continue
+            if publisher.startswith("Google News Camping"):
+                lang = SOURCE_LANGUAGES[publisher]
+                if google_counts[lang] >= MAX_GOOGLE_CANDIDATES_PER_LANGUAGE:
+                    continue
+                google_counts[lang] += 1
             diagnostics["eligible"] += 1
             source_stats["eligible"] += 1
             candidates.append((published_date, entry, region, publisher))
@@ -421,7 +492,7 @@ def main():
         if is_duplicate({"title": title, "source_url": url}, known):
             continue
         article = make_article(entry, region, publisher)
-        if article:
+        if article and not is_duplicate(article, known):
             new_articles.append(article)
             known.append(article)
         if len(new_articles) >= MAX_NEW:
