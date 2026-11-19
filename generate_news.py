@@ -4,6 +4,7 @@ import json
 import logging
 import re
 import time
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from difflib import SequenceMatcher
 from html.parser import HTMLParser
@@ -22,7 +23,9 @@ MAX_VISIBLE = 50
 VISIBLE_AGE_DAYS = 90
 # Bestehende Meldungen schrittweise auf Bilder prüfen, damit der tägliche Lauf schnell bleibt.
 MAX_IMAGE_BACKFILL = 4
-REQUEST_TIMEOUT = 12
+REQUEST_TIMEOUT = 8
+FEED_TIMEOUT = 10
+FEED_WORKERS = 6
 # Fehlgeschlagene Bildprüfungen frühestens nach sieben Tagen wiederholen.
 IMAGE_RETRY_DAYS = 3
 # Direkte RSS-Feeds; weitere geprüfte Quellen können hier ergänzt werden.
@@ -44,22 +47,48 @@ FEEDS = [
     # Neue RSS-Kandidaten: Erreichbarkeit und Eintraege im GitHub-Protokoll kontrollieren.
     ("https://caravanecamper.it/feed/", "Italien", "Caravan e Camper"),
     ("https://www.camperpress.info/feed/", "Italien", "Camper Press"),
-    ("https://www.autocaravaning.es/feed/", "Spanien", "Autocaravaning"),
     ("https://www.furgosfera.com/feed/", "Spanien", "Furgosfera"),
     ("https://www.practicalmotorhome.com/feed", "Europa", "Practical Motorhome"),
     ("https://www.caravanguard.co.uk/news/feed/", "Europa", "Caravan Guard"),
     ("https://fpautocaravanismo.pt/feed/", "Portugal", "Federacao Autocaravanismo"),
-    ("https://www.acp.pt/feed/", "Portugal", "ACP Portugal"),
 ]
 
 SOURCE_LANGUAGES = {
     "promobil": "de", "Camping-News": "de", "Camper Professional": "de",
     "Le Monde du Camping-Car": "fr", "Van Life Magazine": "fr", "Fourgon le Site": "fr",
     "Caravan e Camper": "it", "Camper Press": "it",
-    "Autocaravaning": "es", "Furgosfera": "es",
+    "Furgosfera": "es",
     "Practical Motorhome": "en", "Caravan Guard": "en",
-    "Federacao Autocaravanismo": "pt", "ACP Portugal": "pt",
+    "Federacao Autocaravanismo": "pt",
 }
+
+# Bei älteren Archivmeldungen ist die Sprache noch nicht gespeichert.
+# Bekannte Quellen werden sicher zugeordnet; unbekannte bleiben "und".
+def archive_language(article):
+    publisher = article.get("source_title", "")
+    if publisher in SOURCE_LANGUAGES:
+        return SOURCE_LANGUAGES[publisher]
+    if publisher == "Originalmeldung bei Google News":
+        title = (article.get("title") or "").casefold()
+        # Nur klare deutsche Funktionswörter, keine Vermutung aus der Region.
+        if re.search(r"\\b(?:der|die|das|und|für|mit|auf|bei|warum|wird|werden|neue|neuen|einem|einer|über|gegen|nicht)\\b", title):
+            return "de"
+    return "und"
+
+
+def fetch_feed(spec):
+    feed_url, region, publisher = spec
+    try:
+        # Pro Thread eigene Anfrage statt einer gemeinsam genutzten Session.
+        response = requests.get(
+            feed_url, timeout=FEED_TIMEOUT,
+            headers={"User-Agent": "Mozilla/5.0 (compatible; CampingKompassNews/1.2)"},
+        )
+        response.raise_for_status()
+        return spec, feedparser.parse(response.content), None
+    except (requests.RequestException, ValueError) as exc:
+        return spec, None, str(exc)
+
 
 # Keine alten Beiträge aus längst vergangenen Jahren neu importieren.
 MAX_AGE_DAYS = 14
@@ -288,6 +317,12 @@ def make_article(entry, region, publisher):
 
 def main():
     existing = load_archive()
+    language_updates = 0
+    for article in existing:
+        if not article.get("language"):
+            article["language"] = archive_language(article)
+            language_updates += 1
+    logging.info("Sprachkennung bei %s älteren Meldungen ergänzt (und = unbestimmt).", language_updates)
     known = list(existing)
     new_articles = []
 
@@ -295,38 +330,46 @@ def main():
     # So verdrängt die erste Quelle nicht alle übrigen Quellen.
     candidates = []
     diagnostics = {"duplicates": 0, "missing_date": 0, "too_old_or_invalid": 0, "eligible": 0}
-    for feed_url, region, publisher in FEEDS:
-        try:
-            response = SESSION.get(feed_url, timeout=25)
-            response.raise_for_status()
-            feed = feedparser.parse(response.content)
-            logging.info("RSS-Quelle %s [%s]: %s Einträge gefunden (%s).", publisher, SOURCE_LANGUAGES.get(publisher, "und"), len(feed.entries), feed_url)
-            if not feed.entries and getattr(feed, "bozo", False):
-                logging.warning("Ungültiger RSS/Atom-Feed: %s (%s)", feed_url,
-                                getattr(feed, "bozo_exception", "unbekannt"))
-            if not feed.entries:
-                logging.warning("RSS-Feed liefert keine Einträge: %s", feed_url)
-            for entry in feed.entries:
-                title = clean_text(entry.get("title", ""))
-                url = clean_url(entry.get("link", ""))
-                if not title or not url:
-                    continue
-                if is_duplicate({"title": title, "source_url": url}, known):
-                    diagnostics["duplicates"] += 1
-                    continue
-                published = get_date(entry)
-                if not published:
-                    diagnostics["missing_date"] += 1
-                    continue
-                published_date = date_key({"source_published": published})
-                age = datetime.now(timezone.utc) - published_date
-                if published_date.year < 2000 or age.total_seconds() < -86400 or age.days > MAX_AGE_DAYS:
-                    diagnostics["too_old_or_invalid"] += 1
-                    continue
-                diagnostics["eligible"] += 1
-                candidates.append((published_date, entry, region, publisher))
-        except (requests.RequestException, ValueError) as exc:
-            logging.warning("RSS-Feed nicht erreichbar: %s (%s)", feed_url, exc)
+    # Feed-Abfragen parallel: eine langsame Quelle blockiert nicht alle anderen.
+    with ThreadPoolExecutor(max_workers=FEED_WORKERS) as pool:
+        feed_results = list(pool.map(fetch_feed, FEEDS))
+    for (feed_url, region, publisher), feed, error in feed_results:
+        if error:
+            logging.warning("RSS-Feed nicht erreichbar: %s (%s)", feed_url, error)
+            continue
+        logging.info("RSS-Quelle %s [%s]: %s Einträge gefunden (%s).",
+                     publisher, SOURCE_LANGUAGES.get(publisher, "und"), len(feed.entries), feed_url)
+        if not feed.entries and getattr(feed, "bozo", False):
+            logging.warning("Ungültiger RSS/Atom-Feed: %s (%s)", feed_url,
+                            getattr(feed, "bozo_exception", "unbekannt"))
+        if not feed.entries:
+            logging.warning("RSS-Feed liefert keine Einträge: %s", feed_url)
+        source_stats = {"duplicate": 0, "old": 0, "missing_date": 0, "eligible": 0}
+        for entry in feed.entries:
+            title = clean_text(entry.get("title", ""))
+            url = clean_url(entry.get("link", ""))
+            if not title or not url:
+                continue
+            if is_duplicate({"title": title, "source_url": url}, known):
+                diagnostics["duplicates"] += 1
+                source_stats["duplicate"] += 1
+                continue
+            published = get_date(entry)
+            if not published:
+                diagnostics["missing_date"] += 1
+                source_stats["missing_date"] += 1
+                continue
+            published_date = date_key({"source_published": published})
+            age = datetime.now(timezone.utc) - published_date
+            if published_date.year < 2000 or age.total_seconds() < -86400 or age.days > MAX_AGE_DAYS:
+                diagnostics["too_old_or_invalid"] += 1
+                source_stats["old"] += 1
+                continue
+            diagnostics["eligible"] += 1
+            source_stats["eligible"] += 1
+            candidates.append((published_date, entry, region, publisher))
+        logging.info("RSS-Diagnose %s [%s]: %s", publisher,
+                     SOURCE_LANGUAGES.get(publisher, "und"), source_stats)
 
     logging.info("RSS-Prüfung abgeschlossen: %s Quellen, %s neue Kandidaten.",
                  len(FEEDS), len(candidates))
