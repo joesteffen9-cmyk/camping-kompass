@@ -71,7 +71,7 @@ def archive_language(article):
     if publisher == "Originalmeldung bei Google News":
         title = (article.get("title") or "").casefold()
         # Nur klare deutsche Funktionswörter, keine Vermutung aus der Region.
-        if re.search(r"\\b(?:der|die|das|und|für|mit|auf|bei|warum|wird|werden|neue|neuen|einem|einer|über|gegen|nicht)\\b", title):
+        if re.search(r"\b(?:der|die|das|und|für|mit|auf|bei|warum|wird|werden|neue|neuen|einem|einer|über|gegen|nicht)\b", title):
             return "de"
     return "und"
 
@@ -330,9 +330,26 @@ def main():
     # So verdrängt die erste Quelle nicht alle übrigen Quellen.
     candidates = []
     diagnostics = {"duplicates": 0, "missing_date": 0, "too_old_or_invalid": 0, "eligible": 0}
-    # Feed-Abfragen parallel: eine langsame Quelle blockiert nicht alle anderen.
+    # Die meisten Quellen parallel abrufen. Die beiden zuvor erfolgreichen
+    # Feeds mit der bewährten Session-Methode separat und sequenziell abrufen.
+    legacy_publishers = {"Furgosfera", "Federacao Autocaravanismo"}
+    parallel_feeds = [spec for spec in FEEDS if spec[2] not in legacy_publishers]
     with ThreadPoolExecutor(max_workers=FEED_WORKERS) as pool:
-        feed_results = list(pool.map(fetch_feed, FEEDS))
+        parallel_results = list(pool.map(fetch_feed, parallel_feeds))
+    results_by_url = {spec[0]: (spec, feed, error)
+                      for spec, feed, error in parallel_results}
+    for spec in FEEDS:
+        if spec[2] not in legacy_publishers:
+            continue
+        url = spec[0]
+        try:
+            response = SESSION.get(url, timeout=25)
+            response.raise_for_status()
+            feed = feedparser.parse(response.content)
+            results_by_url[url] = (spec, feed, None)
+        except (requests.RequestException, ValueError) as exc:
+            results_by_url[url] = (spec, None, str(exc))
+    feed_results = [results_by_url[spec[0]] for spec in FEEDS]
     for (feed_url, region, publisher), feed, error in feed_results:
         if error:
             logging.warning("RSS-Feed nicht erreichbar: %s (%s)", feed_url, error)
