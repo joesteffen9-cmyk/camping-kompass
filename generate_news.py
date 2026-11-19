@@ -51,6 +51,11 @@ FEEDS = [
     ("https://www.practicalmotorhome.com/feed", "Europa", "Practical Motorhome"),
     ("https://www.caravanguard.co.uk/news/feed/", "Europa", "Caravan Guard"),
     ("https://fpautocaravanismo.pt/feed/", "Portugal", "Federacao Autocaravanismo"),
+    # Neue Quellen: Guía Turista ist ein RSS-Kandidat; Google News dient
+    # als sprach- und themenspezifischer Fallback für aktuelle Meldungen.
+    ("https://www.guiaturista.es/feed/ultimas-noticias", "Spanien", "Guía Turista"),
+    ("https://news.google.com/rss/search?q=autocaravanas+OR+camping+OR+caravanas+when%3A14d&hl=es&gl=ES&ceid=ES%3Aes", "Spanien", "Google News Camping ES"),
+    ("https://news.google.com/rss/search?q=autocaravanas+OR+campismo+OR+parques+de+campismo+when%3A14d&hl=pt-PT&gl=PT&ceid=PT%3Apt", "Portugal", "Google News Camping PT"),
 ]
 
 SOURCE_LANGUAGES = {
@@ -60,6 +65,8 @@ SOURCE_LANGUAGES = {
     "Furgosfera": "es",
     "Practical Motorhome": "en", "Caravan Guard": "en",
     "Federacao Autocaravanismo": "pt",
+    "Guía Turista": "es", "Google News Camping ES": "es",
+    "Google News Camping PT": "pt",
 }
 
 # Bei älteren Archivmeldungen ist die Sprache noch nicht gespeichert.
@@ -367,6 +374,10 @@ def main():
             url = clean_url(entry.get("link", ""))
             if not title or not url:
                 continue
+            if publisher == "Guía Turista":
+                summary = clean_text(entry.get("summary", ""))
+                if not re.search(r"\b(?:camping|campings|campamento|autocaravana|autocaravanas|caravana|caravanas|camper|campers|furgoneta|furgonetas)\b", (title + " " + summary).casefold()):
+                    continue
             if is_duplicate({"title": title, "source_url": url}, known):
                 diagnostics["duplicates"] += 1
                 source_stats["duplicate"] += 1
