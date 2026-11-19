@@ -42,23 +42,23 @@ FEEDS = [
     ("https://www.vanlifemag.fr/feed/", "Frankreich", "Van Life Magazine"),
     ("https://www.fourgonlesite.com/feed/", "Frankreich", "Fourgon le Site"),
     # Neue RSS-Kandidaten: Erreichbarkeit und Eintraege im GitHub-Protokoll kontrollieren.
-    ("https://www.camperonline.it/feed/", "Italien", "CamperOnLine"),
-    ("https://www.camperlife.it/feed/", "Italien", "CamperLife"),
-    ("https://www.autocaravanas.es/feed/", "Spanien", "Autocaravanas"),
+    ("https://caravanecamper.it/feed/", "Italien", "Caravan e Camper"),
+    ("https://www.camperpress.info/feed/", "Italien", "Camper Press"),
+    ("https://www.autocaravaning.es/feed/", "Spanien", "Autocaravaning"),
     ("https://www.furgosfera.com/feed/", "Spanien", "Furgosfera"),
     ("https://www.practicalmotorhome.com/feed", "Europa", "Practical Motorhome"),
-    ("https://www.motorhomefun.co.uk/blog/feed/", "Europa", "MotorhomeFun"),
-    ("https://www.autocaravanismo.pt/feed/", "Portugal", "Autocaravanismo"),
-    ("https://www.campismo.pt/feed/", "Portugal", "Campismo"),
+    ("https://www.caravanguard.co.uk/news/feed/", "Europa", "Caravan Guard"),
+    ("https://fpautocaravanismo.pt/feed/", "Portugal", "Federacao Autocaravanismo"),
+    ("https://www.acp.pt/feed/", "Portugal", "ACP Portugal"),
 ]
 
 SOURCE_LANGUAGES = {
     "promobil": "de", "Camping-News": "de", "Camper Professional": "de",
     "Le Monde du Camping-Car": "fr", "Van Life Magazine": "fr", "Fourgon le Site": "fr",
-    "CamperOnLine": "it", "CamperLife": "it",
-    "Autocaravanas": "es", "Furgosfera": "es",
-    "Practical Motorhome": "en", "MotorhomeFun": "en",
-    "Autocaravanismo": "pt", "Campismo": "pt",
+    "Caravan e Camper": "it", "Camper Press": "it",
+    "Autocaravaning": "es", "Furgosfera": "es",
+    "Practical Motorhome": "en", "Caravan Guard": "en",
+    "Federacao Autocaravanismo": "pt", "ACP Portugal": "pt",
 }
 
 # Keine alten Beiträge aus längst vergangenen Jahren neu importieren.
@@ -294,6 +294,7 @@ def main():
     # Alle Quellen zuerst einsammeln; erst DANACH die neuesten Artikel auswählen.
     # So verdrängt die erste Quelle nicht alle übrigen Quellen.
     candidates = []
+    diagnostics = {"duplicates": 0, "missing_date": 0, "too_old_or_invalid": 0, "eligible": 0}
     for feed_url, region, publisher in FEEDS:
         try:
             response = SESSION.get(feed_url, timeout=25)
@@ -308,21 +309,28 @@ def main():
             for entry in feed.entries:
                 title = clean_text(entry.get("title", ""))
                 url = clean_url(entry.get("link", ""))
-                if not title or not url or is_duplicate({"title": title, "source_url": url}, known):
+                if not title or not url:
+                    continue
+                if is_duplicate({"title": title, "source_url": url}, known):
+                    diagnostics["duplicates"] += 1
                     continue
                 published = get_date(entry)
                 if not published:
+                    diagnostics["missing_date"] += 1
                     continue
                 published_date = date_key({"source_published": published})
                 age = datetime.now(timezone.utc) - published_date
                 if published_date.year < 2000 or age.total_seconds() < -86400 or age.days > MAX_AGE_DAYS:
+                    diagnostics["too_old_or_invalid"] += 1
                     continue
+                diagnostics["eligible"] += 1
                 candidates.append((published_date, entry, region, publisher))
         except (requests.RequestException, ValueError) as exc:
             logging.warning("RSS-Feed nicht erreichbar: %s (%s)", feed_url, exc)
 
     logging.info("RSS-Prüfung abgeschlossen: %s Quellen, %s neue Kandidaten.",
                  len(FEEDS), len(candidates))
+    logging.info("RSS-Diagnose: %s", diagnostics)
     candidates.sort(key=lambda item: item[0], reverse=True)
     # Fairer Sprachmix bei max. 50 Meldungen; je Sprache neueste zuerst.
     from collections import deque
